@@ -27,7 +27,6 @@ username_value = ctk.CTkEntry(
 )
 username_value.place(x=150, y=200)
 
-
 password_entry = ctk.CTkEntry(
     window,
     width=180,
