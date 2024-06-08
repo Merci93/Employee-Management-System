@@ -37,7 +37,13 @@ password_entry = ctk.CTkEntry(
 )
 password_entry.place(x=150, y=250)
 
-login_button = ctk.CTkButton(window, text="Login", cursor="hand2", bg_color="#7125FF", width=100)
+login_button = ctk.CTkButton(
+    window,
+    text="Login",
+    cursor="hand2",
+    bg_color="#7125FF",
+    width=100,
+)
 login_button.place(x=190, y=350)
 
 window.mainloop()
