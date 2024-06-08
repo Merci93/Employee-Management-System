@@ -18,14 +18,14 @@ heading_label = ctk.CTkLabel(
 )
 heading_label.place(x=50, y=30)
 
-user_name_value = ctk.CTkEntry(
+username_value = ctk.CTkEntry(
     window,
     width=180,
     placeholder_text="Enter Username",
     border_color="#7125FF",
     bg_color="#7125FF",
 )
-user_name_value.place(x=150, y=200)
+username_value.place(x=150, y=200)
 
 
 window.mainloop()
