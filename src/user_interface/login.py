@@ -28,4 +28,15 @@ username_value = ctk.CTkEntry(
 username_value.place(x=150, y=200)
 
 
+password_entry = ctk.CTkEntry(
+    window,
+    width=180,
+    placeholder_text="Password",
+    show="*",
+    border_color="#7125FF",
+    bg_color="#7125FF",
+)
+password_entry.place(x=150, y=250)
+
+
 window.mainloop()
