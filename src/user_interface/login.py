@@ -6,10 +6,10 @@ ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
 window = ctk.CTk()
-window.geometry("1230x678")
+window.geometry("1130x578")
 window.resizable(0, 0)
 window.title("Login")
-image = ctk.CTkImage(Image.open(r"./files/ems.png"), size=(1230, 678))
+image = ctk.CTkImage(Image.open(r"./files/ems.png"), size=(1138, 578))
 image_label = ctk.CTkLabel(window, image=image, text="")
 image_label.place(x=0, y=0)
 heading_label = ctk.CTkLabel(
