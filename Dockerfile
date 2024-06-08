@@ -1,4 +1,4 @@
-FROM python3.11-slim
+FROM python:3.11-slim
 
 LABEL quay.expires-after=12w
 
