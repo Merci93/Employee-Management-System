@@ -1,33 +1,33 @@
-import customtkinter as ctk
+import customtkinter
 from PIL import Image
 
 
-ctk.set_appearance_mode("System")
-ctk.set_default_color_theme("blue")
+customtkinter.set_appearance_mode("System")
+customtkinter.set_default_color_theme("blue")
 
-window = ctk.CTk()
+window = customtkinter.CTk()
 window.geometry("1130x578")
 window.resizable(0, 0)
 window.title("Login")
-image = ctk.CTkImage(Image.open(r"./files/ems.png"), size=(1138, 578))
-image_label = ctk.CTkLabel(window, image=image, text="")
+image = customtkinter.CTkImage(Image.open(r"./files/ems.png"), size=(1138, 578))
+image_label = customtkinter.CTkLabel(window, image=image, text="")
 image_label.place(x=0, y=0)
-heading_label = ctk.CTkLabel(
+heading_label = customtkinter.CTkLabel(
     window, text="Employee Management System", bg_color="#7125FF",
     font=("Goudy Old Style", 60, "bold"),
 )
 heading_label.place(x=50, y=30)
 
-username_value = ctk.CTkEntry(
+username_entry = customtkinter.CTkEntry(
     window,
     width=180,
     placeholder_text="Enter Username",
     border_color="#7125FF",
     bg_color="#7125FF",
 )
-username_value.place(x=150, y=200)
+username_entry.place(x=150, y=200)
 
-password_entry = ctk.CTkEntry(
+password_entry = customtkinter.CTkEntry(
     window,
     width=180,
     placeholder_text="Password",
@@ -37,7 +37,7 @@ password_entry = ctk.CTkEntry(
 )
 password_entry.place(x=150, y=250)
 
-login_button = ctk.CTkButton(
+login_button = customtkinter.CTkButton(
     window,
     text="Login",
     cursor="hand2",
