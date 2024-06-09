@@ -11,6 +11,7 @@ window = customtkinter.CTk()
 window.geometry("1130x578")
 window.resizable(0, 0)
 window.title("Login")
+
 image = customtkinter.CTkImage(Image.open(r"./files/login_image.png"), size=(1138, 578))
 image_label = customtkinter.CTkLabel(window, image=image, text="")
 image_label.place(x=0, y=0)
