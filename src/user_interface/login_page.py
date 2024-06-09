@@ -14,6 +14,7 @@ window.title("Login")
 image = customtkinter.CTkImage(Image.open(r"./files/ems.png"), size=(1138, 578))
 image_label = customtkinter.CTkLabel(window, image=image, text="")
 image_label.place(x=0, y=0)
+
 heading_label = customtkinter.CTkLabel(
     window, text="Employee Management System", bg_color="#7125FF",
     font=("Goudy Old Style", 60, "bold"),
