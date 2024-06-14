@@ -72,7 +72,7 @@ role_value.set("Select Role")
 
 # Gender
 gender_label = customtkinter.CTkLabel(left_frame, text="Gender", font=("arial", 15, "bold"))
-gender_label.grid(row=5, column=0, padx=12, sticky="w")
+gender_label.grid(row=5, column=0, padx=20, sticky="w")
 gender = ["Male", "Female"]
 gender_value = customtkinter.CTkComboBox(
     left_frame, values=gender, font=("arial", 15, "bold"), width=140, state="readonly",
