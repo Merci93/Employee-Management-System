@@ -108,5 +108,8 @@ search_entry.grid(row=0, column=1)
 search_button = customtkinter.CTkButton(right_frame, text="Search", width=100)
 search_button.grid(row=0, column=2)
 
+# Show all button
+show_all = customtkinter.CTkButton(right_frame, text="Show All Results")
+show_all.grid(row=0, column=3)
 
 window.mainloop()
