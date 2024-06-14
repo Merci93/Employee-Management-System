@@ -102,13 +102,13 @@ right_frame.grid(row=1, column=1, columnspan=2)
 # Search Options
 options = ["Id", "Name", "Phone", "Role", "Gender", "Department", "Salary"]
 search_value = customtkinter.CTkComboBox(
-    right_frame, values=options, font=("arial", 15, "bold"), width=180, state="readonly",
+    right_frame, values=options, font=("arial", 15, "bold"), width=140, state="readonly",
 )
-search_value.grid(row=0, column=0)
+search_value.grid(row=0, column=0, pady=10)
 search_value.set("Search By")
 
 # Search Entry
-search_entry = customtkinter.CTkEntry(right_frame)
+search_entry = customtkinter.CTkEntry(right_frame, width=200)
 search_entry.grid(row=0, column=1)
 
 # Search Button
@@ -127,6 +127,7 @@ results_window_map = ("Id", "Name", "Phone", "Role", "Gender", "Department", "Sa
 for item in results_window_map:
     results_window.heading(item, text=item)
 results_window.config(show="headings")
+
 results_window_size = {"Id": 120,
                        "Name": 200,
                        "Phone": 140,
@@ -137,5 +138,6 @@ results_window_size = {"Id": 120,
                        }
 for key, value in results_window_size.items():
     results_window.column(key, width=value)
+tkinter.ttk.Style().configure("Treeview.Heading", font=("arial", 18, "bold"))
 
 window.mainloop()
