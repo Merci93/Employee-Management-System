@@ -140,4 +140,61 @@ for key, value in results_window_size.items():
     results_window.column(key, width=value)
 tkinter.ttk.Style().configure("Treeview.Heading", font=("arial", 18, "bold"))
 
+# Button Frame Functionalities
+button_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
+button_frame.grid(row=2, column=0, columnspan=2)
+
+# New Employee Data
+new_employee = customtkinter.CTkButton(
+    button_frame,
+    text="New Employee",
+    font=("aria", 15, "bold"),
+    width=120,
+    corner_radius=10,
+)
+new_employee.grid(row=0, column=0, pady=40, padx=(20, 0))
+
+# Update Employee Data
+update_employee = customtkinter.CTkButton(
+    button_frame,
+    text="Update Employee Data",
+    font=("aria", 15, "bold"),
+    width=120,
+    corner_radius=10,
+)
+update_employee.grid(row=0, column=1, pady=40, padx=(10, 0))
+
+# Add Employee Data
+add_employee = customtkinter.CTkButton(
+    button_frame,
+    text="Add Employee Data",
+    font=("aria", 15, "bold"),
+    width=120,
+    corner_radius=10,
+)
+add_employee.grid(row=0, column=2, pady=40, padx=(10, 0))
+
+# Delete Employee Data
+delete_employee = customtkinter.CTkButton(
+    button_frame,
+    text="Delete Employee Data",
+    font=("aria", 15, "bold"),
+    width=120,
+    corner_radius=10,
+    text_color="red"
+)
+delete_employee.grid(row=0, column=3, pady=40, padx=(10, 0))
+
+# Delete All
+delete_all = customtkinter.CTkButton(
+    button_frame,
+    text="Delete All",
+    font=("aria", 15, "bold"),
+    width=120,
+    corner_radius=10,
+    text_color="red"
+)
+delete_all.grid(row=0, column=4, pady=40, padx=(10, 0))
+
+
 window.mainloop()
