@@ -104,5 +104,9 @@ search_value.set("Search By")
 search_entry = customtkinter.CTkEntry(right_frame)
 search_entry.grid(row=0, column=1)
 
+# Search Button
+search_button = customtkinter.CTkButton(right_frame, text="Search", width=100)
+search_button.grid(row=0, column=2)
+
 
 window.mainloop()
