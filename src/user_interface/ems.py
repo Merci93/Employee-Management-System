@@ -12,14 +12,14 @@ window.title("EMS")
 window.configure(fg_color="#13132b")
 
 # Add header image
-image = customtkinter.CTkImage(Image.open(r"./files/ems_logo.jpg"), size=(330, 150))
+image = customtkinter.CTkImage(Image.open(r"./files/ems_logo.jpg"), size=(280, 150))
 image_header = customtkinter.CTkLabel(window, image=image, text="")
 image_header.grid(row=0, column=0)
 
 # Add header title
 heading_title = customtkinter.CTkLabel(
     window,
-    width=910,
+    width=980,
     height=150,
     text="Employee Management System",
     text_color="black",
