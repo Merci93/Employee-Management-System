@@ -1,6 +1,5 @@
 """Employement Management System User Interface."""
 import tkinter
-import tkinter.ttk
 
 import customtkinter
 from PIL import Image
@@ -119,5 +118,24 @@ search_button.grid(row=0, column=2)
 # Show all button
 show_all = customtkinter.CTkButton(right_frame, text="Show All Results")
 show_all.grid(row=0, column=3)
+
+# Results Treeview Window
+results_window = tkinter.ttk.Treeview(right_frame, height=18)
+results_window.grid(row=1, column=0, columnspan=4)
+results_window["columns"] = ("Id", "Name", "Phone", "Role", "Gender", "Department", "Salary")
+results_window_map = ("Id", "Name", "Phone", "Role", "Gender", "Department", "Salary")
+for item in results_window_map:
+    results_window.heading(item, text=item)
+results_window.config(show="headings")
+results_window_size = {"Id": 120,
+                       "Name": 200,
+                       "Phone": 140,
+                       "Role": 150,
+                       "Gender": 100,
+                       "Department": 180,
+                       "Salary": 150,
+                       }
+for key, value in results_window_size.items():
+    results_window.column(key, width=value)
 
 window.mainloop()
