@@ -6,7 +6,7 @@ from PIL import Image
 
 
 window = customtkinter.CTk()
-window.geometry("1230x678")
+window.geometry("1230x678+22+9")
 window.resizable(False, False)
 window.title("EMS")
 window.configure(fg_color="#13132b")
