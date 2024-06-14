@@ -92,4 +92,13 @@ salary_value.grid(row=6, column=1, pady=15, padx=(0, 20))
 right_frame = customtkinter.CTkFrame(window)
 right_frame.grid(row=1, column=1, columnspan=2)
 
+# Search Options
+options = ["Id", "Name", "Phone", "Role", "Gender", "Department", "Salary"]
+search_value = customtkinter.CTkComboBox(
+    right_frame, values=options, font=("arial", 15, "bold"), width=180, state="readonly",
+)
+search_value.grid(row=0, column=0)
+search_value.set("Search By")
+
+
 window.mainloop()
