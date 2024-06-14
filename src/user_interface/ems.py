@@ -88,7 +88,8 @@ salary_label.grid(row=6, column=0, padx=20, sticky="w")
 salary_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=180)
 salary_value.grid(row=6, column=1, pady=15, padx=(0, 20))
 
-# right_frame = customtkinter.CTkFrame(window)
-# right_frame.grid(row=1, column=1, columnspan=2)
+# Right frame
+right_frame = customtkinter.CTkFrame(window)
+right_frame.grid(row=1, column=1, columnspan=2)
 
 window.mainloop()
