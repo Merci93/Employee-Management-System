@@ -62,7 +62,8 @@ role_label.grid(row=4, column=0, padx=20, sticky="w")
 roles = [
     "HR", "Data Engineer", "Solutions Architect", "Data Analyst", "Intern", "Business Analyst",
     "Senior Manager Engineering", "Data Scientist", "Junior Data Engineer", "Web Developer",
-    "Cloud Architect", "Software Engineer", "Network Engineer", "Others"
+    "Cloud Architect", "Software Engineer", "Network Engineer", "DevOps Engineer", "Product Owner",
+    "Others",
 ]
 role_value = customtkinter.CTkComboBox(
     left_frame, values=roles, font=("arial", 15, "bold"), width=140, state="readonly",
@@ -138,7 +139,9 @@ results_window_size = {"Id": 120,
                        }
 for key, value in results_window_size.items():
     results_window.column(key, width=value)
-tkinter.ttk.Style().configure("Treeview.Heading", font=("arial", 18, "bold"))
+style = tkinter.ttk.Style()
+style.configure("Treeview.Heading", font=("arial", 18, "bold"))
+style.configure("Treeview", font=("arial", 15, "bold"), rowheight=25)
 
 # Scroll bar
 scroll_bar = tkinter.ttk.Scrollbar(right_frame, orient="vertical")
