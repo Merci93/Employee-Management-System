@@ -1,4 +1,6 @@
 """Employement Management System User Interface."""
+import tkinter
+import tkinter.ttk
 
 import customtkinter
 from PIL import Image
@@ -34,19 +36,19 @@ left_frame.grid(row=1, column=0)
 # Id
 id_label = customtkinter.CTkLabel(left_frame, text="Id", font=("arial", 15, "bold"))
 id_label.grid(row=0, column=0, padx=20, sticky="w")
-id_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=180)
+id_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
 id_value.grid(row=0, column=1, pady=15, padx=(0, 20))
 
 # Name
 name_label = customtkinter.CTkLabel(left_frame, text="Name", font=("arial", 15, "bold"))
 name_label.grid(row=1, column=0, padx=20, sticky="w")
-name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=180)
+name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
 name_value.grid(row=1, column=1, pady=15, padx=(0, 20))
 
 # Phone
 phone_label = customtkinter.CTkLabel(left_frame, text="Phone", font=("arial", 15, "bold"))
 phone_label.grid(row=2, column=0, padx=20, sticky="w")
-phone_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=180)
+phone_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
 phone_value.grid(row=2, column=1, pady=15, padx=(0, 20))
 
 # Role
@@ -58,7 +60,7 @@ roles = [
     "Cloud Architect", "Software Engineer", "Network Engineer", "Others"
 ]
 role_value = customtkinter.CTkComboBox(
-    left_frame, values=roles, font=("arial", 15, "bold"), width=180, state="readonly",
+    left_frame, values=roles, font=("arial", 15, "bold"), width=140, state="readonly",
 )
 role_value.grid(row=3, column=1, pady=15, padx=(0, 20))
 role_value.set("Select Role")
@@ -68,7 +70,7 @@ gender_label = customtkinter.CTkLabel(left_frame, text="Gender", font=("arial", 
 gender_label.grid(row=4, column=0, padx=15, sticky="w")
 gender = ["Male", "Female"]
 gender_value = customtkinter.CTkComboBox(
-    left_frame, values=gender, font=("arial", 15, "bold"), width=180, state="readonly",
+    left_frame, values=gender, font=("arial", 15, "bold"), width=140, state="readonly",
 )
 gender_value.grid(row=4, column=1, pady=15, padx=(0, 20))
 gender_value.set("Select gender")
@@ -78,14 +80,14 @@ department_label = customtkinter.CTkLabel(left_frame, text="Department", font=("
 department_label.grid(row=5, column=0, padx=20, sticky="w")
 departments = ["IT", "Marketing", "Sales", "Research", "HR", "Others"]
 department_value = customtkinter.CTkComboBox(
-    left_frame, values=departments, font=("arial", 15, "bold"), width=180, state="readonly",
+    left_frame, values=departments, font=("arial", 15, "bold"), width=140, state="readonly",
 )
 department_value.grid(row=5, column=1, pady=15, padx=(0, 20))
 
 # Salary
 salary_label = customtkinter.CTkLabel(left_frame, text="Salary", font=("arial", 15, "bold"))
 salary_label.grid(row=6, column=0, padx=20, sticky="w")
-salary_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=180)
+salary_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
 salary_value.grid(row=6, column=1, pady=15, padx=(0, 20))
 
 # Right frame
