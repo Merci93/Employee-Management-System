@@ -10,11 +10,13 @@ window.resizable(False, False)
 window.title("EMS")
 window.configure(fg_color="#13132b")
 
+# Add header image
 image = customtkinter.CTkImage(Image.open(r"./files/ems_logo.jpg"), size=(330, 150))
-image_label = customtkinter.CTkLabel(window, image=image, text="")
-image_label.grid(row=0, column=0)
+image_header = customtkinter.CTkLabel(window, image=image, text="")
+image_header.grid(row=0, column=0)
 
-heading_label = customtkinter.CTkLabel(
+# Add header title
+heading_title = customtkinter.CTkLabel(
     window,
     width=910,
     height=150,
@@ -23,7 +25,7 @@ heading_label = customtkinter.CTkLabel(
     bg_color="#F8992B",
     font=("Goudy Old Style", 68, "bold"),
 )
-heading_label.grid(row=0, column=1)
+heading_title.grid(row=0, column=1)
 
 # Left frame
 left_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
