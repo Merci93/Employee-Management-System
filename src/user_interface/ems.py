@@ -140,6 +140,10 @@ for key, value in results_window_size.items():
     results_window.column(key, width=value)
 tkinter.ttk.Style().configure("Treeview.Heading", font=("arial", 18, "bold"))
 
+# Scroll bar
+scroll_bar = tkinter.ttk.Scrollbar(right_frame, orient="vertical")
+scroll_bar.grid(row=1, column=4, sticky="ns")
+
 # Button Frame Functionalities
 button_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
 button_frame.grid(row=2, column=0, columnspan=2)
