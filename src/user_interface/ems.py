@@ -100,5 +100,9 @@ search_value = customtkinter.CTkComboBox(
 search_value.grid(row=0, column=0)
 search_value.set("Search By")
 
+# Search Entry
+search_entry = customtkinter.CTkEntry(right_frame)
+search_entry.grid(row=0, column=1)
+
 
 window.mainloop()
