@@ -130,14 +130,15 @@ for item in results_window_map:
     results_window.heading(item, text=item)
 results_window.config(show="headings")
 
-results_window_size = {"Id": 120,
-                       "Name": 200,
-                       "Phone": 140,
-                       "Role": 150,
-                       "Gender": 100,
-                       "Department": 180,
-                       "Salary": 150,
-                       }
+results_window_size = {
+    "Id": 120,
+    "Name": 200,
+    "Phone": 140,
+    "Role": 150,
+    "Gender": 100,
+    "Department": 180,
+    "Salary": 150,
+}
 for key, value in results_window_size.items():
     results_window.column(key, width=value)
 style = tkinter.ttk.Style()
