@@ -12,7 +12,7 @@ window.title("EMS")
 window.configure(fg_color="#13132b")
 
 # Add header image
-image = customtkinter.CTkImage(Image.open(r"./files/ems_logo.jpg"), size=(280, 150))
+image = customtkinter.CTkImage(Image.open(r"./img/ems_logo.jpg"), size=(280, 150))
 image_header = customtkinter.CTkLabel(window, image=image, text="")
 image_header.grid(row=0, column=0)
 
@@ -35,25 +35,25 @@ left_frame.grid(row=1, column=0)
 # Id
 id_label = customtkinter.CTkLabel(left_frame, text="Id", font=("arial", 15, "bold"))
 id_label.grid(row=0, column=0, padx=20, sticky="w")
-id_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
+id_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), placeholder_text="Enter Id", width=140)
 id_value.grid(row=0, column=1, pady=12, padx=(0, 20))
 
 # First Name
 first_name_label = customtkinter.CTkLabel(left_frame, text="First Name", font=("arial", 15, "bold"))
 first_name_label.grid(row=1, column=0, padx=20, sticky="w")
-first_name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
+first_name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), placeholder_text="First Name", width=140)
 first_name_value.grid(row=1, column=1, pady=12, padx=(0, 20))
 
 # Last Name
 last_name_label = customtkinter.CTkLabel(left_frame, text="Last Name", font=("arial", 15, "bold"))
 last_name_label.grid(row=2, column=0, padx=20, sticky="w")
-last_name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
+last_name_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), placeholder_text="Last Name", width=140)
 last_name_value.grid(row=2, column=1, pady=12, padx=(0, 20))
 
 # Phone
 phone_label = customtkinter.CTkLabel(left_frame, text="Phone", font=("arial", 15, "bold"))
 phone_label.grid(row=3, column=0, padx=20, sticky="w")
-phone_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
+phone_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), placeholder_text="Phone", width=140)
 phone_value.grid(row=3, column=1, pady=12, padx=(0, 20))
 
 # Role
@@ -79,7 +79,7 @@ gender_value = customtkinter.CTkComboBox(
     left_frame, values=gender, font=("arial", 15, "bold"), width=140, state="readonly",
 )
 gender_value.grid(row=5, column=1, pady=12, padx=(0, 20))
-gender_value.set("Select gender")
+gender_value.set("Select Gender")
 
 # Department
 department_label = customtkinter.CTkLabel(left_frame, text="Department", font=("arial", 15, "bold"))
@@ -89,11 +89,12 @@ department_value = customtkinter.CTkComboBox(
     left_frame, values=departments, font=("arial", 15, "bold"), width=140, state="readonly",
 )
 department_value.grid(row=6, column=1, pady=12, padx=(0, 20))
+department_value.set("Select Dept.")
 
 # Salary
 salary_label = customtkinter.CTkLabel(left_frame, text="Salary", font=("arial", 15, "bold"))
 salary_label.grid(row=7, column=0, padx=20, sticky="w")
-salary_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), width=140)
+salary_value = customtkinter.CTkEntry(left_frame, font=("arial", 15, "bold"), placeholder_text="Salary", width=140)
 salary_value.grid(row=7, column=1, pady=12, padx=(0, 20))
 
 # Right frame
@@ -109,7 +110,7 @@ search_value.grid(row=0, column=0, pady=10)
 search_value.set("Search By")
 
 # Search Entry
-search_entry = customtkinter.CTkEntry(right_frame, width=200)
+search_entry = customtkinter.CTkEntry(right_frame, placeholder_text="Search Criteria", width=200)
 search_entry.grid(row=0, column=1)
 
 # Search Button
