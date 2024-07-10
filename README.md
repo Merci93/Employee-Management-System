@@ -9,6 +9,9 @@ The database is a PostgrSQL database which stores all employee information(s) in
 
 The UI contains a query interface that displays the results when the database is queried for employee data.
 
+# Flow Chart
+![](flow-chart/flow-chart.png)
+
 ## User Interface
 >> TODO
 
