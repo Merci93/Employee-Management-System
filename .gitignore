@@ -1,4 +1,6 @@
+# Folders
 env/
-testenv/
-pycache/
+__pycache__/
 .vscode/
+
+# Files
