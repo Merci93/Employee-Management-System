@@ -5,7 +5,7 @@ An Employee Management System developed using Python, Customtkinter and tkinter 
 - Deleting a specified employee data
 - Deleting all data
 
-The database is a PostgrSQL database which stores all employee information(s) including first name, last name, phone number, address, role, gender, department and salary.
+The database is a PostgreSQL database and stores all employee information(s) including first name, last name, phone number, address, role, gender, department and salary.
 
 The UI contains a query interface that displays the results when the database is queried for employee data.
 
