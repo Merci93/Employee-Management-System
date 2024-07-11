@@ -1,0 +1,39 @@
+services:
+  app:
+    image: docker/ems
+    container_name: ems
+    ports:
+      - "8080:5000"
+
+  postgres:
+    image: postgres:15.5-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: employees
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+    networks:
+      - ems
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pg-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user123@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - 5050:80
+    restart: always
+    networks:
+      - ems
+
+volumes:
+  postgres-data:
+
+networks:
+  ems:
