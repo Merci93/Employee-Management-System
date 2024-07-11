@@ -7,6 +7,30 @@ from PIL import Image
 
 def user_interface() -> None:
     """EMS User Interface."""
+
+    def add_switch() -> None:
+        """Helper function for add button state."""
+        if save_employee["state"] == "normal":
+            save_employee["state"] = "disabled"
+            update_employee["state"] = "disabled"
+            enable_add_employee["text"] = "Enable Add Employee"
+            id_value["state"] = "normal"
+        else:
+            save_employee["state"] = "normal"
+            update_employee["state"] = "normal"
+            enable_add_employee["text"] = "Disable Add Employee"
+
+    def delete_switch() -> None:
+        """Helper function for delete button state."""
+        if delete_employee["state"] == "normal":
+            delete_employee["state"] = "disabled"
+            delete_all["state"] = "disabled"
+            enable_delete_employee["text"] = "Enable Delete Employee"
+        else:
+            delete_employee["state"] = "normal"
+            delete_all["state"] = "normal"
+            enable_delete_employee["text"] = "Disable Delete Employee"
+
     window = customtkinter.CTk()
     window.geometry("1230x678+22+9")
     window.resizable(False, False)
@@ -157,11 +181,31 @@ def user_interface() -> None:
     search_entry.grid(row=0, column=1)
 
     # Search Button
-    search_button = customtkinter.CTkButton(right_frame, text="Search", width=100)
+    search_button = tkinter.Button(
+        right_frame,
+        text="Search",
+        font=("aria", 15, "bold"),
+        width=10,
+        height=0,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        )
     search_button.grid(row=0, column=2)
 
     # Show all button
-    show_all = customtkinter.CTkButton(right_frame, text="Show All Results")
+    show_all = tkinter.Button(
+        right_frame,
+        text="Show All Results",
+        font=("aria", 15, "bold"),
+        width=15,
+        height=0,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        )
     show_all.grid(row=0, column=3)
 
     # Results Treeview Window
@@ -196,56 +240,88 @@ def user_interface() -> None:
     button_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
     button_frame.grid(row=2, column=0, columnspan=2)
 
-    # New Employee Data
-    new_employee = customtkinter.CTkButton(
+    # Enable/Disable Add New Employee Data
+    enable_add_employee = tkinter.Button(
         button_frame,
-        text="New Employee",
+        text="Enable Add Employee",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        command=add_switch,
     )
-    new_employee.grid(row=0, column=0, pady=40, padx=(20, 0))
+    enable_add_employee.grid(row=0, column=0, pady=40, padx=(20, 0))
+
+    # Save Employee Data
+    save_employee = tkinter.Button(
+        button_frame,
+        text="Save Employee Data",
+        font=("aria", 15, "bold"),
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        state="disabled"
+    )
+    save_employee.grid(row=0, column=1, pady=40, padx=(10, 0))
 
     # Update Employee Data
-    update_employee = customtkinter.CTkButton(
+    update_employee = tkinter.Button(
         button_frame,
         text="Update Employee Data",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        state="disabled"
     )
-    update_employee.grid(row=0, column=1, pady=40, padx=(10, 0))
+    update_employee.grid(row=0, column=2, pady=40, padx=(10, 0))
 
-    # Add Employee Data
-    add_employee = customtkinter.CTkButton(
+    # Enable/Disable Delete Employee Data
+    enable_delete_employee = tkinter.Button(
         button_frame,
-        text="Add Employee Data",
+        text="Enable Delete Employee",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        command=delete_switch,
     )
-    add_employee.grid(row=0, column=2, pady=40, padx=(10, 0))
+    enable_delete_employee.grid(row=0, column=3, pady=40, padx=(20, 0))
 
     # Delete Employee Data
-    delete_employee = customtkinter.CTkButton(
+    delete_employee = tkinter.Button(
         button_frame,
         text="Delete Employee Data",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
-        text_color="red"
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        state="disabled"
     )
-    delete_employee.grid(row=0, column=3, pady=40, padx=(10, 0))
+    delete_employee.grid(row=0, column=4, pady=40, padx=(10, 0))
 
     # Delete All
-    delete_all = customtkinter.CTkButton(
+    delete_all = tkinter.Button(
         button_frame,
         text="Delete All",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
-        text_color="red"
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        state="disabled"
     )
-    delete_all.grid(row=0, column=4, pady=40, padx=(10, 0))
+    delete_all.grid(row=0, column=5, pady=40, padx=(10, 0))
 
     window.mainloop()
