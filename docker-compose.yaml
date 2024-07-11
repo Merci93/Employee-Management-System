@@ -3,7 +3,7 @@ services:
     image: docker/ems
     container_name: ems
     ports:
-      - "8080:5000"
+      - "8000:8000"
 
   postgres:
     image: postgres:15.5-alpine
