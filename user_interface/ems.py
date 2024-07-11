@@ -7,6 +7,30 @@ from PIL import Image
 
 def user_interface() -> None:
     """EMS User Interface."""
+
+    def add_switch() -> None:
+        """Helper function for add button state."""
+        if save_employee["state"] == "normal":
+            save_employee["state"] = "disabled"
+            update_employee["state"] = "disabled"
+            enable_add_employee["text"] = "Enable Add Employee"
+            id_value["state"] = "normal"
+        else:
+            save_employee["state"] = "normal"
+            update_employee["state"] = "normal"
+            enable_add_employee["text"] = "Disable Add Employee"
+
+    def delete_switch() -> None:
+        """Helper function for delete button state."""
+        if delete_employee["state"] == "normal":
+            delete_employee["state"] = "disabled"
+            delete_all["state"] = "disabled"
+            enable_delete_employee["text"] = "Enable Delete Employee"
+        else:
+            delete_employee["state"] = "normal"
+            delete_all["state"] = "normal"
+            enable_delete_employee["text"] = "Disable Delete Employee"
+
     window = customtkinter.CTk()
     window.geometry("1230x678+22+9")
     window.resizable(False, False)
@@ -14,7 +38,7 @@ def user_interface() -> None:
     window.configure(fg_color="#13132b")
 
     # Add header image
-    image = customtkinter.CTkImage(Image.open(r"./img/ems_logo.jpg"), size=(280, 150))
+    image = customtkinter.CTkImage(Image.open(r"./img/ems_logo.jpg"), size=(290, 150))
     image_header = customtkinter.CTkLabel(window, image=image, text="")
     image_header.grid(row=0, column=0)
 
@@ -43,7 +67,7 @@ def user_interface() -> None:
         placeholder_text="Enter Id",
         width=140,
     )
-    id_value.grid(row=0, column=1, pady=12, padx=(0, 20))
+    id_value.grid(row=0, column=1, pady=9, padx=(0, 20))
 
     # First Name
     first_name_label = customtkinter.CTkLabel(
@@ -58,7 +82,22 @@ def user_interface() -> None:
         placeholder_text="First Name",
         width=140,
     )
-    first_name_value.grid(row=1, column=1, pady=12, padx=(0, 20))
+    first_name_value.grid(row=1, column=1, pady=9, padx=(0, 20))
+
+    # Middle Name
+    middle_name_label = customtkinter.CTkLabel(
+        left_frame,
+        text="Middle Name",
+        font=("arial", 15, "bold"),
+    )
+    middle_name_label.grid(row=2, column=0, padx=20, sticky="w")
+    middle_name_value = customtkinter.CTkEntry(
+        left_frame,
+        font=("arial", 15, "bold"),
+        placeholder_text="Middle Name",
+        width=140,
+    )
+    middle_name_value.grid(row=2, column=1, pady=9, padx=(0, 20))
 
     # Last Name
     last_name_label = customtkinter.CTkLabel(
@@ -66,29 +105,29 @@ def user_interface() -> None:
         text="Last Name",
         font=("arial", 15, "bold"),
     )
-    last_name_label.grid(row=2, column=0, padx=20, sticky="w")
+    last_name_label.grid(row=3, column=0, padx=20, sticky="w")
     last_name_value = customtkinter.CTkEntry(
         left_frame,
         font=("arial", 15, "bold"),
         placeholder_text="Last Name",
         width=140,
     )
-    last_name_value.grid(row=2, column=1, pady=12, padx=(0, 20))
+    last_name_value.grid(row=3, column=1, pady=9, padx=(0, 20))
 
     # Phone
     phone_label = customtkinter.CTkLabel(left_frame, text="Phone", font=("arial", 15, "bold"))
-    phone_label.grid(row=3, column=0, padx=20, sticky="w")
+    phone_label.grid(row=4, column=0, padx=20, sticky="w")
     phone_value = customtkinter.CTkEntry(
         left_frame,
         font=("arial", 15, "bold"),
         placeholder_text="Phone",
         width=140,
     )
-    phone_value.grid(row=3, column=1, pady=12, padx=(0, 20))
+    phone_value.grid(row=4, column=1, pady=9, padx=(0, 20))
 
     # Role
     role_label = customtkinter.CTkLabel(left_frame, text="Role", font=("arial", 15, "bold"))
-    role_label.grid(row=4, column=0, padx=20, sticky="w")
+    role_label.grid(row=5, column=0, padx=20, sticky="w")
     roles = [
         "HR", "Data Engineer", "Solutions Architect", "Data Analyst", "Intern", "Business Analyst",
         "Senior Manager Engineering", "Data Scientist", "Junior Data Engineer", "Web Developer",
@@ -98,17 +137,17 @@ def user_interface() -> None:
     role_value = customtkinter.CTkComboBox(
         left_frame, values=roles, font=("arial", 15, "bold"), width=140, state="readonly",
     )
-    role_value.grid(row=4, column=1, pady=12, padx=(0, 20))
+    role_value.grid(row=5, column=1, pady=9, padx=(0, 20))
     role_value.set("Select Role")
 
     # Gender
     gender_label = customtkinter.CTkLabel(left_frame, text="Gender", font=("arial", 15, "bold"))
-    gender_label.grid(row=5, column=0, padx=20, sticky="w")
+    gender_label.grid(row=6, column=0, padx=20, sticky="w")
     gender = ["Male", "Female"]
     gender_value = customtkinter.CTkComboBox(
         left_frame, values=gender, font=("arial", 15, "bold"), width=140, state="readonly",
     )
-    gender_value.grid(row=5, column=1, pady=12, padx=(0, 20))
+    gender_value.grid(row=6, column=1, pady=9, padx=(0, 20))
     gender_value.set("Select Gender")
 
     # Department
@@ -117,24 +156,24 @@ def user_interface() -> None:
         text="Department",
         font=("arial", 15, "bold"),
     )
-    department_label.grid(row=6, column=0, padx=20, sticky="w")
+    department_label.grid(row=7, column=0, padx=20, sticky="w")
     departments = ["IT", "Marketing", "Sales", "Research", "HR", "Others"]
     department_value = customtkinter.CTkComboBox(
         left_frame, values=departments, font=("arial", 15, "bold"), width=140, state="readonly",
     )
-    department_value.grid(row=6, column=1, pady=12, padx=(0, 20))
+    department_value.grid(row=7, column=1, pady=9, padx=(0, 20))
     department_value.set("Select Dept.")
 
     # Salary
     salary_label = customtkinter.CTkLabel(left_frame, text="Salary", font=("arial", 15, "bold"))
-    salary_label.grid(row=7, column=0, padx=20, sticky="w")
+    salary_label.grid(row=8, column=0, padx=20, sticky="w")
     salary_value = customtkinter.CTkEntry(
         left_frame,
         font=("arial", 15, "bold"),
         placeholder_text="Salary",
         width=140,
     )
-    salary_value.grid(row=7, column=1, pady=12, padx=(0, 20))
+    salary_value.grid(row=8, column=1, pady=9, padx=(0, 20))
 
     # Right frame
     right_frame = customtkinter.CTkFrame(window)
@@ -157,11 +196,31 @@ def user_interface() -> None:
     search_entry.grid(row=0, column=1)
 
     # Search Button
-    search_button = customtkinter.CTkButton(right_frame, text="Search", width=100)
+    search_button = tkinter.Button(
+        right_frame,
+        text="Search",
+        font=("aria", 15, "bold"),
+        width=10,
+        height=0,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        )
     search_button.grid(row=0, column=2)
 
     # Show all button
-    show_all = customtkinter.CTkButton(right_frame, text="Show All Results")
+    show_all = tkinter.Button(
+        right_frame,
+        text="Show All Results",
+        font=("aria", 15, "bold"),
+        width=15,
+        height=0,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        )
     show_all.grid(row=0, column=3)
 
     # Results Treeview Window
@@ -196,56 +255,88 @@ def user_interface() -> None:
     button_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
     button_frame.grid(row=2, column=0, columnspan=2)
 
-    # New Employee Data
-    new_employee = customtkinter.CTkButton(
+    # Enable/Disable Add New Employee Data
+    enable_add_employee = tkinter.Button(
         button_frame,
-        text="New Employee",
+        text="Enable Add Employee",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        command=add_switch,
     )
-    new_employee.grid(row=0, column=0, pady=40, padx=(20, 0))
+    enable_add_employee.grid(row=0, column=0, pady=40, padx=(20, 0))
+
+    # Save Employee Data
+    save_employee = tkinter.Button(
+        button_frame,
+        text="Save Employee Data",
+        font=("aria", 15, "bold"),
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        state="disabled"
+    )
+    save_employee.grid(row=0, column=1, pady=40, padx=(10, 0))
 
     # Update Employee Data
-    update_employee = customtkinter.CTkButton(
+    update_employee = tkinter.Button(
         button_frame,
         text="Update Employee Data",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="white",
+        cursor="hand2",
+        state="disabled"
     )
-    update_employee.grid(row=0, column=1, pady=40, padx=(10, 0))
+    update_employee.grid(row=0, column=2, pady=40, padx=(10, 0))
 
-    # Add Employee Data
-    add_employee = customtkinter.CTkButton(
+    # Enable/Disable Delete Employee Data
+    enable_delete_employee = tkinter.Button(
         button_frame,
-        text="Add Employee Data",
+        text="Enable Delete Employee",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        command=delete_switch,
     )
-    add_employee.grid(row=0, column=2, pady=40, padx=(10, 0))
+    enable_delete_employee.grid(row=0, column=3, pady=40, padx=(20, 0))
 
     # Delete Employee Data
-    delete_employee = customtkinter.CTkButton(
+    delete_employee = tkinter.Button(
         button_frame,
         text="Delete Employee Data",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
-        text_color="red"
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        state="disabled"
     )
-    delete_employee.grid(row=0, column=3, pady=40, padx=(10, 0))
+    delete_employee.grid(row=0, column=4, pady=40, padx=(10, 0))
 
     # Delete All
-    delete_all = customtkinter.CTkButton(
+    delete_all = tkinter.Button(
         button_frame,
         text="Delete All",
         font=("aria", 15, "bold"),
-        width=120,
-        corner_radius=10,
-        text_color="red"
+        width=20,
+        background="#1E66A4",
+        borderwidth=10,
+        foreground="red",
+        cursor="hand2",
+        state="disabled"
     )
-    delete_all.grid(row=0, column=4, pady=40, padx=(10, 0))
+    delete_all.grid(row=0, column=5, pady=40, padx=(10, 0))
 
     window.mainloop()
