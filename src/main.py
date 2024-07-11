@@ -6,15 +6,18 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# from src.config import init_settings
-from config import init_settings
+from src.config import init_settings
+# from config import init_settings
 
 
 description = """
 An API developed for the data retrieval and updates for the Employee Management System.
+
 Developed and and managed by David Asogwa.
+
 PS: This API is for this project purpose only.
-[Source Code](https://github.com/Merci93/Employee-Management-System)
+
+📝[Source Code](https://github.com/Merci93/Employee-Management-System)
 """
 
 
