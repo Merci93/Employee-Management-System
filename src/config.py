@@ -16,4 +16,4 @@ def init_settings() -> None:
 
 settings = None
 if not settings:
-    settings()
+    init_settings()
