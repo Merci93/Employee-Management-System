@@ -11,4 +11,4 @@ CALL virtual-env.bat
 @REM Activate the virtual environment and spin up the UI
 ECHO Starting up UI ...
 CALL env\Scripts\activate
-python user_interface\ems.py
+python user_interface\main.py
