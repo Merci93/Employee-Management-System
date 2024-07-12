@@ -12,6 +12,9 @@ The UI contains a query interface that displays the results when the database is
 # Overview
 ![](flow-chart/overview.png)
 
+# Flow Chart
+![](flow-chart/flow-chart.png)
+
 ## User Interface
 >> TODO
 
