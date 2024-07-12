@@ -13,23 +13,23 @@ def user_interface() -> None:
         if save_employee["state"] == "normal":
             save_employee["state"] = "disabled"
             update_employee["state"] = "disabled"
-            enable_add_employee["text"] = "Enable Add Employee"
+            enable_add_employee["text"] = "Enable Add/Update"
             id_value["state"] = "normal"
         else:
             save_employee["state"] = "normal"
             update_employee["state"] = "normal"
-            enable_add_employee["text"] = "Disable Add Employee"
+            enable_add_employee["text"] = "Disable Add/Update"
 
     def delete_switch() -> None:
         """Helper function for delete button state."""
         if delete_employee["state"] == "normal":
             delete_employee["state"] = "disabled"
             delete_all["state"] = "disabled"
-            enable_delete_employee["text"] = "Enable Delete Employee"
+            enable_delete_employee["text"] = "Enable Delete"
         else:
             delete_employee["state"] = "normal"
             delete_all["state"] = "normal"
-            enable_delete_employee["text"] = "Disable Delete Employee"
+            enable_delete_employee["text"] = "Disable Delete"
 
     window = customtkinter.CTk()
     window.geometry("1230x678+22+9")
@@ -204,7 +204,7 @@ def user_interface() -> None:
         height=0,
         background="#1E66A4",
         borderwidth=10,
-        foreground="white",
+        foreground="#ffffff",
         cursor="hand2",
         )
     search_button.grid(row=0, column=2)
@@ -218,7 +218,7 @@ def user_interface() -> None:
         height=0,
         background="#1E66A4",
         borderwidth=10,
-        foreground="white",
+        foreground="#ffffff",
         cursor="hand2",
         )
     show_all.grid(row=0, column=3)
@@ -258,12 +258,12 @@ def user_interface() -> None:
     # Enable/Disable Add New Employee Data
     enable_add_employee = tkinter.Button(
         button_frame,
-        text="Enable Add Employee",
+        text="Enable Add/Update",
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
         borderwidth=10,
-        foreground="white",
+        foreground="#ffffff",
         cursor="hand2",
         command=add_switch,
     )
@@ -277,7 +277,7 @@ def user_interface() -> None:
         width=20,
         background="#1E66A4",
         borderwidth=10,
-        foreground="white",
+        foreground="#ffffff",
         cursor="hand2",
         state="disabled"
     )
@@ -291,7 +291,7 @@ def user_interface() -> None:
         width=20,
         background="#1E66A4",
         borderwidth=10,
-        foreground="white",
+        foreground="#ffffff",
         cursor="hand2",
         state="disabled"
     )
@@ -300,7 +300,7 @@ def user_interface() -> None:
     # Enable/Disable Delete Employee Data
     enable_delete_employee = tkinter.Button(
         button_frame,
-        text="Enable Delete Employee",
+        text="Enable Delete",
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
