@@ -1,5 +1,4 @@
 """Employee Management System Login Page."""
-
 import customtkinter
 from PIL import Image
 
