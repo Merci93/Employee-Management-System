@@ -10,7 +10,7 @@ def login() -> None:
     customtkinter.set_default_color_theme("blue")
 
     window = customtkinter.CTk()
-    window.geometry("1130x578")
+    window.geometry("1130x578+100+80")
     window.resizable(0, 0)
     window.title("Login")
 
