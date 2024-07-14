@@ -200,10 +200,9 @@ def user_interface() -> None:
         right_frame,
         text="Search",
         font=("aria", 15, "bold"),
-        width=10,
+        width=15,
         height=0,
         background="#1E66A4",
-        borderwidth=10,
         foreground="#ffffff",
         cursor="hand2",
         )
@@ -217,7 +216,6 @@ def user_interface() -> None:
         width=15,
         height=0,
         background="#1E66A4",
-        borderwidth=10,
         foreground="#ffffff",
         cursor="hand2",
         )
@@ -262,7 +260,6 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="#ffffff",
         cursor="hand2",
         command=add_switch,
@@ -276,7 +273,6 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="#ffffff",
         cursor="hand2",
         state="disabled"
@@ -290,7 +286,6 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="#ffffff",
         cursor="hand2",
         state="disabled"
@@ -304,12 +299,11 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="red",
         cursor="hand2",
         command=delete_switch,
     )
-    enable_delete_employee.grid(row=0, column=3, pady=40, padx=(20, 0))
+    enable_delete_employee.grid(row=0, column=3, pady=40, padx=(10, 0))
 
     # Delete Employee Data
     delete_employee = tkinter.Button(
@@ -318,7 +312,6 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="red",
         cursor="hand2",
         state="disabled"
@@ -332,7 +325,6 @@ def user_interface() -> None:
         font=("aria", 15, "bold"),
         width=20,
         background="#1E66A4",
-        borderwidth=10,
         foreground="red",
         cursor="hand2",
         state="disabled"
