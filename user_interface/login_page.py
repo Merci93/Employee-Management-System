@@ -1,16 +1,14 @@
 """Employee Management System Login Page."""
-
 import customtkinter
 from PIL import Image
+
+from add_new_user import new_user
 
 
 def login() -> None:
     """Login page"""
-    customtkinter.set_appearance_mode("System")
-    customtkinter.set_default_color_theme("blue")
-
     window = customtkinter.CTk()
-    window.geometry("1130x578")
+    window.geometry("1130x578+100+80")
     window.resizable(0, 0)
     window.title("Login")
 
@@ -50,6 +48,16 @@ def login() -> None:
         bg_color="#7125FF",
         width=100,
     )
-    login_button.place(x=190, y=350)
+    login_button.place(x=190, y=300)
+
+    create_user_button = customtkinter.CTkButton(
+        window,
+        text="Create New user",
+        cursor="hand2",
+        bg_color="#7125FF",
+        width=100,
+        command=new_user,
+    )
+    create_user_button.place(x=183, y=400)
 
     window.mainloop()
