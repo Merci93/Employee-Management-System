@@ -1,16 +1,21 @@
+-- INIT SQL
 -- Create databases
 CREATE DATABASE employees;
 CREATE DATABASE users;
 
--- Create default user.
-\CONNECT users;
+-- Create user table and add default user.
+\connect users
 
-CREATE TABLE user (
-    username VARCHAR(50) PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    password VARCHAR(20),
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL
 );
 
-INSERT INTO users (username, password)
-VALUES ("admin@gmail.com", "admin", "admin", "ADmin1234");
+INSERT INTO user (username, first_name, last_name, password, email) VALUES ("admin@gmail.com", "admin", "admin", "ADmin1234", "admin@gmail.com");
+
+
+-- Create tables in the employee database and add data
