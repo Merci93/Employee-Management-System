@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import init_settings
+from src.backend import db_connect
 
 
 description = """
@@ -22,8 +23,12 @@ PS: This API is for this project purpose only.
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
+    # Startup
     init_settings()
+    db_connect.user_db_init()
     yield
+    # Shutdown
+    db_connect.users_client.close()
 
 
 app = FastAPI(
@@ -50,6 +55,15 @@ app.add_middleware(
 def get_root() -> dict[str, str]:
     """API root endpoint."""
     return {"message": "Hello!!! Root API running."}
+
+
+@app.get("/verify_user/v1/")
+def verify_user(username: str) -> bool:
+    """Verify user credentials in the database"""
+    cursor = db_connect.users_client.cursor()
+    cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
+    data = cursor.fetchall()
+    return True if data else False
 
 
 if __name__ == "__main__":
