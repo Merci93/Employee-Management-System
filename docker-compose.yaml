@@ -1,7 +1,7 @@
 services:
   app:
     image: docker/ems
-    container_name: ems
+    container_name: ems-api
     ports:
       - "8000:8000"
 
