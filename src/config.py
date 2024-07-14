@@ -4,9 +4,12 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    postgres_username: str = "postgres"
+    postgres_user: str = "postgres"
     postgres_password: str = "postgres"
-    postgres_database: str = "employees"
+    employee_db_name: str = "employee"
+    users_db_name: str = "users"
+    host: str = "ems-db"
+    port: int = 5432
 
 
 def init_settings() -> None:
