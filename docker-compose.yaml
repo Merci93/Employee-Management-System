@@ -20,18 +20,6 @@ services:
     networks:
       - ems
 
-  pgadmin:
-    image: dpage/pgadmin4:8
-    container_name: pg-admin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user123@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: postgres
-    ports:
-      - 5050:80
-    restart: always
-    networks:
-      - ems
-
 volumes:
   postgres-data:
 
