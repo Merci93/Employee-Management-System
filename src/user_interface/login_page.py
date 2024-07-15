@@ -2,7 +2,7 @@
 import customtkinter
 from PIL import Image
 
-from add_new_user import new_user
+from user_interface.add_new_user import new_user
 
 
 def login() -> None:
