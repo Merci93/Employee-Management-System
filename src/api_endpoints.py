@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import init_settings
-from src.backend import db_connect
+from src.backend import db_connect, httpx_client
 
 
 description = """
@@ -26,9 +26,11 @@ async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
     # Startup
     init_settings()
     db_connect.user_db_init()
+    httpx_client.init_httpx_client()
     yield
     # Shutdown
     db_connect.users_client.close()
+    httpx_client.httpx_client.close()
 
 
 app = FastAPI(
