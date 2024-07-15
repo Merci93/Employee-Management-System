@@ -62,8 +62,8 @@ def verify_user(username: str) -> bool:
     """Verify user credentials in the database"""
     cursor = db_connect.users_client.cursor()
     cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
-    data = cursor.fetchall()
-    return True if data else False
+    user = cursor.fetchall()
+    return True if user else False
 
 
 if __name__ == "__main__":
