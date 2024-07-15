@@ -1,6 +1,6 @@
 """API endpoint module."""
 from contextlib import asynccontextmanager
-from typing import Any, AsyncContextManager
+from typing import Any, AsyncContextManager, Dict
 
 import uvicorn
 from fastapi import FastAPI
@@ -60,12 +60,16 @@ def get_root() -> dict[str, str]:
 
 
 @app.get("/verify_user/v1/")
-def verify_user(username: str) -> bool:
+def verify_user(username: str) -> Dict[str, Any]:
     """Verify user credentials in the database"""
     cursor = db_connect.users_client.cursor()
-    cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
-    user = cursor.fetchall()
-    return True if user else False
+    cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
+    user_details = cursor.fetchall()
+    if user_details:
+        user_data = {"exist": True, "password": user_details[0][1]}
+    else:
+        user_data = {"exist": False, "password": None}
+    return user_data
 
 
 if __name__ == "__main__":
