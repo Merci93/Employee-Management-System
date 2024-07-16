@@ -16,3 +16,14 @@ def verify_user(username: str) -> Dict[str, Any]:
     response = httpx_client.httpx_client.get(url, params=params, headers=headers)
     response.raise_for_status()
     return response.json()
+
+
+def verify_email(email: str) -> Dict[str, Any]:
+    """Verify email before creating user."""
+    url = "http://localhost:8000/verify_email/v1/"
+    params = {
+        "email": email,
+    }
+    response = httpx_client.httpx_client.get(url, params=params, headers=headers)
+    response.raise_for_status()
+    return response.json()
