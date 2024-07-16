@@ -2,10 +2,10 @@
 from contextlib import asynccontextmanager
 from typing import Any, AsyncContextManager, Dict
 
-import psycopg2
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
 
 from src.config import init_settings
 from src.backend import db_connect, httpx_client
@@ -70,6 +70,20 @@ def verify_user(username: str) -> Dict[str, Any]:
         user_data = {"exist": True, "password": user_details[0][1]}
     else:
         user_data = {"exist": False, "password": None}
+    db_connect.users_client.commit()
+    return user_data
+
+
+@app.get("/verify_email/v1/")
+def verify_email(email: str) -> Dict[str, bool]:
+    """Verify if email already exists."""
+    cursor = db_connect.users_client.cursor()
+    cursor.execute("SELECT email from users WHERE email = %s", (email,))
+    user_email = cursor.fetchall()
+    if user_email:
+        user_data = {"exist": True}
+    else:
+        user_data = {"exist": False}
     db_connect.users_client.commit()
     return user_data
 
