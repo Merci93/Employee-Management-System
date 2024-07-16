@@ -88,5 +88,22 @@ def verify_email(email: str) -> Dict[str, bool]:
     return user_data
 
 
+@app.post("/add_user/v1/")
+def add_new_user(username: str, first_name: str, last_name: str, email: str, password: str) -> Dict[str, str]:
+    """Add new user to the user's database and table"""
+    query = """
+        INSERT INTO users (username, first_name, last_name, email, password)
+        VALUES (%s, %s, %s, %s, %s);
+    """
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            cursor.execute(query, (username, first_name, last_name, email, password))
+        db_connect.users_client.commit()
+        return {"success": f"user {username} added to database successfully."}
+    except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
+        db_connect.users_client.rollback()
+        return {"error": str(e)}
+
+
 if __name__ == "__main__":
     uvicorn.run("api:app", port=8000, reload=True)
