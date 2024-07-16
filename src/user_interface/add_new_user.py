@@ -37,6 +37,49 @@ class NewUserWindow:
     def open_window(self) -> None:
         """Open Window."""
 
+        def add_user() -> None:
+            """verify user credentials and add to database if all tests passed."""
+            fields = {
+                "Username": new_username_entry.get(),
+                "First Name": new_firstname_entry.get(),
+                "Last Name": new_lastname_entry.get(),
+                "Email": new_email_entry.get(),
+                "Password": new_password_entry.get(),
+                "Confirm Password": confirm_password_entry.get(),
+            }
+
+            missing_fields = [field_name for field_name, value in fields.items() if not value]
+
+            if missing_fields:
+                missing_required_fields = ", ".join(missing_fields)
+                messagebox.showerror("Error", f"The following fields are required: {missing_required_fields}")
+                return
+
+            if verify_username(fields.get("Username")):
+                messagebox.showerror("Error", f"Username {fields.get('Username')} already exists.")
+                return
+
+            if verify_email(fields.get("Email")):
+                messagebox.showerror("Error", f"Email {fields.get('Email')} already exists.")
+                return
+
+            if fields.get("Password") and fields.get("Password") != fields.get("Confirm Password"):
+                messagebox.showerror("Error", "Passwords do not match.")
+                return
+
+            all_fields = [field_name for field_name, value in fields.items() if value]
+
+            if all_fields:
+                backend_modules.add_new_user(
+                    username=fields.get("Username"),
+                    firstname=fields.get("First Name"),
+                    lastname=fields.get("Last Name"),
+                    email=fields.get("Email"),
+                    password=fields.get("Password"),
+                )
+                messagebox.showinfo("Success", f"User {fields.get('Username')} added.")
+                return
+
         if self.window is None:
             self.window = customtkinter.CTk()
             self.window.geometry("400x600+1000+100")
