@@ -1,11 +1,28 @@
 """Module to create a new user."""
 import sys
+from tkinter import messagebox
 
 import customtkinter
 
 sys.path.append(".")
 
 from src.backend import backend_modules
+
+
+def verify_username(username: str) -> bool:
+    """Verify if username already exists"""
+    user_data = backend_modules.verify_user(username)
+    if user_data.get("exist"):
+        return True
+    return False
+
+
+def verify_email(email: str) -> bool:
+    """Verify if email already exists"""
+    user_data = backend_modules.verify_email(email)
+    if user_data.get("exist"):
+        return True
+    return False
 
 
 class NewUserWindow:
@@ -16,13 +33,6 @@ class NewUserWindow:
         """Close UI."""
         self.window.destroy()
         self.window = None
-
-    def verify_credentials(username: str) -> bool:
-        """Verify if username already exists"""
-        user_data = backend_modules.verify_user(username)
-        if user_data.get("exist"):
-            return True
-        return False
 
     def open_window(self) -> None:
         """Open Window."""
@@ -91,6 +101,7 @@ class NewUserWindow:
                 cursor="hand2",
                 hover_color="#1e0c0c",
                 width=100,
+                command=add_user
             )
             add_user_button.place(x=152, y=450)
 
@@ -114,6 +125,3 @@ new_user_window = NewUserWindow()
 def new_user() -> None:
     """Run new user window."""
     new_user_window.open_window()
-
-
-new_user()
