@@ -27,3 +27,18 @@ def verify_email(email: str) -> Dict[str, Any]:
     response = httpx_client.httpx_client.get(url, params=params, headers=headers)
     response.raise_for_status()
     return response.json()
+
+
+def add_new_user(username: str, firstname: str, lastname: str, email: str, password: str) -> Dict[str, str]:
+    """Add a new user to the database."""
+    url = "http://localhost:8000/add_user/v1/"
+    params = {
+        "username": username,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email,
+        "password": password,
+    }
+    response = httpx_client.httpx_client.post(url, params=params, headers=headers, data={})
+    response.raise_for_status()
+    return response.json()
