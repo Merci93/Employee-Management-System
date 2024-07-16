@@ -31,20 +31,20 @@ def user_interface() -> None:
             delete_all["state"] = "normal"
             enable_delete_employee["text"] = "Disable Delete"
 
-    window = customtkinter.CTk()
-    window.geometry("1230x678+22+9")
-    window.resizable(False, False)
-    window.title("EMS")
-    window.configure(fg_color="#13132b")
+    ems_window = customtkinter.CTk()
+    ems_window.geometry("1230x678+22+9")
+    ems_window.resizable(False, False)
+    ems_window.title("EMS")
+    ems_window.configure(fg_color="#13132b")
 
     # Add header image
     image = customtkinter.CTkImage(Image.open(r"./img/ems_logo.jpg"), size=(290, 150))
-    image_header = customtkinter.CTkLabel(window, image=image, text="")
+    image_header = customtkinter.CTkLabel(ems_window, image=image, text="")
     image_header.grid(row=0, column=0)
 
     # Add header title
     heading_title = customtkinter.CTkLabel(
-        window,
+        ems_window,
         width=980,
         height=150,
         text="Employee Management System",
@@ -55,7 +55,7 @@ def user_interface() -> None:
     heading_title.grid(row=0, column=1)
 
     # Left frame
-    left_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
+    left_frame = customtkinter.CTkFrame(ems_window, fg_color="#13132b")
     left_frame.grid(row=1, column=0)
 
     # Id
@@ -176,7 +176,7 @@ def user_interface() -> None:
     salary_value.grid(row=8, column=1, pady=9, padx=(0, 20))
 
     # Right frame
-    right_frame = customtkinter.CTkFrame(window)
+    right_frame = customtkinter.CTkFrame(ems_window)
     right_frame.grid(row=1, column=1, columnspan=2)
 
     # Search Options
@@ -250,7 +250,7 @@ def user_interface() -> None:
     scroll_bar.grid(row=1, column=4, sticky="ns")
 
     # Button Frame Functionalities
-    button_frame = customtkinter.CTkFrame(window, fg_color="#13132b")
+    button_frame = customtkinter.CTkFrame(ems_window, fg_color="#13132b")
     button_frame.grid(row=2, column=0, columnspan=2)
 
     # Enable/Disable Add New Employee Data
@@ -331,4 +331,4 @@ def user_interface() -> None:
     )
     delete_all.grid(row=0, column=5, pady=40, padx=(10, 0))
 
-    window.mainloop()
+    ems_window.mainloop()
