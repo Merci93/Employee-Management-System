@@ -98,6 +98,7 @@ def login() -> None:
 if __name__ == "__main__":
     global logged_in
     logged_in = False
+
     login()
 
     if logged_in:
