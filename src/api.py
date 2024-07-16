@@ -2,6 +2,7 @@
 from contextlib import asynccontextmanager
 from typing import Any, AsyncContextManager, Dict
 
+import psycopg2
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -69,6 +70,7 @@ def verify_user(username: str) -> Dict[str, Any]:
         user_data = {"exist": True, "password": user_details[0][1]}
     else:
         user_data = {"exist": False, "password": None}
+    db_connect.users_client.commit()
     return user_data
 
 
