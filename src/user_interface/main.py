@@ -22,7 +22,7 @@ def verify_credentials(username: str, password: str) -> bool:
 def login() -> None:
     """Login page."""
 
-    def get_username_ui() -> None:
+    def get_ui_data() -> None:
         """Get username from login interface."""
         username = username_entry.get()
         input_password = password_entry.get()
@@ -78,7 +78,7 @@ def login() -> None:
         cursor="hand2",
         bg_color="#7125FF",
         width=100,
-        command=get_username_ui,
+        command=get_ui_data,
     )
     login_button.place(x=190, y=300)
 
