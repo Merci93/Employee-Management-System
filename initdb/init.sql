@@ -11,8 +11,8 @@ CREATE TABLE users (
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL
+    password VARCHAR(50) NOT NULL,
 );
 
 INSERT INTO users (username, first_name, last_name, email, password) VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
