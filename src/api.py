@@ -9,6 +9,7 @@ from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransa
 
 from src.backend import db_connect, httpx_client
 from src.config import init_settings
+from src.log_handler import logger
 
 
 description = """
@@ -63,13 +64,16 @@ def get_root() -> dict[str, str]:
 @app.get("/verify_user/v1/")
 def verify_user(username: str) -> Dict[str, Any]:
     """Verify user credentials in the database"""
+    logger.info(f"Verifying user {username} ...")
     cursor = db_connect.users_client.cursor()
     cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
     user_details = cursor.fetchall()
     if user_details:
         user_data = {"exist": True, "password": user_details[0][1]}
+        logger.info(f"User {username} exists.")
     else:
         user_data = {"exist": False, "password": None}
+        logger.info(f"User {username} does not exist.")
     db_connect.users_client.commit()
     return user_data
 
@@ -77,13 +81,16 @@ def verify_user(username: str) -> Dict[str, Any]:
 @app.get("/verify_email/v1/")
 def verify_email(email: str) -> Dict[str, bool]:
     """Verify if email already exists."""
+    logger.info(f"Verifying email {email} ...")
     cursor = db_connect.users_client.cursor()
     cursor.execute("SELECT email from users WHERE email = %s", (email,))
     user_email = cursor.fetchall()
     if user_email:
         user_data = {"exist": True}
+        logger.info(f"Email {email} exists.")
     else:
         user_data = {"exist": False}
+        logger.info(f"Email {email} does not exist.")
     db_connect.users_client.commit()
     return user_data
 
@@ -91,6 +98,7 @@ def verify_email(email: str) -> Dict[str, bool]:
 @app.post("/add_user/v1/")
 def add_new_user(username: str, first_name: str, last_name: str, email: str, password: str) -> Dict[str, str]:
     """Add new user to the user's database and table"""
+    logger.info(f"Adding user {username} and details to the database ...")
     query = """
         INSERT INTO users (username, first_name, last_name, email, password)
         VALUES (%s, %s, %s, %s, %s);
@@ -99,9 +107,11 @@ def add_new_user(username: str, first_name: str, last_name: str, email: str, pas
         with db_connect.users_client.cursor() as cursor:
             cursor.execute(query, (username, first_name, last_name, email, password))
         db_connect.users_client.commit()
+        logger.info(f"User {username} added successfully.")
         return {"success": f"user {username} added to database successfully."}
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.users_client.rollback()
+        logger.error(f"Failed to add user: {e}")
         return {"error": str(e)}
 
 
