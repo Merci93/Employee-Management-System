@@ -7,8 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
 
-from src.config import init_settings
 from src.backend import db_connect, httpx_client
+from src.config import init_settings
 
 
 description = """
