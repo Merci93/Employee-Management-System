@@ -34,8 +34,8 @@ def add_new_user(username: str, firstname: str, lastname: str, email: str, passw
     url = "http://localhost:8000/add_user/v1/"
     params = {
         "username": username,
-        "firstname": firstname,
-        "lastname": lastname,
+        "first_name": firstname,
+        "last_name": lastname,
         "email": email,
         "password": password,
     }
