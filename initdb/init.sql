@@ -19,3 +19,14 @@ INSERT INTO users (username, first_name, last_name, email, password) VALUES ('ad
 
 
 -- Create tables in the employee database and add data
+\connect employees
+
+CREATE TABLE employees(
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    salary INT NOT NULL,
+)
