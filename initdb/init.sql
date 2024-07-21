@@ -30,3 +30,8 @@ CREATE TABLE employees(
     phone VARCHAR(50) NOT NULL,
     salary INT NOT NULL,
 )
+
+CREATE  TABLE department(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+)
