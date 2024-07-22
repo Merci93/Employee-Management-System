@@ -29,6 +29,8 @@ CREATE TABLE employees(
     email VARCHAR(50) NOT NULL,
     phone VARCHAR(50) NOT NULL,
     salary INT NOT NULL,
+    department_id INT NOT NULL,
+    role_id INT NOT NULL,
 )
 
 CREATE  TABLE department(
