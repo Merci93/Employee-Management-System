@@ -33,7 +33,12 @@ CREATE TABLE employees(
     role_id INT NOT NULL,
 )
 
-CREATE  TABLE department(
+CREATE  TABLE departments(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
+)
+
+CREATE TABLE roles(
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(50) NOT NULL,
 )
