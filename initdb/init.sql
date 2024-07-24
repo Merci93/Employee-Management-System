@@ -15,7 +15,8 @@ CREATE TABLE users (
     password VARCHAR(50) NOT NULL
 );
 
-INSERT INTO users (username, first_name, last_name, email, password) VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
+INSERT INTO users (username, first_name, last_name, email, password)
+VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
 
 
 -- Create tables in the employee database and add data
