@@ -15,7 +15,8 @@ CREATE TABLE users (
     password VARCHAR(50) NOT NULL
 );
 
-INSERT INTO users (username, first_name, last_name, email, password) VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
+INSERT INTO users (username, first_name, last_name, email, password)
+VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
 
 
 -- Create tables in the employee database and add data
@@ -33,11 +34,21 @@ CREATE TABLE employees(
     role_id INT NOT NULL,
 )
 
+
+-- Departments
 CREATE  TABLE departments(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-)
+);
 
+INSERT INTO departments(name)
+VALUES ("HR"), ("Data Engineer"), ("Solutions Architect"), ("Data Analyst"), ("Intern"),
+    ("Business Analyst"), ("Senior Manager Engineering"), ("Data Scientist"), ("Web Developer"),
+    ("Junior Data Engineer"), ("Cloud Architect"), ("Software Engineer"), ("Network Engineer"),
+    ("DevOps Engineer"), ("Product Owner", "Others");
+
+
+-- Roles
 CREATE TABLE roles(
     id SERIAL PRIMARY KEY,
     role VARCHAR(50) NOT NULL,
