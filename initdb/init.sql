@@ -33,11 +33,21 @@ CREATE TABLE employees(
     role_id INT NOT NULL,
 )
 
+
+-- Departments
 CREATE  TABLE departments(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-)
+);
 
+INSERT INTO departments(name)
+VALUES ("HR"), ("Data Engineer"), ("Solutions Architect"), ("Data Analyst"), ("Intern"),
+    ("Business Analyst"), ("Senior Manager Engineering"), ("Data Scientist"), ("Junior Data Engineer"),
+    ("Web Developer"), ("Cloud Architect"), ("Software Engineer"), ("Network Engineer"),
+    ("DevOps Engineer"), ("Product Owner", "Others");
+
+
+-- Roles
 CREATE TABLE roles(
     id SERIAL PRIMARY KEY,
     role VARCHAR(50) NOT NULL,
