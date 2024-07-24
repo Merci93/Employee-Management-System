@@ -42,8 +42,8 @@ CREATE  TABLE departments(
 
 INSERT INTO departments(name)
 VALUES ("HR"), ("Data Engineer"), ("Solutions Architect"), ("Data Analyst"), ("Intern"),
-    ("Business Analyst"), ("Senior Manager Engineering"), ("Data Scientist"), ("Junior Data Engineer"),
-    ("Web Developer"), ("Cloud Architect"), ("Software Engineer"), ("Network Engineer"),
+    ("Business Analyst"), ("Senior Manager Engineering"), ("Data Scientist"), ("Web Developer"),
+    ("Junior Data Engineer"), ("Cloud Architect"), ("Software Engineer"), ("Network Engineer"),
     ("DevOps Engineer"), ("Product Owner", "Others");
 
 
