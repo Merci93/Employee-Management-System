@@ -42,21 +42,12 @@ CREATE  TABLE departments(
 );
 
 INSERT INTO departments(name)
-VALUES ("HR"),
-    ("Data Engineer"),
-    ("Solutions Architect"),
-    ("Data Analyst"),
-    ("Intern"),
-    ("Business Analyst"),
-    ("Senior Manager Engineering"),
-    ("Data Scientist"),
-    ("Web Developer"),
-    ("Junior Data Engineer"),
-    ("Cloud Architect"),
-    ("Software Engineer"),
-    ("Network Engineer"),
-    ("DevOps Engineer"),
-    ("Product Owner");
+VALUES ('IT'),
+    ('Marketing'),
+    ('Sales'),
+    ('Research'),
+    ('HR'),
+    ('Analytics')
 
 
 -- Roles
