@@ -47,7 +47,7 @@ VALUES ('IT'),
     ('Sales'),
     ('Research'),
     ('HR'),
-    ('Analytics')
+    ('Analytics');
 
 
 -- Roles
