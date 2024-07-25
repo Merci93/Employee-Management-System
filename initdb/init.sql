@@ -6,7 +6,7 @@ CREATE DATABASE users;
 -- Create user table and add default user.
 \connect users
 
-CREATE TABLE users (
+CREATE TABLE user (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
@@ -22,7 +22,7 @@ VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
 -- Create tables in the employee database and add data
 \connect employees
 
-CREATE TABLE employees(
+CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50),
@@ -36,31 +36,39 @@ CREATE TABLE employees(
 
 
 -- Departments
-CREATE  TABLE departments(
+CREATE  TABLE departments (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
 );
 
-INSERT INTO departments(name)
-VALUES ("HR"),
-    ("Data Engineer"),
-    ("Solutions Architect"),
-    ("Data Analyst"),
-    ("Intern"),
-    ("Business Analyst"),
-    ("Senior Manager Engineering"),
-    ("Data Scientist"),
-    ("Web Developer"),
-    ("Junior Data Engineer"),
-    ("Cloud Architect"),
-    ("Software Engineer"),
-    ("Network Engineer"),
-    ("DevOps Engineer"),
-    ("Product Owner");
+INSERT INTO departments (name)
+VALUES ('IT'),
+    ('Marketing'),
+    ('Sales'),
+    ('Research'),
+    ('HR'),
+    ('Analytics');
 
 
 -- Roles
-CREATE TABLE roles(
+CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     role VARCHAR(50) NOT NULL,
 )
+
+INSERT INTO roles (role)
+VALUES ('HR'),
+    ('Data Engineer'),
+    ('Solutions Architect'),
+    ('Data Analyst'),
+    ('Intern'),
+    ('Business Analyst'),
+    ('Senior Manager Engineering'),
+    ('Data Scientist'),
+    ('Web Developer'),
+    ('Junior Data Engineer'),
+    ('Cloud Architect'),
+    ('Software Engineer'),
+    ('Network Engineer'),
+    ('DevOps Engineer'),
+    ('Product Owner');
