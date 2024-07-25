@@ -57,18 +57,18 @@ CREATE TABLE roles (
 )
 
 INSERT INTO roles (role)
-VALUES ("HR"),
-    ("Data Engineer"),
-    ("Solutions Architect"),
-    ("Data Analyst"),
-    ("Intern"),
-    ("Business Analyst"),
-    ("Senior Manager Engineering"),
-    ("Data Scientist"),
-    ("Web Developer"),
-    ("Junior Data Engineer"),
-    ("Cloud Architect"),
-    ("Software Engineer"),
-    ("Network Engineer"),
-    ("DevOps Engineer"),
-    ("Product Owner");
+VALUES ('HR'),
+    ('Data Engineer'),
+    ('Solutions Architect'),
+    ('Data Analyst'),
+    ('Intern'),
+    ('Business Analyst'),
+    ('Senior Manager Engineering'),
+    ('Data Scientist'),
+    ('Web Developer'),
+    ('Junior Data Engineer'),
+    ('Cloud Architect'),
+    ('Software Engineer'),
+    ('Network Engineer'),
+    ('DevOps Engineer'),
+    ('Product Owner');
