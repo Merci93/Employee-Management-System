@@ -5,4 +5,5 @@ pandas==2.2.2
 psycopg2-binary==2.9.1
 psycopg2==2.9.9
 pydantic-settings==2.3.4
+streamlit==1.41.1
 uvicorn==0.30.1
