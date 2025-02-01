@@ -30,41 +30,41 @@ logout_page = st.Page(
 )
 
 new_user_admin = st.Page(
-    "pages/create_user_or_admin.py",
+    "ui/create_user_or_admin.py",
     title="Create New Admin",
     icon=":material/person_add:",
     default=(role == "admin"),
 )
 
 search_employees = st.Page(
-    "pages/search_employee.py",
+    "ui/search_employee.py",
     title="Search",
     icon=":material/search:",
 )
 
 add_employee = st.Page(
-    "pages/new_employee.py",
+    "ui/new_employee.py",
     title="New Employee",
     icon=":material/person_add:",
     default=(role == "admin"),
 )
 
 update_employee = st.Page(
-    "pages/update_employee_data.py",
+    "ui/update_employee_data.py",
     title="Update Employee Data",
     icon=":material/edit:",
     default=(role == "admin"),
 )
 
 delete_employee = st.Page(
-    "pages/delete_employee_data.py",
+    "ui/delete_employee_data.py",
     title="Delete Employee Data",
     icon=":material/delete_forever:",
     default=(role == "admin"),
 )
 
 user_details = st.Page(
-    "pages/user_details.py",
+    "ui/user_details.py",
     title="User Details",
     icon=":material/person:",
 )
