@@ -1,9 +1,9 @@
 """"Backend module"""
-import datetime
 from typing import Dict
 
 import httpx
 
+from src.log_handler import logger
 
 BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
@@ -16,6 +16,8 @@ async def verify_username(username: str) -> bool:
     :param Username: Input username to check.
     return: A boolean True if it exists, False otherwise.
     """
+    logger.info("Starting username verification...")
+
     url = f"{BASE_URL}/verify_user/"
     params = {
         "username": username,
@@ -23,6 +25,7 @@ async def verify_username(username: str) -> bool:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
+        logger.info("Username verification completed.")
         return response.json().get("exist", False)
 
 
@@ -33,6 +36,8 @@ async def verify_email(email: str) -> bool:
     :param Email: Input email to check.
     return: A boolean True if it exists, False otherwise.
     """
+    logger.info("Starting email verification...")
+
     url = f"{BASE_URL}/verify_email/"
     params = {
         "email": email,
@@ -40,6 +45,7 @@ async def verify_email(email: str) -> bool:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
+        logger.info("Email verification completed.")
         return response.json().get("exist", False)
 
 
@@ -48,7 +54,7 @@ async def add_new_user(
     username: str,
     firstname: str,
     lastname: str,
-    dob: datetime.date,
+    dob: str,
     email: str,
     password: str,
 ) -> Dict[str, str]:
@@ -58,17 +64,19 @@ async def add_new_user(
     User role: can only view employee data.
     Admin role: can perform all operations including addin, deleting and updating data.
     """
+    logger.info("Initiating new user creating process ...")
+
     url = f"{BASE_URL}/add_user/"
-    data = {
+    params = {
         "username": username,
         "first_name": firstname,
         "last_name": lastname,
-        "date_of_birth": dob.strftime("%Y-%m-%d"),
+        "date_of_birth": str(dob),
         "email": email,
         "role": role,
         "password": password,
     }
     async with httpx.AsyncClient() as client:
-        response = await client.post(url, json=data, headers=HEADERS, data={})
+        response = await client.post(url, params=params, headers=HEADERS, data={})
         response.raise_for_status()
         return response.json().get("exist", False)

@@ -24,7 +24,7 @@ def config_logging(log_directory=None, level=logging.INFO):
     """
     if log_directory is not None:
         os.makedirs(log_directory, exist_ok=True)
-        log_path = os.path.join(log_directory, "log_" + datetime.now().strftime("%Y-%m-%d") + ".txt")
+        log_path = os.path.join(log_directory, "log_" + datetime.now().strftime("%Y-%m-%d_%H%M%S") + ".txt")
         logger.info(f"configuring logging to file {log_path}.")
     else:
         log_path = os.devnull
