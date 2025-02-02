@@ -56,13 +56,13 @@ app.add_middleware(
 )
 
 
-@app.get("/root/v1/")
+@app.get("/v1/root/")
 def get_root() -> dict[str, str]:
     """API root endpoint."""
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/verify_user/v1/")
+@app.get("/v1/verify_user/")
 def verify_user(username: str) -> Dict[str, Any]:
     """Verify user credentials in the database"""
     logger.info(f"Verifying user {username} ...")
@@ -79,7 +79,7 @@ def verify_user(username: str) -> Dict[str, Any]:
     return user_data
 
 
-@app.get("/verify_email/v1/")
+@app.get("/v1/verify_email/")
 def verify_email(email: str) -> Dict[str, bool]:
     """Verify if email already exists."""
     logger.info(f"Verifying email {email} ...")
@@ -96,7 +96,7 @@ def verify_email(email: str) -> Dict[str, bool]:
     return user_data
 
 
-@app.post("/add_user/v1/")
+@app.post("/v1/add_user/")
 def add_new_user(
     role: str,
     username: str,

@@ -10,7 +10,7 @@ headers = {"accept": "application/json"}
 
 def verify_username(username: str) -> Dict[str, Any]:
     """Verify username."""
-    url = "http://localhost:8000/verify_user/v1/"
+    url = "http://localhost:8000/v1/verify_user/"
     params = {
         "username": username,
     }
@@ -21,7 +21,7 @@ def verify_username(username: str) -> Dict[str, Any]:
 
 def verify_email(email: str) -> Dict[str, Any]:
     """Verify user email."""
-    url = "http://localhost:8000/verify_email/v1/"
+    url = "http://localhost:8000/v1/verify_email/"
     params = {
         "email": email,
     }
@@ -45,7 +45,7 @@ def add_new_user(
     User role: can only view employee data.
     Admin role: can perform all operations including addin, deleting and updating data.
     """
-    url = "http://localhost:8000/add_user/v1/"
+    url = "http://localhost:8000/v1/add_user/"
     params = {
         "username": username,
         "first_name": firstname,
