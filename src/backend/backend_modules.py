@@ -3,7 +3,7 @@ import datetime
 from typing import Dict
 
 import httpx
-# from src.backend import httpx_client
+
 
 BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
