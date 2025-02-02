@@ -122,11 +122,17 @@ def add_new_user(
             cursor.execute(query, (username, firstname, lastname, email, dob, role, password))
         db_connect.users_client.commit()
         logger.info(f"User {username} added successfully.")
-        return {"success": f"user {username} added to database successfully."}
+        return {
+            "status": "Success",
+            "message": f"User {username} added to database successfully.",
+        }
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.users_client.rollback()
         logger.error(f"Failed to add user: {e}")
-        return {"error": str(e)}
+        return {
+            "status": "Failed",
+            "message": str(e),
+        }
 
 
 if __name__ == "__main__":
