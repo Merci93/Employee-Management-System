@@ -1,4 +1,5 @@
 """API endpoint module."""
+import datetime
 from contextlib import asynccontextmanager
 from typing import Any, AsyncContextManager, Dict
 
@@ -96,16 +97,29 @@ def verify_email(email: str) -> Dict[str, bool]:
 
 
 @app.post("/add_user/v1/")
-def add_new_user(username: str, first_name: str, last_name: str, email: str, password: str) -> Dict[str, str]:
-    """Add new user to the user's database and table"""
+def add_new_user(
+    role: str,
+    username: str,
+    firstname: str,
+    lastname: str,
+    dob: datetime.date,
+    email: str,
+    password: str,
+) -> Dict[str, str]:
+    """
+    Add new user to the user's database with assigned role as admin or user.
+
+    User role: can only view employee data.
+    Admin role: can perform all operations including addin, deleting and updating data.
+    """
     logger.info(f"Adding user {username} and details to the database ...")
     query = """
-        INSERT INTO users (username, first_name, last_name, email, password)
-        VALUES (%s, %s, %s, %s, %s);
+        INSERT INTO users (username, first_name, last_name, email, date_of_birth, role, password)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
     """
     try:
         with db_connect.users_client.cursor() as cursor:
-            cursor.execute(query, (username, first_name, last_name, email, password))
+            cursor.execute(query, (username, firstname, lastname, email, dob, role, password))
         db_connect.users_client.commit()
         logger.info(f"User {username} added successfully.")
         return {"success": f"user {username} added to database successfully."}

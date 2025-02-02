@@ -1,4 +1,5 @@
 """"Backend module"""
+import datetime
 from typing import Any, Dict
 
 from src.backend import httpx_client
@@ -29,14 +30,29 @@ def verify_email(email: str) -> Dict[str, Any]:
     return response.json()
 
 
-def add_new_user(username: str, firstname: str, lastname: str, email: str, password: str) -> Dict[str, str]:
-    """Add a new user to the database."""
+def add_new_user(
+    role: str,
+    username: str,
+    firstname: str,
+    lastname: str,
+    dob: datetime.date,
+    email: str,
+    password: str,
+) -> Dict[str, str]:
+    """
+    Add a new user to the user database for specified roles.
+
+    User role: can only view employee data.
+    Admin role: can perform all operations including addin, deleting and updating data.
+    """
     url = "http://localhost:8000/add_user/v1/"
     params = {
         "username": username,
         "first_name": firstname,
         "last_name": lastname,
+        "date_of_birth": dob,
         "email": email,
+        "role": role,
         "password": password,
     }
     response = httpx_client.httpx_client.post(url, params=params, headers=headers, data={})
