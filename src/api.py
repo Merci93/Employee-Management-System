@@ -1,10 +1,10 @@
 """API endpoint module."""
-import datetime
 from contextlib import asynccontextmanager
 from typing import Any, AsyncContextManager, Dict
 
+import bcrypt
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
 
@@ -65,35 +65,35 @@ def get_root() -> dict[str, str]:
 @app.get("/v1/verify_user/")
 def verify_user(username: str) -> Dict[str, Any]:
     """Verify user credentials in the database"""
+
     logger.info(f"Verifying user {username} ...")
-    cursor = db_connect.users_client.cursor()
-    cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
-    user_details = cursor.fetchall()
-    if user_details:
-        user_data = {"exist": True, "password": user_details[0][1]}
-        logger.info(f"User {username} exists.")
-    else:
-        user_data = {"exist": False, "password": None}
-        logger.info(f"User {username} does not exist.")
-    db_connect.users_client.commit()
-    return user_data
+
+    with db_connect.users_client.cursor() as cursor:
+        cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
+        user_details = cursor.fetchone()
+        if user_details:
+            logger.info(f"User {username} exists.")
+            return {"exist": True, "password": user_details[0][1]}
+        else:
+            logger.info(f"User {username} does not exist.")
+            return {"exist": False, "password": None}
 
 
 @app.get("/v1/verify_email/")
 def verify_email(email: str) -> Dict[str, bool]:
     """Verify if email already exists."""
+
     logger.info(f"Verifying email {email} ...")
-    cursor = db_connect.users_client.cursor()
-    cursor.execute("SELECT email from users WHERE email = %s", (email,))
-    user_email = cursor.fetchall()
-    if user_email:
-        user_data = {"exist": True}
-        logger.info(f"Email {email} exists.")
-    else:
-        user_data = {"exist": False}
-        logger.info(f"Email {email} does not exist.")
-    db_connect.users_client.commit()
-    return user_data
+
+    with db_connect.users_client.cursor() as cursor:
+        cursor.execute("SELECT email from users WHERE email = %s", (email,))
+        user_email = cursor.fetchone()
+        if user_email:
+            logger.info(f"Email {email} exists.")
+            return {"exist": True}
+        else:
+            logger.info(f"Email {email} does not exist.")
+            return {"exist": False}
 
 
 @app.post("/v1/add_user/")
@@ -102,7 +102,7 @@ def add_new_user(
     username: str,
     firstname: str,
     lastname: str,
-    dob: datetime.date,
+    dob: str,
     email: str,
     password: str,
 ) -> Dict[str, str]:
@@ -115,24 +115,33 @@ def add_new_user(
     logger.info(f"Adding user {username} and details to the database ...")
     query = """
         INSERT INTO users (username, first_name, last_name, email, date_of_birth, role, password)
-        VALUES (%s, %s, %s, %s, %s, %s, %s);
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING username;
     """
     try:
+        encrypted_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         with db_connect.users_client.cursor() as cursor:
-            cursor.execute(query, (username, firstname, lastname, email, dob, role, password))
+            cursor.execute(query, (username, firstname, lastname, email, dob, role, encrypted_password))
+            inserted_username = cursor.fetchone()[0]
+
         db_connect.users_client.commit()
-        logger.info(f"User {username} added successfully.")
+
+        logger.info(f"User {inserted_username} added successfully.")
+
         return {
             "status": "Success",
             "message": f"User {username} added to database successfully.",
         }
+
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.users_client.rollback()
-        logger.error(f"Failed to add user: {e}")
-        return {
-            "status": "Failed",
-            "message": str(e),
-        }
+        logger.error(f"Failed to add user {username}: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to add user: {str(e)}")
+
+    except Exception as e:
+        db_connect.users_client.rollback()
+        logger.error(f"Unexpected error occurred while adding user {username}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 if __name__ == "__main__":
