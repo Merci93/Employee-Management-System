@@ -8,7 +8,7 @@ from src.backend import httpx_client
 headers = {"accept": "application/json"}
 
 
-def verify_username(username: str) -> bool:
+async def verify_username(username: str) -> bool:
     """
     Verify if username already exists in the user database..
 
@@ -19,13 +19,13 @@ def verify_username(username: str) -> bool:
     params = {
         "username": username,
     }
-    response = httpx_client.httpx_client.get(url, params=params, headers=headers)
-    response.raise_for_status()
-    username_exists = response.json().get("exist")
-    return username_exists
+    async with httpx_client.httpx_client as client:
+        response = await client.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        return response.json().get("exist", False)
 
 
-def verify_email(email: str) -> bool:
+async def verify_email(email: str) -> bool:
     """
     Verify if user email already exists in the database.
 
@@ -36,13 +36,13 @@ def verify_email(email: str) -> bool:
     params = {
         "email": email,
     }
-    response = httpx_client.httpx_client.get(url, params=params, headers=headers)
-    response.raise_for_status()
-    email_exists = response.json().get("exist")
-    return email_exists
+    async with httpx_client.httpx_client as client:
+        response = await client.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        return response.json().get("exist", False)
 
 
-def add_new_user(
+async def add_new_user(
     role: str,
     username: str,
     firstname: str,
@@ -58,16 +58,16 @@ def add_new_user(
     Admin role: can perform all operations including addin, deleting and updating data.
     """
     url = "http://localhost:8000/v1/add_user/"
-    params = {
+    data = {
         "username": username,
         "first_name": firstname,
         "last_name": lastname,
-        "date_of_birth": dob,
+        "date_of_birth": dob.strftime("%Y-%m-%d"),
         "email": email,
         "role": role,
         "password": password,
     }
-    response = httpx_client.httpx_client.post(url, params=params, headers=headers, data={})
-    response.raise_for_status()
-    user_created = response.json().get("status")
-    return user_created
+    async with httpx_client.httpx_client as client:
+        response = await client.post(url, json=data, headers=headers, data={})
+        response.raise_for_status()
+        return response.json().get("exist", False)
