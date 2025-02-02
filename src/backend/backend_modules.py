@@ -7,8 +7,8 @@ from src.backend import httpx_client
 headers = {"accept": "application/json"}
 
 
-def verify_user(username: str) -> Dict[str, Any]:
-    """Verify user before login."""
+def verify_username(username: str) -> Dict[str, Any]:
+    """Verify username."""
     url = "http://localhost:8000/verify_user/v1/"
     params = {
         "username": username,
@@ -19,7 +19,7 @@ def verify_user(username: str) -> Dict[str, Any]:
 
 
 def verify_email(email: str) -> Dict[str, Any]:
-    """Verify email before creating user."""
+    """Verify user email."""
     url = "http://localhost:8000/verify_email/v1/"
     params = {
         "email": email,
