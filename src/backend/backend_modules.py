@@ -1,44 +1,82 @@
 """"Backend module"""
-from typing import Any, Dict
+from typing import Dict
 
-from src.backend import httpx_client
+import httpx
+
+from src.log_handler import logger
+
+BASE_URL = "http://localhost:8000/v1"
+HEADERS = {"accept": "application/json"}
 
 
-headers = {"accept": "application/json"}
+async def verify_username(username: str) -> bool:
+    """
+    Verify if username already exists in the user database..
 
+    :param Username: Input username to check.
+    return: A boolean True if it exists, False otherwise.
+    """
+    logger.info("Starting username verification...")
 
-def verify_user(username: str) -> Dict[str, Any]:
-    """Verify user before login."""
-    url = "http://localhost:8000/verify_user/v1/"
+    url = f"{BASE_URL}/verify_user/"
     params = {
         "username": username,
     }
-    response = httpx_client.httpx_client.get(url, params=params, headers=headers)
-    response.raise_for_status()
-    return response.json()
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Username verification completed.")
+        return response.json().get("exist", False)
 
 
-def verify_email(email: str) -> Dict[str, Any]:
-    """Verify email before creating user."""
-    url = "http://localhost:8000/verify_email/v1/"
+async def verify_email(email: str) -> bool:
+    """
+    Verify if user email already exists in the database.
+
+    :param Email: Input email to check.
+    return: A boolean True if it exists, False otherwise.
+    """
+    logger.info("Starting email verification...")
+
+    url = f"{BASE_URL}/verify_email/"
     params = {
         "email": email,
     }
-    response = httpx_client.httpx_client.get(url, params=params, headers=headers)
-    response.raise_for_status()
-    return response.json()
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Email verification completed.")
+        return response.json().get("exist", False)
 
 
-def add_new_user(username: str, firstname: str, lastname: str, email: str, password: str) -> Dict[str, str]:
-    """Add a new user to the database."""
-    url = "http://localhost:8000/add_user/v1/"
+async def add_new_user(
+    role: str,
+    username: str,
+    firstname: str,
+    lastname: str,
+    dob: str,
+    email: str,
+    password: str,
+) -> Dict[str, str]:
+    """
+    Add a new user to the user database for specified roles.
+
+    User role: can only view employee data.
+    Admin role: can perform all operations including addin, deleting and updating data.
+    """
+    logger.info("Initiating new user creating process ...")
+
+    url = f"{BASE_URL}/add_user/"
     params = {
         "username": username,
         "first_name": firstname,
         "last_name": lastname,
+        "date_of_birth": str(dob),
         "email": email,
+        "role": role,
         "password": password,
     }
-    response = httpx_client.httpx_client.post(url, params=params, headers=headers, data={})
-    response.raise_for_status()
-    return response.json()
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, params=params, headers=HEADERS, data={})
+        response.raise_for_status()
+        return response.json().get("exist", False)

@@ -2,6 +2,8 @@ services:
   app:
     image: docker/ems
     container_name: ems-api
+    environment:
+      - IS_DOCKER=true
     ports:
       - "8000:8000"
     command: uvicorn src.api:app --host=0.0.0.0 --port=8000
@@ -10,6 +12,8 @@ services:
         condition: service_healthy
     networks:
       - ems
+    volumes:
+      - ./logs:/var/log/my_app 
 
   postgres:
     image: postgres:15.5-alpine

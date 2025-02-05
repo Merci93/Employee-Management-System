@@ -8,6 +8,11 @@ from colorlog import ColoredFormatter
 
 logger = logging.getLogger()
 
+if os.getenv("IS_DOCKER", "false").lower() == "true":
+    LOG_DIRECTORY = "/var/log/my_app"
+else:
+    LOG_DIRECTORY = "./logs"
+
 
 def config_logging(log_directory=None, level=logging.INFO):
     """
@@ -52,4 +57,4 @@ def config_logging(log_directory=None, level=logging.INFO):
     logger.info(f"Logger configured. Logging level: {logging.getLevelName(level)}")
 
 
-config_logging()
+config_logging(LOG_DIRECTORY)

@@ -4,6 +4,7 @@ env/
 user_interface/
 flow-chart/
 .vscode/
+logs/
 
 # Files
 README.md

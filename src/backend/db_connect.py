@@ -13,7 +13,7 @@ def user_db_init() -> None:
 
     try:
         users_client = psycopg2.connect(
-            dbname=settings.users_db_name,
+            dbname=settings.employee_db_name,
             user=settings.postgres_user,
             password=settings.postgres_password,
             host=settings.host,
