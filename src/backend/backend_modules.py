@@ -1,4 +1,5 @@
 """"Backend module"""
+from datetime import date
 from typing import Dict
 
 import httpx
@@ -54,7 +55,7 @@ async def add_new_user(
     username: str,
     firstname: str,
     lastname: str,
-    dob: str,
+    dob: date,
     email: str,
     password: str,
 ) -> Dict[str, str]:
@@ -67,16 +68,18 @@ async def add_new_user(
     logger.info("Initiating new user creating process ...")
 
     url = f"{BASE_URL}/add_user/"
-    params = {
-        "username": username,
-        "first_name": firstname,
-        "last_name": lastname,
-        "date_of_birth": str(dob),
-        "email": email,
+    payload = {
         "role": role,
+        "username": username,
+        "firstname": firstname,
+        "lastname": lastname,
+        "dob": dob.strftime("%Y-%m-%d"),
+        "email": email,
         "password": password,
     }
     async with httpx.AsyncClient() as client:
-        response = await client.post(url, params=params, headers=HEADERS, data={})
+        response = await client.post(url, json=payload, headers=HEADERS)
         response.raise_for_status()
-        return response.json().get("exist", False)
+        response = response.json()
+        logger.info(f"{response.get('message')} with assigned role {role}")
+        return response
