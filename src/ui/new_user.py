@@ -49,7 +49,7 @@ async def verify_user_details(username: str, email: str) -> bool | None:
         return None, None
 
 
-async def create_user():
+async def create_user() -> None:
     """Handles form submission with async API calls."""
     fields = {
         "Role": assigned_role,
