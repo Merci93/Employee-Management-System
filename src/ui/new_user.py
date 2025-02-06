@@ -1,4 +1,9 @@
-"""Module to create a new user/admin."""
+"""
+Module to create a new user/admin roles.
+Employees with User role will have login access to view employees data only,
+while employees with Admin access will be able to add, update, delete employees data
+and also assign user and admin roles to other employees.
+"""
 import asyncio
 import os
 import re
