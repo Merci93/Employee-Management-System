@@ -35,6 +35,18 @@ CREATE TABLE employee (
 );
 
 
+-- Create gender table
+CREATE TABLE gender(
+    id SERIAL PRIMARY KEY,
+    gender VARCHAR(10)
+);
+
+-- Add data to gender table
+INSERT INTO gender (gender)
+VALUES ('Male'),
+    ('Female');
+
+
 -- Create departments table
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
@@ -73,6 +85,6 @@ VALUES ('HR'),
     ('Software Engineer'),
     ('Network Engineer'),
     ('DevOps Engineer'),
-    ('Product Owner');
-    ('Senior Data Engineer');
+    ('Product Owner'),
+    ('Senior Data Engineer'),
     ('Machine Learning Engineer');
