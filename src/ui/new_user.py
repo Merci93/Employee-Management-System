@@ -68,11 +68,11 @@ async def create_user() -> None:
         logger.error(f"Missing fields: {' ,'.join(missing_fields)}")
         st.error(f"Fields can't be empty: {' ❌, '.join(missing_fields)}")
         return
-    elif password != confirm_password:
+    if password != confirm_password:
         logger.error("Passwords do not match.")
         st.error("Passwords do not match ❌.")
         return
-    elif not re.match(email_valid_pattern, email):
+    if not re.match(email_valid_pattern, email):
         logger.error("Invalid email entered.")
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
