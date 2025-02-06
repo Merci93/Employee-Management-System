@@ -85,6 +85,6 @@ VALUES ('HR'),
     ('Software Engineer'),
     ('Network Engineer'),
     ('DevOps Engineer'),
-    ('Product Owner');
-    ('Senior Data Engineer');
+    ('Product Owner'),
+    ('Senior Data Engineer'),
     ('Machine Learning Engineer');
