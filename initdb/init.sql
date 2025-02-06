@@ -1,27 +1,27 @@
 -- INIT SQL
 -- Create databases
 CREATE DATABASE employees;
-CREATE DATABASE users;
 
--- Create user table and add default user.
-\connect users
+-- Create user table.
+\connect employees
 
-CREATE TABLE user (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL
+    role CHAR(5),
+    date_of_birth DATE,
+    password VARCHAR(255) NOT NULL
 );
 
-INSERT INTO users (username, first_name, last_name, email, password)
-VALUES ('admin@gmail.com', 'admin', 'admin', 'admin@gmail.com', 'ADmin1234');
+-- Add default admin
+INSERT INTO users (username, first_name, last_name, email, role, date_of_birth, password)
+VALUES ('admin@gmail.com', 'Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234');
 
 
--- Create tables in the employee database and add data
-\connect employees
-
+-- Create employee table
 CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -31,31 +31,33 @@ CREATE TABLE employee (
     phone VARCHAR(50) NOT NULL,
     salary INT NOT NULL,
     department_id INT NOT NULL,
-    role_id INT NOT NULL,
-)
-
-
--- Departments
-CREATE TABLE departments (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    role_id INT NOT NULL
 );
 
+
+-- Create departments table
+CREATE TABLE departments (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+-- Insert data into departments table
 INSERT INTO departments (name)
 VALUES ('IT'),
     ('Marketing'),
     ('Sales'),
     ('Research'),
     ('HR'),
-    ('Analytics');
+    ('Data & Analytics');
 
 
--- Roles
+-- Create roles table
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
-    role VARCHAR(50) NOT NULL,
-)
+    role VARCHAR(50) NOT NULL
+);
 
+-- Insert data into roles table
 INSERT INTO roles (role)
 VALUES ('HR'),
     ('Data Engineer'),
@@ -63,7 +65,7 @@ VALUES ('HR'),
     ('Data Analyst'),
     ('Intern'),
     ('Business Analyst'),
-    ('Senior Manager Engineering'),
+    ('Senior Engineering Manager'),
     ('Data Scientist'),
     ('Web Developer'),
     ('Junior Data Engineer'),
@@ -72,3 +74,5 @@ VALUES ('HR'),
     ('Network Engineer'),
     ('DevOps Engineer'),
     ('Product Owner');
+    ('Senior Data Engineer');
+    ('Machine Learning Engineer');
