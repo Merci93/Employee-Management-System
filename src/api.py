@@ -79,7 +79,7 @@ class EmployeeCreateRequest(BaseModel):
     address: str
     date_of_birth: str
     gender: str
-    phone: int
+    phone: str
     role: str
     email: str
     department: str
@@ -137,7 +137,7 @@ def verify_email(email: str) -> Dict[str, bool]:
 
 
 @app.get("/v1/verify_phone_number/")
-def verify_phone_number(phone: int) -> Dict[str, bool]:
+def verify_phone_number(phone: str) -> Dict[str, bool]:
     """Verify if phone number already exists in database."""
 
     logger.info(f"Verifying phone number {phone}")
@@ -148,10 +148,10 @@ def verify_phone_number(phone: int) -> Dict[str, bool]:
             cursor.execute(query, (phone,))
             employee_phone = cursor.fetchone()
             if employee_phone:
-                logger.info(f"Phone {phone} exists.")
+                logger.info(f"Phone number {phone} exists.")
                 return {"exist": True}
             else:
-                logger.info(f"Phone {phone} does not exist.")
+                logger.info(f"Phone number {phone} does not exist.")
                 return {"exist": False}
     except Exception as e:
         logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
