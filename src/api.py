@@ -92,25 +92,25 @@ def get_root() -> dict[str, str]:
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/v1/verify_username/")
-def verify_username(username: str) -> Dict[str, Any]:
-    """Verify user credentials in the database"""
+@app.get("/v1/verify_employee_id/")
+def verify_employee_id(email: str) -> Dict[str, Any]:
+    """Verify if user to be created has an email associated with an employee ID"""
 
-    logger.info(f"Verifying user {username} ...")
+    logger.info("Verifying employee id ...")
 
     try:
         with db_connect.users_client.cursor() as cursor:
-            query = sql.SQL("SELECT username FROM {} WHERE username = %s").format(sql.Identifier(settings.users_table_name))
-            cursor.execute(query, (username,))
-            user_details = cursor.fetchone()
-            if user_details:
-                logger.info(f"User {username} exists.")
+            query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(sql.Identifier(settings.employee_table_name))
+            cursor.execute(query, (email,))
+            employee_id = cursor.fetchone()
+            if employee_id:
+                logger.info(f"Employee with email {email} has id {employee_id}")
                 return {"exist": True}
             else:
-                logger.info(f"User {username} does not exist.")
+                logger.info(f"Employee with email {email} does not exist.")
                 return {"exist": False}
     except Exception as e:
-        logger.error(f"Unexpected error occurred while verifying username {username}: {e}")
+        logger.error(f"Unexpected error occurred while fetching employee id with email {email}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 

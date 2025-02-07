@@ -10,23 +10,23 @@ BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
 
 
-async def verify_username(username: str) -> bool:
+async def verify_employee_id(email: str) -> bool:
     """
-    Verify if username already exists in the user database..
+    Verify if the user to be added is an employee.
 
-    :param Username: Input username to check.
+    :param Email: Employee email to check.
     return: A boolean True if it exists, False otherwise.
     """
-    logger.info("Starting username verification...")
+    logger.info("Starting Employee ID verification...")
 
-    url = f"{BASE_URL}/verify_username/"
+    url = f"{BASE_URL}/verify_employee_id/"
     params = {
-        "username": username,
+        "email": email,
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Username verification completed.")
+        logger.info("Employee ID verification completed.")
         return response.json().get("exist", False)
 
 
