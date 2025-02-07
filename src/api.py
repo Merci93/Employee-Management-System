@@ -92,8 +92,8 @@ def get_root() -> dict[str, str]:
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/v1/verify_user/")
-def verify_user(username: str) -> Dict[str, Any]:
+@app.get("/v1/verify_username/")
+def verify_username(username: str) -> Dict[str, Any]:
     """Verify user credentials in the database"""
 
     logger.info(f"Verifying user {username} ...")

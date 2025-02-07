@@ -19,7 +19,7 @@ async def verify_username(username: str) -> bool:
     """
     logger.info("Starting username verification...")
 
-    url = f"{BASE_URL}/verify_user/"
+    url = f"{BASE_URL}/verify_username/"
     params = {
         "username": username,
     }
