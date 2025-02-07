@@ -8,10 +8,11 @@ import bcrypt
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from psycopg2 import sql
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
 
-from src.backend import db_connect, httpx_client
-from src.config import init_settings
+from src.backend import db_connect
+from src.config import init_settings, settings
 from src.log_handler import logger
 
 
@@ -31,11 +32,9 @@ async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
     # Startup
     init_settings()
     db_connect.user_db_init()
-    httpx_client.init_httpx_client()
     yield
     # Shutdown
     db_connect.users_client.close()
-    httpx_client.httpx_client.close()
 
 
 app = FastAPI(
@@ -86,14 +85,15 @@ def verify_user(username: str) -> Dict[str, Any]:
     logger.info(f"Verifying user {username} ...")
 
     with db_connect.users_client.cursor() as cursor:
-        cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
+        query = sql.SQL("SELECT username FROM {} WHERE username = %s").format(sql.Identifier(settings.users_table_name))
+        cursor.execute(query, (username,))
         user_details = cursor.fetchone()
         if user_details:
             logger.info(f"User {username} exists.")
-            return {"exist": True, "password": user_details[0][1]}
+            return {"exist": True}
         else:
             logger.info(f"User {username} does not exist.")
-            return {"exist": False, "password": None}
+            return {"exist": False}
 
 
 @app.get("/v1/verify_email/")
@@ -103,13 +103,32 @@ def verify_email(email: str) -> Dict[str, bool]:
     logger.info(f"Verifying email {email} ...")
 
     with db_connect.users_client.cursor() as cursor:
-        cursor.execute("SELECT email from users WHERE email = %s", (email,))
+        query = sql.SQL("SELECT email from {} WHERE email = %s").format(sql.Identifier(settings.users_table_name))
+        cursor.execute(query, (email,))
         user_email = cursor.fetchone()
         if user_email:
             logger.info(f"Email {email} exists.")
             return {"exist": True}
         else:
             logger.info(f"Email {email} does not exist.")
+            return {"exist": False}
+
+
+@app.get("/v1/verify_phone_number/")
+def verify_phone_number(phone: int) -> Dict[str, bool]:
+    """Verify if phone number already exists in database."""
+
+    logger.info(f"Verifying phone number {phone}")
+
+    with db_connect.users_client.cursor() as cursor:
+        query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
+        cursor.execute(query, (phone,))
+        employee_phone = cursor.fetchone()
+        if employee_phone:
+            logger.info(f"Phone {phone} exists.")
+            return {"exist": True}
+        else:
+            logger.info(f"Phone {phone} does not exist.")
             return {"exist": False}
 
 
