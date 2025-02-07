@@ -30,11 +30,12 @@ async def verify_username(username: str) -> bool:
         return response.json().get("exist", False)
 
 
-async def verify_email(email: str) -> bool:
+async def verify_email(email: str, who: str) -> bool:
     """
     Verify if user email already exists in the database.
 
     :param Email: Input email to check.
+    :param who: Input parameter to either verify employee email or user/admin email.
     return: A boolean True if it exists, False otherwise.
     """
     logger.info("Starting email verification...")
@@ -42,6 +43,7 @@ async def verify_email(email: str) -> bool:
     url = f"{BASE_URL}/verify_email/"
     params = {
         "email": email,
+        "who": who,
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)

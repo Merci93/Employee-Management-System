@@ -115,14 +115,19 @@ def verify_username(username: str) -> Dict[str, Any]:
 
 
 @app.get("/v1/verify_email/")
-def verify_email(email: str) -> Dict[str, bool]:
+def verify_email(email: str, who: str) -> Dict[str, bool]:
     """Verify if email already exists."""
 
     logger.info(f"Verifying email {email} ...")
 
     try:
         with db_connect.users_client.cursor() as cursor:
-            query = sql.SQL("SELECT email from {} WHERE email = %s").format(sql.Identifier(settings.users_table_name))
+            query = sql.SQL("SELECT email from {} WHERE email = %s")
+            if who == "user":
+                query = query.format(sql.Identifier(settings.users_table_name))
+            elif who == "employee":
+                query = query.format(sql.Identifier(settings.employee_table_name))
+
             cursor.execute(query, (email,))
             user_email = cursor.fetchone()
             if user_email:
@@ -131,6 +136,7 @@ def verify_email(email: str) -> Dict[str, bool]:
             else:
                 logger.info(f"Email {email} does not exist.")
                 return {"exist": False}
+
     except Exception as e:
         logger.error(f"Unexpected error occurred while verifying email {email}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
