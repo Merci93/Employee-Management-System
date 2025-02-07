@@ -98,16 +98,20 @@ def verify_user(username: str) -> Dict[str, Any]:
 
     logger.info(f"Verifying user {username} ...")
 
-    with db_connect.users_client.cursor() as cursor:
-        query = sql.SQL("SELECT username FROM {} WHERE username = %s").format(sql.Identifier(settings.users_table_name))
-        cursor.execute(query, (username,))
-        user_details = cursor.fetchone()
-        if user_details:
-            logger.info(f"User {username} exists.")
-            return {"exist": True}
-        else:
-            logger.info(f"User {username} does not exist.")
-            return {"exist": False}
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT username FROM {} WHERE username = %s").format(sql.Identifier(settings.users_table_name))
+            cursor.execute(query, (username,))
+            user_details = cursor.fetchone()
+            if user_details:
+                logger.info(f"User {username} exists.")
+                return {"exist": True}
+            else:
+                logger.info(f"User {username} does not exist.")
+                return {"exist": False}
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while verifying username {username}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.get("/v1/verify_email/")
@@ -116,16 +120,20 @@ def verify_email(email: str) -> Dict[str, bool]:
 
     logger.info(f"Verifying email {email} ...")
 
-    with db_connect.users_client.cursor() as cursor:
-        query = sql.SQL("SELECT email from {} WHERE email = %s").format(sql.Identifier(settings.users_table_name))
-        cursor.execute(query, (email,))
-        user_email = cursor.fetchone()
-        if user_email:
-            logger.info(f"Email {email} exists.")
-            return {"exist": True}
-        else:
-            logger.info(f"Email {email} does not exist.")
-            return {"exist": False}
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT email from {} WHERE email = %s").format(sql.Identifier(settings.users_table_name))
+            cursor.execute(query, (email,))
+            user_email = cursor.fetchone()
+            if user_email:
+                logger.info(f"Email {email} exists.")
+                return {"exist": True}
+            else:
+                logger.info(f"Email {email} does not exist.")
+                return {"exist": False}
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while verifying email {email}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.get("/v1/verify_phone_number/")
@@ -134,16 +142,20 @@ def verify_phone_number(phone: int) -> Dict[str, bool]:
 
     logger.info(f"Verifying phone number {phone}")
 
-    with db_connect.users_client.cursor() as cursor:
-        query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
-        cursor.execute(query, (phone,))
-        employee_phone = cursor.fetchone()
-        if employee_phone:
-            logger.info(f"Phone {phone} exists.")
-            return {"exist": True}
-        else:
-            logger.info(f"Phone {phone} does not exist.")
-            return {"exist": False}
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
+            cursor.execute(query, (phone,))
+            employee_phone = cursor.fetchone()
+            if employee_phone:
+                logger.info(f"Phone {phone} exists.")
+                return {"exist": True}
+            else:
+                logger.info(f"Phone {phone} does not exist.")
+                return {"exist": False}
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.post("/v1/add_user/")
