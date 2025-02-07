@@ -7,7 +7,6 @@ CREATE DATABASE employees;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
@@ -17,8 +16,8 @@ CREATE TABLE users (
 );
 
 -- Add default admin
-INSERT INTO users (username, first_name, last_name, email, role, date_of_birth, password)
-VALUES ('admin@gmail.com', 'Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234');
+INSERT INTO users (first_name, last_name, email, role, date_of_birth, password)
+VALUES ('Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234');
 
 
 -- Create employee table
