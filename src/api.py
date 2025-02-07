@@ -72,6 +72,20 @@ class UserCreateRequest(BaseModel):
     password: str
 
 
+class EmployeeCreateRequest(BaseModel):
+    first_name: str
+    middle_name: str
+    last_name: str
+    address: str
+    date_of_birth: str
+    gender: str
+    phone: int
+    role: str
+    email: str
+    department: str
+    salary: int
+
+
 @app.get("/v1/root/")
 def get_root() -> dict[str, str]:
     """API root endpoint."""
@@ -170,6 +184,18 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         db_connect.users_client.rollback()
         logger.error(f"Unexpected error occurred while adding user {user.username}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.post("/v1/add_new_employee")
+def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
+    """
+    Add new employee details to the employees table.
+
+    :param employee: Employee details.
+    :return: Success if added, failed is not.
+    """
+    logger.info(f"Adding new employee {employee.first_name} {employee.last_name} to the database ...")
+    pass
 
 
 if __name__ == "__main__":
