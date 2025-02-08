@@ -27,7 +27,10 @@ async def verify_employee_id(email: str) -> bool:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
         logger.info("Employee ID verification completed.")
-        return response.json().get("exist", False)
+        response = response.json()
+        if response.get("exist"):
+            return response.get("value")
+        return response.get("value", False)
 
 
 async def verify_email(email: str, who: str) -> bool:

@@ -109,10 +109,16 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
             employee_id = cursor.fetchone()
             if employee_id:
                 logger.info(f"Employee with email {email} has id {employee_id}")
-                return {"exist": True}
+                return {
+                    "exist": True,
+                    "value": employee_id
+                }
             else:
                 logger.info(f"Employee with email {email} does not exist.")
-                return {"exist": False}
+                return {
+                    "exist": False,
+                    "value": "Not an employee"
+                }
     except Exception as e:
         logger.error(f"Unexpected error occurred while fetching employee id with email {email}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
