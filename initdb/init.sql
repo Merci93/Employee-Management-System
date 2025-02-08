@@ -18,7 +18,7 @@ CREATE TABLE users (
 
 -- Add default admin
 INSERT INTO users (first_name, last_name, email, role, date_of_birth, password, employee_id)
-VALUES ('Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234', 1);
+VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', '2024-01-01', 'ADmin1234', 1);
 
 
 -- Create employee table 
