@@ -20,7 +20,6 @@ st.header("Create a new User or Admin")
 
 with st.form("new_user_admin_form"):
     assigned_role = st.selectbox("Role", ["User", "Admin"])
-    username = st.text_input("Username")
     firstname = st.text_input("First Name")
     lastname = st.text_input("Last Name")
     dob = st.date_input("Date of Birth")
@@ -30,32 +29,28 @@ with st.form("new_user_admin_form"):
     submit_button = st.form_submit_button("Save")
 
 
-async def verify_user_details(username: str, email: str) -> bool | None:
+async def verify_user_details(email: str) -> bool | None:
     """
-    Runs email and username verification concurrently.
+    Runs email and employee id verification concurrently.
 
-    :param username: Username to be verified.
     :param email: Email address to be verified.
     :return: Returns a boolean True if it exists, False if not, and None in case of error.
     """
     try:
-        username_task = backend_modules.verify_username(username)
+        employee_id_task = backend_modules.verify_employee_id(email)
         email_task = backend_modules.verify_email(email, who="user")
-        username_exists, email_exists = await asyncio.gather(username_task, email_task)
-        return username_exists, email_exists
+        employee_id_exists, email_exists = await asyncio.gather(employee_id_task, email_task)
+        return employee_id_exists, email_exists
     except Exception as e:
         st.error("Verification failed ❌.")
         st.error(f"Error details: {e}")
         return None, None
-
-# TODO - Add verification to ensure the user is an employee before being added.
 
 
 async def create_user() -> None:
     """Handles form submission with async API calls."""
     fields = {
         "Role": assigned_role,
-        "Username": username,  # remove username. This is not needed as employee email should be used.
         "First Name": firstname,
         "Last Name": lastname,
         "Date of Birth": dob,
@@ -82,11 +77,10 @@ async def create_user() -> None:
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
 
-    # remove username verification and replace with employee verification
-    username_exists, email_exists = await verify_user_details(username, email)
+    employee_id_exists, email_exists = await verify_user_details(email)
 
-    if username_exists is None or email_exists is None:
-        if username_exists is None:
+    if employee_id_exists is None or email_exists is None:
+        if employee_id_exists is None:
             st.error("Username verification failed ❌.")
             logger.error("Username verification failed.")
         if email_exists is None:
@@ -94,23 +88,26 @@ async def create_user() -> None:
             logger.error("Email verification failed.")
         return
 
-    if username_exists or email_exists:
-        if email_exists:
-            st.error(f"Email {email} is already used ❌.")
-        if username_exists:
-            st.error(f"Username {username} is already taken ❌.")
+    if not employee_id_exists and isinstance(employee_id_exists, bool):
+        logger.error(f"User with email {email} is not an employee.")
+        st.error(f"User with email {email} is not an employee ❌.")
+        return
+
+    if email_exists:
+        logger.error(f"User with email {email} is already in users table.")
+        st.error(f"Email {email} is already used ❌. Already a user.")
         return
 
     else:
         try:
             response = await backend_modules.add_new_user(
-                username=username,
                 firstname=firstname,
                 lastname=lastname,
                 dob=dob,
                 email=email,
                 password=password,
                 role=assigned_role,
+                employee_id=employee_id_exists,
             )
             if response.get("status") == "Success":
                 st.success(f"{response.get('message')} with assigned role {assigned_role} ✅.")
