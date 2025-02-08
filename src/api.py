@@ -62,6 +62,11 @@ class Role(str, Enum):
     user = "User"
 
 
+class WhoToVerify(str, Enum):
+    user = "user"
+    employee = "employee"
+
+
 class UserCreateRequest(BaseModel):
     role: Role
     firstname: str
@@ -114,7 +119,7 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
 
 
 @app.get("/v1/verify_email/")
-def verify_email(email: str, who: str) -> Dict[str, bool]:
+def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
     """Verify if email already exists."""
 
     logger.info(f"Verifying email {email} ...")
