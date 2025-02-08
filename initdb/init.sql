@@ -20,7 +20,7 @@ INSERT INTO users (first_name, last_name, email, role, date_of_birth, password)
 VALUES ('Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234');
 
 
--- Create employee table
+-- Create employee table 
 CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -30,8 +30,15 @@ CREATE TABLE employee (
     phone VARCHAR(50) NOT NULL,
     salary INT NOT NULL,
     department_id INT NOT NULL,
-    role_id INT NOT NULL
+    position_id INT NOT NULL,
+    gender_id INT NOT NULL,
+    date_of_birth DATE,
+    hired_date DATE DEFAULT CURRENT_DATE
 );
+
+-- Add dummy employee data for tests
+INSERT INTO employee (first_name, middle_name, last_name, email, phone, salary, department_id, position_id, gender_id, date_of_birth, hired_date)
+VALUES ('Admin', 'Admin', 'Admin', 'admin@gmail.com', '070000', 34567, 1, 13, 1, '2005-05-19', '2024-12-05');
 
 
 -- Create gender table
@@ -63,13 +70,13 @@ VALUES ('IT'),
 
 
 -- Create roles table
-CREATE TABLE roles (
+CREATE TABLE positions (
     id SERIAL PRIMARY KEY,
-    role VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL
 );
 
 -- Insert data into roles table
-INSERT INTO roles (role)
+INSERT INTO positions (name)
 VALUES ('HR'),
     ('Data Engineer'),
     ('Solutions Architect'),
