@@ -74,7 +74,6 @@ async def verify_phone_number(phone: str) -> bool:
 
 async def add_new_user(
     role: str,
-    username: str,
     firstname: str,
     lastname: str,
     dob: date,
@@ -92,7 +91,6 @@ async def add_new_user(
     url = f"{BASE_URL}/add_user/"
     payload = {
         "role": role,
-        "username": username,
         "firstname": firstname,
         "lastname": lastname,
         "dob": dob.strftime("%Y-%m-%d"),

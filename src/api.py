@@ -64,7 +64,6 @@ class Role(str, Enum):
 
 class UserCreateRequest(BaseModel):
     role: Role
-    username: str
     firstname: str
     lastname: str
     dob: str
@@ -172,35 +171,35 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     User role: can only view employee data.
     Admin role: can perform all operations including addin, deleting and updating data.
     """
-    logger.info(f"Adding user {user.username} and details to the database ...")
+    logger.info(f"Adding user {user.firstname} {user.lastname} and details to the database ...")
     query = """
-        INSERT INTO users (username, first_name, last_name, email, date_of_birth, role, password)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        RETURNING username;
+        INSERT INTO users (first_name, last_name, email, date_of_birth, role, password)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING first_name last_name;
     """
     try:
         encrypted_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
         with db_connect.users_client.cursor() as cursor:
-            cursor.execute(query, (user.username, user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password))
-            inserted_username = cursor.fetchone()[0]
+            cursor.execute(query, (user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password))
+            inserted_name = cursor.fetchone()[0]
 
         db_connect.users_client.commit()
 
-        logger.info(f"User {inserted_username} added successfully.")
+        logger.info(f"User {inserted_name} added successfully.")
 
         return {
             "status": "Success",
-            "message": f"User {user.username} added to database successfully",
+            "message": f"User {inserted_name} added to database successfully",
         }
 
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.users_client.rollback()
-        logger.error(f"Failed to add user {user.username}: {e}")
+        logger.error(f"Failed to add user {user.firstname} {user.lastname}: {e}")
         raise HTTPException(status_code=400, detail=f"Failed to add user: {str(e)}")
 
     except Exception as e:
         db_connect.users_client.rollback()
-        logger.error(f"Unexpected error occurred while adding user {user.username}: {e}")
+        logger.error(f"Unexpected error occurred while adding user {user.firstname} {user.lastname}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
