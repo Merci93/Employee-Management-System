@@ -74,6 +74,7 @@ class UserCreateRequest(BaseModel):
     dob: str
     email: str
     password: str
+    employee_id: int
 
 
 class EmployeeCreateRequest(BaseModel):
@@ -184,14 +185,14 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
     logger.info(f"Adding user {user.firstname} {user.lastname} and details to the database ...")
     query = """
-        INSERT INTO users (first_name, last_name, email, date_of_birth, role, password)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO users (first_name, last_name, email, date_of_birth, role, password, employee_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING first_name last_name;
     """
     try:
         encrypted_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
         with db_connect.users_client.cursor() as cursor:
-            cursor.execute(query, (user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password))
+            cursor.execute(query, (user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password, user.employee_id))
             inserted_name = cursor.fetchone()[0]
 
         db_connect.users_client.commit()

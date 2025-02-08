@@ -82,6 +82,7 @@ async def add_new_user(
     dob: date,
     email: str,
     password: str,
+    employee_id: int
 ) -> Dict[str, str]:
     """
     Add a new user to the user database for specified roles.
@@ -99,6 +100,7 @@ async def add_new_user(
         "dob": dob.strftime("%Y-%m-%d"),
         "email": email,
         "password": password,
+        "employee_id": employee_id,
     }
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json=payload, headers=HEADERS)
