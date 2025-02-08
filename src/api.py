@@ -117,7 +117,7 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
                 logger.info(f"Employee with email {email} does not exist.")
                 return {
                     "exist": False,
-                    "value": "Not an employee"
+                    "value": False
                 }
     except Exception as e:
         logger.error(f"Unexpected error occurred while fetching employee id with email {email}: {e}")
