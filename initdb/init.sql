@@ -12,12 +12,13 @@ CREATE TABLE users (
     email VARCHAR(50) UNIQUE NOT NULL,
     role CHAR(5),
     date_of_birth DATE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    employee_id INT NOT NULL
 );
 
 -- Add default admin
-INSERT INTO users (first_name, last_name, email, role, date_of_birth, password)
-VALUES ('Admin', 'Admin', 'admin@gmail.com', 'admin', '2024-01-01', 'ADmin1234');
+INSERT INTO users (first_name, last_name, email, role, date_of_birth, password, employee_id)
+VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', '2024-01-01', 'ADmin1234', 1);
 
 
 -- Create employee table 
