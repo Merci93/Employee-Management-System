@@ -10,31 +10,32 @@ BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
 
 
-async def verify_username(username: str) -> bool:
+async def verify_employee_id(email: str) -> bool:
     """
-    Verify if username already exists in the user database..
+    Verify if the user to be added is an employee.
 
-    :param Username: Input username to check.
+    :param Email: Employee email to check.
     return: A boolean True if it exists, False otherwise.
     """
-    logger.info("Starting username verification...")
+    logger.info("Starting Employee ID verification...")
 
-    url = f"{BASE_URL}/verify_user/"
+    url = f"{BASE_URL}/verify_employee_id/"
     params = {
-        "username": username,
+        "email": email,
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Username verification completed.")
+        logger.info("Employee ID verification completed.")
         return response.json().get("exist", False)
 
 
-async def verify_email(email: str) -> bool:
+async def verify_email(email: str, who: str) -> bool:
     """
     Verify if user email already exists in the database.
 
     :param Email: Input email to check.
+    :param who: Input parameter to either verify employee email or user/admin email.
     return: A boolean True if it exists, False otherwise.
     """
     logger.info("Starting email verification...")
@@ -42,11 +43,32 @@ async def verify_email(email: str) -> bool:
     url = f"{BASE_URL}/verify_email/"
     params = {
         "email": email,
+        "who": who,
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
         logger.info("Email verification completed.")
+        return response.json().get("exist", False)
+
+
+async def verify_phone_number(phone: str) -> bool:
+    """
+    Verify if phone number already exists in database.
+
+    :param phone: Phone number to verify.
+    :return: Boolean True if esist, False otherwise.
+    """
+    logger.info("Starting phone number verification...")
+
+    url = f"{BASE_URL}/verify_phone_number/"
+    params = {
+        "phone": phone
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Phone number verification completed.")
         return response.json().get("exist", False)
 
 

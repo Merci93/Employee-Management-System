@@ -8,10 +8,11 @@ import bcrypt
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from psycopg2 import sql
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
 
-from src.backend import db_connect, httpx_client
-from src.config import init_settings
+from src.backend import db_connect
+from src.config import init_settings, settings
 from src.log_handler import logger
 
 
@@ -31,11 +32,9 @@ async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
     # Startup
     init_settings()
     db_connect.user_db_init()
-    httpx_client.init_httpx_client()
     yield
     # Shutdown
     db_connect.users_client.close()
-    httpx_client.httpx_client.close()
 
 
 app = FastAPI(
@@ -73,44 +72,96 @@ class UserCreateRequest(BaseModel):
     password: str
 
 
+class EmployeeCreateRequest(BaseModel):
+    first_name: str
+    middle_name: str
+    last_name: str
+    address: str
+    date_of_birth: str
+    gender: str
+    phone: str
+    role: str
+    email: str
+    department: str
+    salary: int
+
+
 @app.get("/v1/root/")
 def get_root() -> dict[str, str]:
     """API root endpoint."""
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/v1/verify_user/")
-def verify_user(username: str) -> Dict[str, Any]:
-    """Verify user credentials in the database"""
+@app.get("/v1/verify_employee_id/")
+def verify_employee_id(email: str) -> Dict[str, Any]:
+    """Verify if user to be created has an email associated with an employee ID"""
 
-    logger.info(f"Verifying user {username} ...")
+    logger.info("Verifying employee id ...")
 
-    with db_connect.users_client.cursor() as cursor:
-        cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
-        user_details = cursor.fetchone()
-        if user_details:
-            logger.info(f"User {username} exists.")
-            return {"exist": True, "password": user_details[0][1]}
-        else:
-            logger.info(f"User {username} does not exist.")
-            return {"exist": False, "password": None}
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(sql.Identifier(settings.employee_table_name))
+            cursor.execute(query, (email,))
+            employee_id = cursor.fetchone()
+            if employee_id:
+                logger.info(f"Employee with email {email} has id {employee_id}")
+                return {"exist": True}
+            else:
+                logger.info(f"Employee with email {email} does not exist.")
+                return {"exist": False}
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while fetching employee id with email {email}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.get("/v1/verify_email/")
-def verify_email(email: str) -> Dict[str, bool]:
+def verify_email(email: str, who: str) -> Dict[str, bool]:
     """Verify if email already exists."""
 
     logger.info(f"Verifying email {email} ...")
 
-    with db_connect.users_client.cursor() as cursor:
-        cursor.execute("SELECT email from users WHERE email = %s", (email,))
-        user_email = cursor.fetchone()
-        if user_email:
-            logger.info(f"Email {email} exists.")
-            return {"exist": True}
-        else:
-            logger.info(f"Email {email} does not exist.")
-            return {"exist": False}
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT email from {} WHERE email = %s")
+            if who == "user":
+                query = query.format(sql.Identifier(settings.users_table_name))
+            elif who == "employee":
+                query = query.format(sql.Identifier(settings.employee_table_name))
+
+            cursor.execute(query, (email,))
+            user_email = cursor.fetchone()
+            if user_email:
+                logger.info(f"Email {email} exists.")
+                return {"exist": True}
+            else:
+                logger.info(f"Email {email} does not exist.")
+                return {"exist": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while verifying email {email}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/verify_phone_number/")
+def verify_phone_number(phone: str) -> Dict[str, bool]:
+    """Verify if phone number already exists in database."""
+
+    logger.info(f"Verifying phone number {phone}")
+
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
+            cursor.execute(query, (phone,))
+            employee_phone = cursor.fetchone()
+            if employee_phone:
+                logger.info(f"Phone number {phone} exists.")
+                return {"exist": True}
+            else:
+                logger.info(f"Phone number {phone} does not exist.")
+                return {"exist": False}
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.post("/v1/add_user/")
@@ -151,6 +202,18 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         db_connect.users_client.rollback()
         logger.error(f"Unexpected error occurred while adding user {user.username}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.post("/v1/add_new_employee")
+def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
+    """
+    Add new employee details to the employees table.
+
+    :param employee: Employee details.
+    :return: Success if added, failed is not.
+    """
+    logger.info(f"Adding new employee {employee.first_name} {employee.last_name} to the database ...")
+    pass
 
 
 if __name__ == "__main__":
