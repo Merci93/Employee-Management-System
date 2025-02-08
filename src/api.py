@@ -111,7 +111,7 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
                 logger.info(f"Employee with email {email} has id {employee_id}")
                 return {
                     "exist": True,
-                    "value": employee_id
+                    "value": employee_id[0]
                 }
             else:
                 logger.info(f"Employee with email {email} does not exist.")
