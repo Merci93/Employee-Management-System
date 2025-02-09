@@ -77,6 +77,20 @@ class UserCreateRequest(BaseModel):
     employee_id: int
 
 
+class GenderIdRequest(BaseModel):
+    male = "Male"
+    female = "female"
+
+
+class DepartmentIdRequest(BaseException):
+    it = "IT"
+    hr = "HR"
+    sales = "Sales"
+    research = "Research"
+    marketing = "Marketing"
+    data_analytics = "Data & Analytics"
+
+
 class EmployeeCreateRequest(BaseModel):
     first_name: str
     middle_name: str
@@ -172,6 +186,27 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
                 return {"exist": False}
     except Exception as e:
         logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/get_gender_id/")
+def get_gender_id(gender: GenderIdRequest) -> int:
+    """Get employee gender id."""
+    logger.info(f"Retrieving gender id for gender {gender} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(sql.Identifier(settings.gender_table_name))
+            cursor.execute(query, (gender,))
+            employee_gender_id = cursor.fetchone()
+            if employee_gender_id:
+                logger.info(f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}")
+                return {"value": employee_gender_id}
+            else:
+                logger.info("Gender ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for gender {gender}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
