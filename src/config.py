@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     employee_db_name: str = "employees"
     users_table_name: str = "users"
     employee_table_name: str = "employee"
+    gender_table_name: str = "gender"
+    position_table_name: str = "positions"
+    dept_table_name: str = "departments"
     host: str = "ems-db"
     port: int = 5432
 
