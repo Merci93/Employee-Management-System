@@ -210,6 +210,27 @@ def get_gender_id(gender: GenderIdRequest) -> int:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
+@app.get("/v1/get_department_id/")
+def get_department_id(department: DepartmentIdRequest) -> int:
+    """Get employee department id."""
+    logger.info(f"Retrieving department id for {department} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.dept_table_name))
+            cursor.execute(query, (department,))
+            employee_dept_id = cursor.fetchone()
+            if employee_dept_id:
+                logger.info(f"Department ID retrieved successfully. Value: {employee_dept_id[0]}")
+                return {"value": employee_dept_id}
+            else:
+                logger.info("Department ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for {department}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
 @app.post("/v1/add_user/")
 def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
