@@ -79,7 +79,7 @@ class UserCreateRequest(BaseModel):
 
 class GenderIdRequest(str, Enum):
     male = "Male"
-    female = "female"
+    female = "Female"
 
 
 class DepartmentIdRequest(str, Enum):
@@ -208,7 +208,7 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
 
 
 @app.get("/v1/get_gender_id/")
-def get_gender_id(gender: GenderIdRequest) -> int:
+def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
     """Get employee gender id."""
     logger.info(f"Retrieving gender id for gender {gender} ...")
     try:
@@ -218,7 +218,7 @@ def get_gender_id(gender: GenderIdRequest) -> int:
             employee_gender_id = cursor.fetchone()
             if employee_gender_id:
                 logger.info(f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}")
-                return {"value": employee_gender_id}
+                return {"value": employee_gender_id[0]}
             else:
                 logger.info("Gender ID not retrieved.")
                 return {"value": False}
@@ -229,7 +229,7 @@ def get_gender_id(gender: GenderIdRequest) -> int:
 
 
 @app.get("/v1/get_department_id/")
-def get_department_id(department: DepartmentIdRequest) -> int:
+def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     """Get employee department id."""
     logger.info(f"Retrieving department id for {department} ...")
     try:
@@ -239,7 +239,7 @@ def get_department_id(department: DepartmentIdRequest) -> int:
             employee_dept_id = cursor.fetchone()
             if employee_dept_id:
                 logger.info(f"Department ID retrieved successfully. Value: {employee_dept_id[0]}")
-                return {"value": employee_dept_id}
+                return {"value": employee_dept_id[0]}
             else:
                 logger.info("Department ID not retrieved.")
                 return {"value": False}
@@ -250,7 +250,7 @@ def get_department_id(department: DepartmentIdRequest) -> int:
 
 
 @app.get("/v1/get_position_id/")
-def get_position_id(position: PositionIdRequest) -> int:
+def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     """Get employee position id."""
     logger.info(f"Retrieving position id for {position} ...")
     try:
@@ -260,7 +260,7 @@ def get_position_id(position: PositionIdRequest) -> int:
             employee_position_id = cursor.fetchone()
             if employee_position_id:
                 logger.info(f"Position ID retrieved successfully. Value: {employee_position_id[0]}")
-                return {"value": employee_position_id}
+                return {"value": employee_position_id[0]}
             else:
                 logger.info("position ID not retrieved.")
                 return {"value": False}
