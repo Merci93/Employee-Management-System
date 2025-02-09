@@ -79,7 +79,7 @@ async def get_department_id(department: str) -> int | bool:
     """
     Get the department ID for the employee.
 
-    :param gender: Department
+    :param department: Department
     :return: Department ID from the department table.
     """
     logger.info("Starting department id retrieval ...")
@@ -94,7 +94,25 @@ async def get_department_id(department: str) -> int | bool:
         logger.info("Department ID retrieved successfully.")
         return response.json().get("value", False)
 
-# TODO - Configure calls to retrieve id's for gender, position and departmen from their respective tables.
+
+async def get_position_id(position: str) -> int:
+    """
+    Get the position ID for the employee.
+
+    :param position: Position
+    :return: Position ID from the position table.
+    """
+    logger.info("Starting position id retrieval ...")
+
+    url = f"{BASE_URL}/get_position_id/"
+    params = {
+        "position": position
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Position ID retrieved successfully.")
+        return response.json().get("value", False)
 
 
 async def verify_phone_number(phone: str) -> bool:
