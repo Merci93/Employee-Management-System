@@ -77,12 +77,12 @@ class UserCreateRequest(BaseModel):
     employee_id: int
 
 
-class GenderIdRequest(BaseModel):
+class GenderIdRequest(str, Enum):
     male = "Male"
     female = "female"
 
 
-class DepartmentIdRequest(BaseException):
+class DepartmentIdRequest(str, Enum):
     it = "IT"
     hr = "HR"
     sales = "Sales"
@@ -91,7 +91,7 @@ class DepartmentIdRequest(BaseException):
     data_analytics = "Data & Analytics"
 
 
-class PositionIdRequest(BaseModel):
+class PositionIdRequest(str, Enum):
     hr = "HR"
     de = "Data Engineer"
     sa = "Solutions Architect"
