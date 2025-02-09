@@ -55,7 +55,7 @@ async def verify_email(email: str, who: str) -> bool:
         return response.json().get("exist", False)
 
 
-async def get_gender_id(gender: str) -> int:
+async def get_gender_id(gender: str) -> int | bool:
     """
     Get the gender ID for the employee.
 
@@ -72,6 +72,26 @@ async def get_gender_id(gender: str) -> int:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
         logger.info("Gender ID retrieved successfully.")
+        return response.json().get("value", False)
+
+
+async def get_department_id(department: str) -> int | bool:
+    """
+    Get the department ID for the employee.
+
+    :param gender: Department
+    :return: Department ID from the department table.
+    """
+    logger.info("Starting department id retrieval ...")
+
+    url = f"{BASE_URL}/get_department_id/"
+    params = {
+        "department": department
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Department ID retrieved successfully.")
         return response.json().get("value", False)
 
 # TODO - Configure calls to retrieve id's for gender, position and departmen from their respective tables.
