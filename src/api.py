@@ -91,6 +91,24 @@ class DepartmentIdRequest(BaseException):
     data_analytics = "Data & Analytics"
 
 
+class PositionIdRequest(BaseModel):
+    hr = "HR"
+    de = "Data Engineer"
+    sa = "Solutions Architect"
+    da = "Data Analyst"
+    inte = "Intern"
+    ba = "Business Analyst"
+    sem = "Senior Manager Engineering"
+    ds = "Data Scientist"
+    jde = "Junior Data Engineer"
+    wd = "Web Developer"
+    ca = "Cloud Architect"
+    se = "Software Engineer"
+    ne = "Network Engineer"
+    dev = "DevOps Engineer"
+    po = "Product Owner"
+
+
 class EmployeeCreateRequest(BaseModel):
     first_name: str
     middle_name: str
@@ -228,6 +246,27 @@ def get_department_id(department: DepartmentIdRequest) -> int:
 
     except Exception as e:
         logger.error(f"Unexpected error occurred while retrieving id for {department}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/get_position_id/")
+def get_position_id(position: PositionIdRequest) -> int:
+    """Get employee position id."""
+    logger.info(f"Retrieving position id for {position} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.position_table_name))
+            cursor.execute(query, (position,))
+            employee_position_id = cursor.fetchone()
+            if employee_position_id:
+                logger.info(f"Position ID retrieved successfully. Value: {employee_position_id[0]}")
+                return {"value": employee_position_id}
+            else:
+                logger.info("position ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for {position}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
