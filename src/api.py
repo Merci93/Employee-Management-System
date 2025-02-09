@@ -77,6 +77,38 @@ class UserCreateRequest(BaseModel):
     employee_id: int
 
 
+class GenderIdRequest(str, Enum):
+    male = "Male"
+    female = "Female"
+
+
+class DepartmentIdRequest(str, Enum):
+    it = "IT"
+    hr = "HR"
+    sales = "Sales"
+    research = "Research"
+    marketing = "Marketing"
+    data_analytics = "Data & Analytics"
+
+
+class PositionIdRequest(str, Enum):
+    hr = "HR"
+    de = "Data Engineer"
+    sa = "Solutions Architect"
+    da = "Data Analyst"
+    inte = "Intern"
+    ba = "Business Analyst"
+    sem = "Senior Manager Engineering"
+    ds = "Data Scientist"
+    jde = "Junior Data Engineer"
+    wd = "Web Developer"
+    ca = "Cloud Architect"
+    se = "Software Engineer"
+    ne = "Network Engineer"
+    dev = "DevOps Engineer"
+    po = "Product Owner"
+
+
 class EmployeeCreateRequest(BaseModel):
     first_name: str
     middle_name: str
@@ -172,6 +204,69 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
                 return {"exist": False}
     except Exception as e:
         logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/get_gender_id/")
+def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
+    """Get employee gender id."""
+    logger.info(f"Retrieving gender id for gender {gender} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(sql.Identifier(settings.gender_table_name))
+            cursor.execute(query, (gender,))
+            employee_gender_id = cursor.fetchone()
+            if employee_gender_id:
+                logger.info(f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}")
+                return {"value": employee_gender_id[0]}
+            else:
+                logger.info("Gender ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for gender {gender}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/get_department_id/")
+def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
+    """Get employee department id."""
+    logger.info(f"Retrieving department id for {department} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.dept_table_name))
+            cursor.execute(query, (department,))
+            employee_dept_id = cursor.fetchone()
+            if employee_dept_id:
+                logger.info(f"Department ID retrieved successfully. Value: {employee_dept_id[0]}")
+                return {"value": employee_dept_id[0]}
+            else:
+                logger.info("Department ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for {department}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/v1/get_position_id/")
+def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
+    """Get employee position id."""
+    logger.info(f"Retrieving position id for {position} ...")
+    try:
+        with db_connect.users_client.cursor() as cursor:
+            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.position_table_name))
+            cursor.execute(query, (position,))
+            employee_position_id = cursor.fetchone()
+            if employee_position_id:
+                logger.info(f"Position ID retrieved successfully. Value: {employee_position_id[0]}")
+                return {"value": employee_position_id[0]}
+            else:
+                logger.info("position ID not retrieved.")
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while retrieving id for {position}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
