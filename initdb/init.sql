@@ -70,7 +70,7 @@ VALUES ('IT'),
     ('Data & Analytics');
 
 
--- Create roles table
+-- Create positions table
 CREATE TABLE positions (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
