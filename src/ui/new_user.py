@@ -81,8 +81,8 @@ async def create_user() -> None:
 
     if employee_id_exists is None or email_exists is None:
         if employee_id_exists is None:
-            st.error("Username verification failed ❌.")
-            logger.error("Username verification failed.")
+            st.error("Employee ID verification failed ❌.")
+            logger.error("Employee ID verification failed.")
         if email_exists is None:
             st.error("Email verification failed ❌.")
             logger.error("Email verification failed.")

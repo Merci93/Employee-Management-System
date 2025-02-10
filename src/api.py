@@ -31,10 +31,10 @@ PS: This API is for this project purpose only.
 async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
     # Startup
     init_settings()
-    db_connect.user_db_init()
+    db_connect.db_init()
     yield
     # Shutdown
-    db_connect.users_client.close()
+    db_connect.db_client.close()
 
 
 app = FastAPI(
@@ -115,12 +115,13 @@ class EmployeeCreateRequest(BaseModel):
     last_name: str
     address: str
     date_of_birth: str
-    gender: str
+    gender_id: int
     phone: str
-    role: str
+    position_id: int
     email: str
-    department: str
+    department_id: int
     salary: int
+    hired_date: str
 
 
 @app.get("/v1/root/")
@@ -136,7 +137,7 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
     logger.info("Verifying employee id ...")
 
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(sql.Identifier(settings.employee_table_name))
             cursor.execute(query, (email,))
             employee_id = cursor.fetchone()
@@ -164,7 +165,7 @@ def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
     logger.info(f"Verifying email {email} ...")
 
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT email from {} WHERE email = %s")
             if who == "user":
                 query = query.format(sql.Identifier(settings.users_table_name))
@@ -192,7 +193,7 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
     logger.info(f"Verifying phone number {phone}")
 
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
             cursor.execute(query, (phone,))
             employee_phone = cursor.fetchone()
@@ -212,7 +213,7 @@ def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
     """Get employee gender id."""
     logger.info(f"Retrieving gender id for gender {gender} ...")
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(sql.Identifier(settings.gender_table_name))
             cursor.execute(query, (gender,))
             employee_gender_id = cursor.fetchone()
@@ -233,7 +234,7 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     """Get employee department id."""
     logger.info(f"Retrieving department id for {department} ...")
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.dept_table_name))
             cursor.execute(query, (department,))
             employee_dept_id = cursor.fetchone()
@@ -254,7 +255,7 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     """Get employee position id."""
     logger.info(f"Retrieving position id for {position} ...")
     try:
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.position_table_name))
             cursor.execute(query, (position,))
             employee_position_id = cursor.fetchone()
@@ -286,11 +287,11 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
     try:
         encrypted_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
-        with db_connect.users_client.cursor() as cursor:
+        with db_connect.db_client.cursor() as cursor:
             cursor.execute(query, (user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password, user.employee_id))
             inserted_name = cursor.fetchone()[0]
 
-        db_connect.users_client.commit()
+        db_connect.db_client.commit()
 
         logger.info(f"User {inserted_name} added successfully.")
 
@@ -300,12 +301,12 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         }
 
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
-        db_connect.users_client.rollback()
+        db_connect.db_client.rollback()
         logger.error(f"Failed to add user {user.firstname} {user.lastname}: {e}")
         raise HTTPException(status_code=400, detail=f"Failed to add user: {str(e)}")
 
     except Exception as e:
-        db_connect.users_client.rollback()
+        db_connect.db_client.rollback()
         logger.error(f"Unexpected error occurred while adding user {user.firstname} {user.lastname}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
@@ -319,7 +320,45 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     :return: Success if added, failed is not.
     """
     logger.info(f"Adding new employee {employee.first_name} {employee.last_name} to the database ...")
-    pass
+
+    query = """
+        INSERT INTO employee (
+            first_name, middle_name, last_name, email, phone, address, salary, department_id, position_id, gender_id, date_of_birth, hired_date)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING first_name last_name;
+    """
+
+    try:
+        with db_connect.db_client.cursor() as cursor:
+            cursor.execute(
+                query, (employee.first_name, employee.middle_name, employee.last_name, employee.email, employee.phone,
+                        employee.address, employee.salary, employee.department_id, employee.position_id, employee.gender_id,
+                        employee.date_of_birth, employee.hired_date)
+                )
+            inserted_name = cursor.fetchone()[0]
+
+        db_connect.db_client.commit()
+
+        logger.info(f"{inserted_name} added successfully as an employee.")
+
+        return {
+            "status": "Success",
+            "message": f"{inserted_name} added successfully as an employee.",
+        }
+
+    except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
+        db_connect.db_client.rollback()
+        logger.error(f"Failed to add employee {employee.first_name} {employee.last_name}: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to add employee: {str(e)}")
+
+    except Exception as e:
+        db_connect.db_client.rollback()
+        logger.error(f"Unexpected error occurred while adding employee {employee.first_name} {employee.last_name}: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+# TODO - Add endpoint to delete employee data
+# TODO - Add endpoint for updating employee data
 
 
 if __name__ == "__main__":

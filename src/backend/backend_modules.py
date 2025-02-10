@@ -55,6 +55,66 @@ async def verify_email(email: str, who: str) -> bool:
         return response.json().get("exist", False)
 
 
+async def get_gender_id(gender: str) -> int | bool:
+    """
+    Get the gender ID for the employee.
+
+    :param gender: Gender
+    :return: Gender ID from the gender table.
+    """
+    logger.info("Starting gender id retrieval ...")
+
+    url = f"{BASE_URL}/get_gender_id/"
+    params = {
+        "gender": gender
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Gender ID retrieved successfully.")
+        return response.json().get("value", False)
+
+
+async def get_department_id(department: str) -> int | bool:
+    """
+    Get the department ID for the employee.
+
+    :param department: Department
+    :return: Department ID from the department table.
+    """
+    logger.info("Starting department id retrieval ...")
+
+    url = f"{BASE_URL}/get_department_id/"
+    params = {
+        "department": department
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Department ID retrieved successfully.")
+        return response.json().get("value", False)
+
+
+async def get_position_id(position: str) -> int:
+    """
+    Get the position ID for the employee.
+
+    :param position: Position
+    :return: Position ID from the position table.
+    """
+    logger.info("Starting position id retrieval ...")
+
+    url = f"{BASE_URL}/get_position_id/"
+    params = {
+        "position": position
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Position ID retrieved successfully.")
+        return response.json().get("value", False)
+
+
 async def verify_phone_number(phone: str) -> bool:
     """
     Verify if phone number already exists in database.
