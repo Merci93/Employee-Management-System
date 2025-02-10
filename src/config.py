@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     postgres_user: str = "postgres"
     postgres_password: str = "postgres"
-    employee_db_name: str = "employees"
+    database_name: str = "employees"
     users_table_name: str = "users"
     employee_table_name: str = "employee"
     gender_table_name: str = "gender"
