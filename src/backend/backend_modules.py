@@ -28,8 +28,11 @@ async def verify_employee_id(email: str) -> bool:
         response.raise_for_status()
         logger.info("Employee ID verification completed.")
         response = response.json()
+
         if response.get("exist"):
             return response.get("value")
+
+        logger.error(f"User with email {email} is not an employee.")
         return response.get("value", False)
 
 
@@ -51,8 +54,14 @@ async def verify_email(email: str, who: str) -> bool:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Email verification completed.")
-        return response.json().get("exist", False)
+        response = response.json()
+
+        if response.get("exist"):
+            logger.info(f"{who.capitalize()} with email {email} already exists.")
+        else:
+            logger.info(f"Email {email} does not exist in {who.lower()}s table.")
+
+        return response.get("exist", False)
 
 
 async def get_gender_id(gender: str) -> int | bool:
@@ -71,8 +80,14 @@ async def get_gender_id(gender: str) -> int | bool:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Gender ID retrieved successfully.")
-        return response.json().get("value", False)
+        response = response.json()
+
+        if response.get("value") is not False:
+            logger.info("Gender ID retrieved successfully.")
+            return response.get("value")
+
+        logger.info("Gender ID not retrieved.")
+        return response.get("value", False)
 
 
 async def get_department_id(department: str) -> int | bool:
@@ -91,8 +106,14 @@ async def get_department_id(department: str) -> int | bool:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Department ID retrieved successfully.")
-        return response.json().get("value", False)
+        response = response.json()
+
+        if response.get("value") is not False:
+            logger.info("Department ID retrieved successfully.")
+            return response.get("value")
+
+        logger.info("Department ID not retrieved.")
+        return response.get("value", False)
 
 
 async def get_position_id(position: str) -> int:
@@ -111,8 +132,14 @@ async def get_position_id(position: str) -> int:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Position ID retrieved successfully.")
-        return response.json().get("value", False)
+        response = response.json()
+
+        if response.get("value") is not False:
+            logger.info("Position ID retrieved successfully")
+            return response.get("value")
+
+        logger.info("position ID not retrieved.")
+        return response.get("value", False)
 
 
 async def verify_phone_number(phone: str) -> bool:
@@ -132,7 +159,14 @@ async def verify_phone_number(phone: str) -> bool:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
         logger.info("Phone number verification completed.")
-        return response.json().get("exist", False)
+        response = response.json()
+
+        if response.get("exist"):
+            logger.info(f"Phone number {phone} exists.")
+            return response.get("exist")
+
+        logger.info(f"Phone number {phone} does not exist.")
+        return response.get("exist", False)
 
 
 async def add_new_user(
