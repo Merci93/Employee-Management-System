@@ -47,6 +47,24 @@ app = FastAPI(
         "contact": "https://github.com/Merci93/Employee-Management-System",
     },
     lifespan=lifespan,
+    openapi_tags=[
+        {
+            "name": "Employee Data Verification",
+            "description": "Endpoints for verifying employee data - email, phone number and ID."
+        },
+        {
+            "name": "Retrieve ID",
+            "description": "Endpoints for retrieving id for specified gender, department and position from their respective tables.",
+        },
+        {
+            "name": "Admin and User Management",
+            "description": "Endpoints to add employees as user and admins in order to access or modify data."
+        },
+        {
+            "name": "Employee Management",
+            "description": "Endpoints to manage employee data - add, update and delete."
+        }
+    ]
 )
 
 app.add_middleware(
@@ -124,13 +142,13 @@ class EmployeeCreateRequest(BaseModel):
     hired_date: str
 
 
-@app.get("/v1/root/")
+@app.get("/v1/root/", tags=["Root"])
 def get_root() -> dict[str, str]:
     """API root endpoint."""
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/v1/verify_employee_id/")
+@app.get("/v1/verify_employee_id/", tags=["Employee Data Verification"])
 def verify_employee_id(email: str) -> Dict[str, Any]:
     """Verify if user to be created has an email associated with an employee ID"""
 
@@ -158,7 +176,7 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/verify_email/")
+@app.get("/v1/verify_email/", tags=["Employee Data Verification"])
 def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
     """Verify if email already exists."""
 
@@ -186,7 +204,7 @@ def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/verify_phone_number/")
+@app.get("/v1/verify_phone_number/", tags=["Employee Data Verification"])
 def verify_phone_number(phone: str) -> Dict[str, bool]:
     """Verify if phone number already exists in database."""
 
@@ -208,7 +226,7 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_gender_id/")
+@app.get("/v1/get_gender_id/", tags=["Retrieve ID"])
 def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
     """Get employee gender id."""
     logger.info(f"Retrieving gender id for gender {gender} ...")
@@ -229,7 +247,7 @@ def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_department_id/")
+@app.get("/v1/get_department_id/", tags=["Retrieve ID"])
 def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     """Get employee department id."""
     logger.info(f"Retrieving department id for {department} ...")
@@ -250,7 +268,7 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_position_id/")
+@app.get("/v1/get_position_id/", tags=["Retrieve ID"])
 def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     """Get employee position id."""
     logger.info(f"Retrieving position id for {position} ...")
@@ -271,7 +289,7 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/add_user/")
+@app.post("/v1/add_user/", tags=["Admin and User Management"])
 def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
     Add new user to the user's database with assigned role as admin or user.
@@ -311,7 +329,7 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/add_new_employee/")
+@app.post("/v1/add_new_employee/", tags=["Employee Management"])
 def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     """
     Add new employee details to the employees table.
