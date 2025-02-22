@@ -311,7 +311,7 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/add_new_employee")
+@app.post("/v1/add_new_employee/")
 def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     """
     Add new employee details to the employees table.
