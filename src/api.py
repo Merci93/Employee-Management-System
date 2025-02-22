@@ -235,7 +235,7 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     logger.info(f"Retrieving department id for {department} ...")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.dept_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE department = %s").format(sql.Identifier(settings.dept_table_name))
             cursor.execute(query, (department,))
             employee_dept_id = cursor.fetchone()
             if employee_dept_id:
@@ -256,7 +256,7 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     logger.info(f"Retrieving position id for {position} ...")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE name = %s").format(sql.Identifier(settings.position_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE position = %s").format(sql.Identifier(settings.position_table_name))
             cursor.execute(query, (position,))
             employee_position_id = cursor.fetchone()
             if employee_position_id:
