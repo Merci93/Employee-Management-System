@@ -3,6 +3,7 @@ from datetime import date
 from typing import Dict
 
 import httpx
+from fastapi import HTTPException
 
 from src.log_handler import logger
 
@@ -202,3 +203,52 @@ async def add_new_user(
         response = response.json()
         logger.info(f"{response.get('message')} with assigned role {role}")
         return response
+
+
+async def add_new_employee_data(
+    first_name: str,
+    middle_name: str,
+    last_name: str,
+    address: str,
+    date_of_birth: date,
+    gender_id: int,
+    phone: str,
+    position_id: int,
+    email: str,
+    department_id: int,
+    salary: int,
+    hired_date: date,
+) -> Dict[str, str]:
+    """
+    Add a new employee details to the database.
+    """
+    logger.info("Initiating new employee creating process ...")
+
+    url = f"{BASE_URL}/add_new_employee/"
+    payload = {
+        "first_name": first_name,
+        "middle_name": middle_name,
+        "last_name": last_name,
+        "address": address,
+        "date_of_birth": date_of_birth.strftime("%Y-%m-%d"),
+        "gender_id": gender_id,
+        "phone": phone,
+        "position_id": position_id,
+        "department_id": department_id,
+        "email": email,
+        "salary": salary,
+        "hired_date": hired_date.strftime("%Y-%m-%d"),
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json=payload, headers=HEADERS)
+            response.raise_for_status()
+            response = response.json()
+
+            if response.get("status") == "Success":
+                logger.info(f"{response.get('message')}")
+                return response
+        except Exception as e:
+            logger.error(f"Unexpected error occurred while adding employee data for {first_name} {last_name}: {e}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
