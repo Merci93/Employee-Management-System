@@ -231,14 +231,15 @@ async def add_new_employee_data(
         "last_name": last_name,
         "address": address,
         "date_of_birth": date_of_birth.strftime("%Y-%m-%d"),
-        "gender": gender_id,
+        "gender_id": gender_id,
         "phone": phone,
-        "position": position_id,
-        "department": department_id,
+        "position_id": position_id,
+        "department_id": department_id,
         "email": email,
         "salary": salary,
-        "hired_date": hired_date,
+        "hired_date": hired_date.strftime("%Y-%m-%d"),
     }
+
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(url, json=payload, headers=HEADERS)
