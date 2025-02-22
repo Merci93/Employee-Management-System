@@ -24,7 +24,7 @@ CREATE TABLE departments (
 );
 
 -- Insert data into departments table
-INSERT INTO departments (name)
+INSERT INTO departments (department)
 VALUES ('IT'),
     ('Marketing'),
     ('Sales'),
@@ -40,7 +40,7 @@ CREATE TABLE positions (
 );
 
 -- Insert data into roles table
-INSERT INTO positions (name)
+INSERT INTO positions (position)
 VALUES ('HR'),
     ('Data Engineer'),
     ('Solutions Architect'),
