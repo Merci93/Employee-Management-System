@@ -120,7 +120,7 @@ class EmployeeCreateRequest(BaseModel):
     position_id: int
     email: str
     department_id: int
-    salary: int
+    salary: float
     hired_date: str
 
 
