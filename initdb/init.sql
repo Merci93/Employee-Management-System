@@ -20,7 +20,7 @@ VALUES ('Male'),
 -- Create departments table
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    department VARCHAR(50) NOT NULL
 );
 
 -- Insert data into departments table
@@ -36,7 +36,7 @@ VALUES ('IT'),
 -- Create positions table
 CREATE TABLE positions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    position VARCHAR(50) NOT NULL
 );
 
 -- Insert data into roles table
