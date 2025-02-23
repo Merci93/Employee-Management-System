@@ -1,8 +1,8 @@
--- INIT SQL
+-- INITIALIZE DATABASE AND CREATE TABLES
 -- Create databases
 CREATE DATABASE employees;
 
--- COnnect to database.
+-- Connect to database.
 \connect employees
 
 -- Create gender table
