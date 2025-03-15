@@ -18,13 +18,13 @@ VALUES ('Male'),
 
 
 -- Create departments table
-CREATE TABLE departments (
+CREATE TABLE department (
     id SERIAL PRIMARY KEY,
     department VARCHAR(50) NOT NULL
 );
 
 -- Insert data into departments table
-INSERT INTO departments (department)
+INSERT INTO department (department)
 VALUES ('IT'),
     ('Marketing'),
     ('Sales'),
@@ -34,13 +34,13 @@ VALUES ('IT'),
 
 
 -- Create positions table
-CREATE TABLE positions (
+CREATE TABLE position (
     id SERIAL PRIMARY KEY,
     position VARCHAR(50) NOT NULL
 );
 
 -- Insert data into roles table
-INSERT INTO positions (position)
+INSERT INTO position (position)
 VALUES ('HR'),
     ('Data Engineer'),
     ('Solutions Architect'),
@@ -79,8 +79,8 @@ CREATE TABLE employee (
     date_resigned DATE,
 
     -- Foreign Key Constraints
-    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE,
-    CONSTRAINT fk_position FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE,
+    CONSTRAINT fk_position FOREIGN KEY (position_id) REFERENCES position(id) ON DELETE CASCADE,
     CONSTRAINT fk_gender FOREIGN KEY (gender_id) REFERENCES gender(id) ON DELETE SET NULL
 );
 
