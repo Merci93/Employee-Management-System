@@ -2,7 +2,7 @@
 import httpx
 
 
-httpx_client: httpx.AsyncClient = None
+httpx_client: httpx.AsyncClient = None  # type: ignore
 
 
 def init_httpx_client() -> None:
@@ -17,7 +17,7 @@ async def close_httpx_client() -> None:
     global httpx_client
     if httpx_client is not None:
         await httpx_client.aclose()
-        httpx_client = None
+        httpx_client = None  # type: ignore
 
 
 # Initialize the client when the module is loaded
