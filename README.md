@@ -10,10 +10,7 @@ The database is a PostgreSQL database and stores all employee information(s) inc
 The UI contains a query interface that displays the results when the database is queried for employee data.
 
 ### Overview
-![](flow-chart/overview.png)
-
-### Flow Chart
-![](flow-chart/flow-chart.png)
+![](img/overview.png)
 
 ### Functionalities
 1. **Login**: Verifies user login data against already existing data in the database. Access is granted if username exists. If username does not exists or password entered is wrong, an error message is shown. Dat verification in the database is possible via API endpoint.

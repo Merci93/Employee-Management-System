@@ -3,5 +3,6 @@ env/
 __pycache__/
 .vscode/
 logs/
+flow-chart
 
 # Files
