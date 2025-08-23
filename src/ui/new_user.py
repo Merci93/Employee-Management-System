@@ -36,11 +36,11 @@ async def verify_user_details(email: str) -> bool | None:
         employee_id_task = backend_modules.verify_employee_id(email)
         email_task = backend_modules.verify_email(email, who="user")
         employee_id_exists, email_exists = await asyncio.gather(employee_id_task, email_task)
-        return employee_id_exists, email_exists
+        return employee_id_exists, email_exists  # type: ignore
     except Exception as e:
         st.error("Verification failed ❌.")
         st.error(f"Error details: {e}")
-        return None, None
+        return None, None  # type: ignore
 
 
 async def create_user() -> None:
@@ -73,7 +73,7 @@ async def create_user() -> None:
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
 
-    employee_id_exists, email_exists = await verify_user_details(email)
+    employee_id_exists, email_exists = await verify_user_details(email)  # type: ignore
 
     if employee_id_exists is None or email_exists is None:
         if employee_id_exists is None:
@@ -99,7 +99,7 @@ async def create_user() -> None:
             response = await backend_modules.add_new_user(
                 firstname=firstname,
                 lastname=lastname,
-                dob=dob,
+                dob=dob,  # type: ignore
                 email=email,
                 password=password,
                 role=assigned_role,

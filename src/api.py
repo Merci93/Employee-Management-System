@@ -7,7 +7,7 @@ from typing import Any, AsyncContextManager, Dict
 
 import bcrypt
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2 import sql
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
@@ -372,7 +372,7 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
                     user.employee_id,
                 ),
             )
-            inserted_name = cursor.fetchone()[0]
+            inserted_name = cursor.fetchone()[0]  # type: ignore
 
         db_connect.db_client.commit()
 
