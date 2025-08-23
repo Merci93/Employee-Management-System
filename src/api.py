@@ -1,4 +1,5 @@
 """API endpoint module."""
+
 from contextlib import asynccontextmanager
 from enum import Enum
 from pydantic import BaseModel
@@ -6,7 +7,7 @@ from typing import Any, AsyncContextManager, Dict
 
 import bcrypt
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2 import sql
 from psycopg2.errors import OperationalError, UniqueViolation, InFailedSqlTransaction
@@ -27,12 +28,12 @@ PS: This API is for this project purpose only.
 """
 
 
-@asynccontextmanager
+@asynccontextmanager  # type: ignore
 async def lifespan(app: FastAPI) -> AsyncContextManager[Any]:  # type: ignore
     # Startup
     init_settings()
     db_connect.db_init()
-    yield
+    yield  # type: ignore
     # Shutdown
     db_connect.db_client.close()
 
@@ -50,7 +51,7 @@ app = FastAPI(
     openapi_tags=[
         {
             "name": "Employee Data Verification",
-            "description": "Endpoints for verifying employee data - email, phone number and ID."
+            "description": "Endpoints for verifying employee data - email, phone number and ID.",
         },
         {
             "name": "Retrieve ID",
@@ -58,17 +59,21 @@ app = FastAPI(
         },
         {
             "name": "Admin and User Management",
-            "description": "Endpoints to add employees as user and admins in order to access or modify data."
+            "description": "Endpoints to add employees as user and admins in order to access or modify data.",
         },
         {
             "name": "Employee Management",
-            "description": "Endpoints to manage employee data - add, update and delete."
+            "description": "Endpoints to manage employee data - add, update and delete.",
         },
         {
             "name": "Employee Data Search",
-            "description": "Endpoints to fetch employee data."
-        }
-    ]
+            "description": "Endpoints to fetch employee data.",
+        },
+        {
+            "name": "Employee Data Update",
+            "description": "Endpoints to update employee data.",
+        },
+    ],
 )
 
 app.add_middleware(
@@ -146,6 +151,26 @@ class EmployeeCreateRequest(BaseModel):
     hired_date: str
 
 
+class AddressUpdate(BaseModel):
+    address: str
+
+
+class SalaryUpdate(BaseModel):
+    salary: int
+
+
+class PhoneNumberUpdate(BaseModel):
+    phone: str
+
+
+class DepartmentUpdate(BaseModel):
+    department: int
+
+
+class PositionUpdate(BaseModel):
+    position: int
+
+
 @app.get("/v1/root/", tags=["Root"])
 def get_root() -> dict[str, str]:
     """API root endpoint."""
@@ -160,23 +185,21 @@ def verify_employee_id(email: str) -> Dict[str, Any]:
 
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(sql.Identifier(settings.employee_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(
+                sql.Identifier(settings.employee_table_name)
+            )
             cursor.execute(query, (email,))
             employee_id = cursor.fetchone()
             if employee_id:
                 logger.info(f"Employee with email {email} has id {employee_id}")
-                return {
-                    "exist": True,
-                    "value": employee_id[0]
-                }
+                return {"exist": True, "value": employee_id[0]}
             else:
                 logger.info(f"Employee with email {email} does not exist.")
-                return {
-                    "exist": False,
-                    "value": False
-                }
+                return {"exist": False, "value": False}
     except Exception as e:
-        logger.error(f"Unexpected error occurred while fetching employee id with email {email}: {e}")
+        logger.error(
+            f"Unexpected error occurred while fetching employee id with email {email}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -216,7 +239,9 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
 
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(sql.Identifier(settings.employee_table_name))
+            query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(
+                sql.Identifier(settings.employee_table_name)
+            )
             cursor.execute(query, (phone,))
             employee_phone = cursor.fetchone()
             if employee_phone:
@@ -226,7 +251,9 @@ def verify_phone_number(phone: str) -> Dict[str, bool]:
                 logger.info(f"Phone number {phone} does not exist.")
                 return {"exist": False}
     except Exception as e:
-        logger.error(f"Unexpected error occurred while verifying phone number {phone}: {e}")
+        logger.error(
+            f"Unexpected error occurred while verifying phone number {phone}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -236,18 +263,24 @@ def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
     logger.info(f"Retrieving gender id for gender {gender} ...")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(sql.Identifier(settings.gender_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(
+                sql.Identifier(settings.gender_table_name)
+            )
             cursor.execute(query, (gender,))
             employee_gender_id = cursor.fetchone()
             if employee_gender_id:
-                logger.info(f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}")
+                logger.info(
+                    f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}"
+                )
                 return {"value": employee_gender_id[0]}
             else:
                 logger.info("Gender ID not retrieved.")
                 return {"value": False}
 
     except Exception as e:
-        logger.error(f"Unexpected error occurred while retrieving id for gender {gender}: {e}")
+        logger.error(
+            f"Unexpected error occurred while retrieving id for gender {gender}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -257,18 +290,24 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     logger.info(f"Retrieving department id for {department} ...")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE department = %s").format(sql.Identifier(settings.dept_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE department = %s").format(
+                sql.Identifier(settings.dept_table_name)
+            )
             cursor.execute(query, (department,))
             employee_dept_id = cursor.fetchone()
             if employee_dept_id:
-                logger.info(f"Department ID retrieved successfully. Value: {employee_dept_id[0]}")
+                logger.info(
+                    f"Department ID retrieved successfully. Value: {employee_dept_id[0]}"
+                )
                 return {"value": employee_dept_id[0]}
             else:
                 logger.info("Department ID not retrieved.")
                 return {"value": False}
 
     except Exception as e:
-        logger.error(f"Unexpected error occurred while retrieving id for {department}: {e}")
+        logger.error(
+            f"Unexpected error occurred while retrieving id for {department}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -278,18 +317,24 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     logger.info(f"Retrieving position id for {position} ...")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE position = %s").format(sql.Identifier(settings.position_table_name))
+            query = sql.SQL("SELECT id FROM {} WHERE position = %s").format(
+                sql.Identifier(settings.position_table_name)
+            )
             cursor.execute(query, (position,))
             employee_position_id = cursor.fetchone()
             if employee_position_id:
-                logger.info(f"Position ID retrieved successfully. Value: {employee_position_id[0]}")
+                logger.info(
+                    f"Position ID retrieved successfully. Value: {employee_position_id[0]}"
+                )
                 return {"value": employee_position_id[0]}
             else:
                 logger.info("position ID not retrieved.")
                 return {"value": False}
 
     except Exception as e:
-        logger.error(f"Unexpected error occurred while retrieving id for {position}: {e}")
+        logger.error(
+            f"Unexpected error occurred while retrieving id for {position}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -301,16 +346,31 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     User role: can only view employee data.
     Admin role: can perform all operations including addin, deleting and updating data.
     """
-    logger.info(f"Adding user {user.firstname} {user.lastname} and details to the database ...")
+    logger.info(
+        f"Adding user {user.firstname} {user.lastname} and details to the database ..."
+    )
     query = """
         INSERT INTO users (first_name, last_name, email, date_of_birth, role, password, employee_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING first_name last_name;
     """
     try:
-        encrypted_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
+        encrypted_password = bcrypt.hashpw(
+            user.password.encode(), bcrypt.gensalt()
+        ).decode()
         with db_connect.db_client.cursor() as cursor:
-            cursor.execute(query, (user.firstname, user.lastname, user.email, user.dob, user.role, encrypted_password, user.employee_id))
+            cursor.execute(
+                query,
+                (
+                    user.firstname,
+                    user.lastname,
+                    user.email,
+                    user.dob,
+                    user.role,
+                    encrypted_password,
+                    user.employee_id,
+                ),
+            )
             inserted_name = cursor.fetchone()[0]
 
         db_connect.db_client.commit()
@@ -329,7 +389,9 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
 
     except Exception as e:
         db_connect.db_client.rollback()
-        logger.error(f"Unexpected error occurred while adding user {user.firstname} {user.lastname}: {e}")
+        logger.error(
+            f"Unexpected error occurred while adding user {user.firstname} {user.lastname}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -341,7 +403,9 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     :param employee: Employee details.
     :return: Success if added, failed is not.
     """
-    logger.info(f"Adding new employee {employee.first_name} {employee.last_name} to the database ...")
+    logger.info(
+        f"Adding new employee {employee.first_name} {employee.last_name} to the database ..."
+    )
 
     query = """
         INSERT INTO employee (
@@ -353,10 +417,22 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     try:
         with db_connect.db_client.cursor() as cursor:
             cursor.execute(
-                query, (employee.first_name, employee.middle_name, employee.last_name, employee.email, employee.phone,
-                        employee.address, employee.salary, employee.department_id, employee.position_id, employee.gender_id,
-                        employee.date_of_birth, employee.hired_date)
-                )
+                query,
+                (
+                    employee.first_name,
+                    employee.middle_name,
+                    employee.last_name,
+                    employee.email,
+                    employee.phone,
+                    employee.address,
+                    employee.salary,
+                    employee.department_id,
+                    employee.position_id,
+                    employee.gender_id,
+                    employee.date_of_birth,
+                    employee.hired_date,
+                ),
+            )
             inserted_name = cursor.fetchone()[0]
 
         db_connect.db_client.commit()
@@ -370,12 +446,16 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
 
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.db_client.rollback()
-        logger.error(f"Failed to add employee {employee.first_name} {employee.last_name}: {e}")
+        logger.error(
+            f"Failed to add employee {employee.first_name} {employee.last_name}: {e}"
+        )
         raise HTTPException(status_code=400, detail=f"Failed to add employee: {str(e)}")
 
     except Exception as e:
         db_connect.db_client.rollback()
-        logger.error(f"Unexpected error occurred while adding employee {employee.first_name} {employee.last_name}: {e}")
+        logger.error(
+            f"Unexpected error occurred while adding employee {employee.first_name} {employee.last_name}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -390,7 +470,8 @@ def get_employee_data(employee_id: int) -> Dict[str, Any]:
     logger.info(f"Retrieving data for employee with ID {employee_id}")
     try:
         with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("""
+            query = sql.SQL(
+                """
                             SELECT
                                 e.id,
                                 e.first_name,
@@ -412,37 +493,78 @@ def get_employee_data(employee_id: int) -> Dict[str, Any]:
                             JOIN {} AS g ON e.{} = g.{}
                             JOIN {} AS p ON e.{} = p.{}
                             WHERE e.{} = %s;
-                        """).format(
-                            sql.Identifier(settings.employee_table_name),
-                            sql.Identifier(settings.dept_table_name),
-                            sql.Identifier(settings.department_id),
-                            sql.Identifier(settings.join_column),
-                            sql.Identifier(settings.gender_table_name),
-                            sql.Identifier(settings.gender_id),
-                            sql.Identifier(settings.join_column),
-                            sql.Identifier(settings.position_table_name),
-                            sql.Identifier(settings.position_id),
-                            sql.Identifier(settings.join_column),
-                            sql.Identifier(settings.join_column)
-                        )
+                        """
+            ).format(
+                sql.Identifier(settings.employee_table_name),
+                sql.Identifier(settings.dept_table_name),
+                sql.Identifier(settings.department_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.gender_table_name),
+                sql.Identifier(settings.gender_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.position_table_name),
+                sql.Identifier(settings.position_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.join_column),
+            )
             cursor.execute(query, (employee_id,))
             rows = cursor.fetchall()
             col_names = [desc[0] for desc in cursor.description]
             employee_data = [dict(zip(col_names, row)) for row in rows]
 
             if employee_data:
-                logger.info(f"Employee data retrieved successfully for employee with ID {employee_id}")
+                logger.info(
+                    f"Employee data retrieved successfully for employee with ID {employee_id}"
+                )
                 return {"value": employee_data}
             else:
-                logger.info(f"Employee with ID {employee_id} does not exists in the database.")
+                logger.info(
+                    f"Employee with ID {employee_id} does not exists in the database."
+                )
                 return {"value": False}
 
     except Exception as e:
-        logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
+        logger.error(
+            f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
-# TODO - Add endpoint to delete employee data
+
+@app.post("/v1/update_employee_address/", tags=["Employee Data Update"])
+def address_update(
+    address: AddressUpdate, employee_id: int = Depends()
+) -> Dict[str, bool]:
+    """Update existing address."""
+    logger.info(f"Updating address for employee with ID {employee_id} ...")
+    query = """
+        UPDATE employees
+        SET address = %s
+        WHERE id = %s;
+    """
+    try:
+        with db_connect.db_client.cursor() as cursor:
+            cursor.execute(query, (address.address, employee_id))
+        db_connect.db_client.commit()
+
+        logger.info(f"Address updated successfully for employee ID {employee_id}.")
+
+        return {"status": True}
+
+    except Exception as e:
+        db_connect.db_client.rollback()
+        logger.error(
+            f"Unexpected error occurred while updating address for employee {employee_id}: {e}"
+        )
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
 # TODO - Add endpoint for updating employee data
+# 1. Endpoint to update address ✅
+# 2. Endpoint to update phone number
+# 3. Endpoint to update salary
+# 4. Endpoint to update department
+# 5. Endpoint to update position
+# TODO - Add endpoint to delete employee data
 
 
 if __name__ == "__main__":

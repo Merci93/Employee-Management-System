@@ -29,12 +29,19 @@ logout_page = st.Page(
     icon=":material/logout:",
 )
 
-new_user_admin = st.Page(
-    "ui/create_user_or_admin.py",
-    title="Create New Admin",
+new_user = st.Page(
+    "ui/new_user.py",
+    title="Create New User",
     icon=":material/person_add:",
     default=(role == "admin"),
 )
+
+# new_admin = st.Page(
+#     "ui/new_admin.py",
+#     title="Create New Admin",
+#     icon=":material/person_add:",
+#     default=(role == "admin"),
+# )
 
 search_employees = st.Page(
     "ui/search_employee.py",
@@ -75,14 +82,14 @@ st.logo("img/ems_logo.jpg", icon_image="img/CustomTkinter_icon_Windows.ico")
 account_pages = [user_details, logout_page]
 user_pages = [search_employees]
 admin_pages = [search_employees, add_employee, update_employee, delete_employee]
-new_user_pages = [new_user_admin]
+create_user_pages = [new_user]
 
 page_dict = {}
 if role is not None and role.lower() == "user":
     page_dict["Logged in as User"] = user_pages
 if role is not None and role.lower() == "admin":
     page_dict["Logged in as Admin"] = admin_pages
-    page_dict["Admins"] = new_user_pages
+    page_dict["Admins"] = create_user_pages
 
 if len(page_dict) > 0:
     pages = st.navigation({"Account": account_pages} | page_dict)

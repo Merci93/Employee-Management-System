@@ -8,6 +8,7 @@ from fastapi import HTTPException
 
 from src.log_handler import logger
 
+
 BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
 
@@ -219,7 +220,7 @@ async def add_new_employee_data(
     department_id: int,
     salary: int,
     hired_date: date,
-) -> Dict[str, str]:
+) -> Dict[str, str]: # type: ignore
     """
     Add a new employee details to the database.
     """
