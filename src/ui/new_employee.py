@@ -3,13 +3,9 @@ Module to add new employee data to the employees table.
 """
 
 import asyncio
-import os
 import re
-import sys
 
 import streamlit as st
-
-sys.path.append(os.path.abspath("."))
 
 from src.backend import backend_modules
 from src.log_handler import logger
