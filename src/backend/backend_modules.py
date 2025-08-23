@@ -220,7 +220,8 @@ async def add_new_employee_data(
     department_id: int,
     salary: int,
     hired_date: date,
-) -> Dict[str, str]: # type: ignore
+    status: str = "Active",
+) -> Dict[str, str]:  # type: ignore
     """
     Add a new employee details to the database.
     """
@@ -240,6 +241,7 @@ async def add_new_employee_data(
         "email": email,
         "salary": salary,
         "hired_date": hired_date.strftime("%Y-%m-%d"),
+        "status": status,
     }
 
     async with httpx.AsyncClient() as client:
