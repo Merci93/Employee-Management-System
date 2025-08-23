@@ -18,13 +18,13 @@ VALUES ('Male'),
 
 
 -- Create departments table
-CREATE TABLE departments (
+CREATE TABLE department (
     id SERIAL PRIMARY KEY,
     department VARCHAR(50) NOT NULL
 );
 
 -- Insert data into departments table
-INSERT INTO departments (department)
+INSERT INTO department (department)
 VALUES ('IT'),
     ('Marketing'),
     ('Sales'),
@@ -34,13 +34,13 @@ VALUES ('IT'),
 
 
 -- Create positions table
-CREATE TABLE positions (
+CREATE TABLE position (
     id SERIAL PRIMARY KEY,
     position VARCHAR(50) NOT NULL
 );
 
 -- Insert data into roles table
-INSERT INTO positions (position)
+INSERT INTO position (position)
 VALUES ('HR'),
     ('Data Engineer'),
     ('Solutions Architect'),
@@ -75,16 +75,18 @@ CREATE TABLE employee (
     gender_id INT NOT NULL,
     date_of_birth DATE,
     hired_date DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(10),
+    date_resigned DATE,
 
     -- Foreign Key Constraints
-    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE,
-    CONSTRAINT fk_position FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE,
+    CONSTRAINT fk_position FOREIGN KEY (position_id) REFERENCES position(id) ON DELETE CASCADE,
     CONSTRAINT fk_gender FOREIGN KEY (gender_id) REFERENCES gender(id) ON DELETE SET NULL
 );
 
 -- Add Admin employee data
-INSERT INTO employee (first_name, middle_name, last_name, email, phone, address, salary, department_id, position_id, gender_id, date_of_birth, hired_date)
-VALUES ('Admin', 'Admin', 'Admin', 'admin@gmail.com', '070000', '123 checksum street, Indi', 34567, 1, 13, 1, '2005-05-19', '2024-12-05');
+INSERT INTO employee (first_name, middle_name, last_name, email, phone, address, salary, department_id, position_id, gender_id, date_of_birth, hired_date, status, date_resigned)
+VALUES ('Admin', 'Admin', 'Admin', 'admin@gmail.com', '070000', '123 checksum street, Indi', 34567, 1, 13, 1, '2005-05-19', '2024-12-05', 'Active', NULL);
 
 
 -- Create Users table

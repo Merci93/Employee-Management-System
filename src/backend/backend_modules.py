@@ -3,9 +3,11 @@ from datetime import date
 from typing import Dict
 
 import httpx
+import pandas as pd
 from fastapi import HTTPException
 
 from src.log_handler import logger
+
 
 BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
@@ -218,7 +220,7 @@ async def add_new_employee_data(
     department_id: int,
     salary: int,
     hired_date: date,
-) -> Dict[str, str]:
+) -> Dict[str, str]: # type: ignore
     """
     Add a new employee details to the database.
     """
@@ -252,3 +254,30 @@ async def add_new_employee_data(
         except Exception as e:
             logger.error(f"Unexpected error occurred while adding employee data for {first_name} {last_name}: {e}")
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+async def get_employee_data(employee_id: int) -> pd.DataFrame | None:
+    """Fetch employee data using employee id"""
+    logger.info("Initiating employee data retrieval process ...")
+    url = f"{BASE_URL}/get_employee_data/"
+    payload = {"employee_id": employee_id}
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, params=payload, headers=HEADERS)
+            response.raise_for_status()
+            response = response.json()
+
+            data = response.get("value")
+
+            if data:
+                logger.info("Pandas DataFrame with employee data created.")
+                return pd.DataFrame(data)
+            return data
+        except Exception as e:
+            logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+# TODO - Add new enpoint call for deleting employee data
+# TODO - Add new enpoint call for updating employee data
