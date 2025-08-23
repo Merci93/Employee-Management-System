@@ -149,6 +149,7 @@ class EmployeeCreateRequest(BaseModel):
     department_id: int
     salary: float
     hired_date: str
+    status: str
 
 
 class AddressUpdate(BaseModel):
@@ -409,8 +410,8 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
 
     query = """
         INSERT INTO employee (
-            first_name, middle_name, last_name, email, phone, address, salary, department_id, position_id, gender_id, date_of_birth, hired_date)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        first_name, middle_name, last_name, email, phone, address, salary, department_id, position_id, gender_id, date_of_birth, hired_date, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING first_name last_name;
     """
 
@@ -431,9 +432,10 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
                     employee.gender_id,
                     employee.date_of_birth,
                     employee.hired_date,
+                    employee.status
                 ),
             )
-            inserted_name = cursor.fetchone()[0]
+            inserted_name = cursor.fetchone()[0]  # type: ignore
 
         db_connect.db_client.commit()
 
@@ -509,7 +511,7 @@ def get_employee_data(employee_id: int) -> Dict[str, Any]:
             )
             cursor.execute(query, (employee_id,))
             rows = cursor.fetchall()
-            col_names = [desc[0] for desc in cursor.description]
+            col_names = [desc[0] for desc in cursor.description]  # type: ignore
             employee_data = [dict(zip(col_names, row)) for row in rows]
 
             if employee_data:
