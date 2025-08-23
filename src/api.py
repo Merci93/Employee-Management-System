@@ -531,9 +531,7 @@ def get_employee_data(employee_id: int) -> Dict[str, Any]:
 
 
 @app.post("/v1/update_employee_address/", tags=["Employee Data Update"])
-def address_update(
-    address: AddressUpdate, employee_id: int = Depends()
-) -> Dict[str, bool]:
+def address_update(address: AddressUpdate, employee_id: int) -> Dict[str, bool]:
     """Update existing address."""
     logger.info(f"Updating address for employee with ID {employee_id} ...")
     query = """
