@@ -5,12 +5,8 @@ while employees with Admin access will be able to add, update, delete employees 
 and also assign user and admin roles to other employees.
 """
 import asyncio
-import os
 import re
-import sys
 import streamlit as st
-
-sys.path.append(os.path.abspath("."))
 
 from src.backend import backend_modules
 from src.log_handler import logger

@@ -1,11 +1,7 @@
 """Module to update employee data."""
 import asyncio
-import os
-import sys
 import streamlit as st
 import pandas as pd
-
-sys.path.append(os.path.abspath("."))
 
 from src.backend import backend_modules
 

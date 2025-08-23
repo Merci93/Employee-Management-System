@@ -1,26 +1,28 @@
 @ECHO OFF
 
-docker_image_exists() (
-    docker images -q %1 2>nul
-)
+REM Force execution from the batch file's folder (project root)
+cd /d "%~dp0"
 
-@REM Check if the image 'docker/ems' exists
-FOR /F "tokens=*" %%i IN ('docker images -q docker/ems') DO SET IMAGE_EXISTS=%%i
+
+@REM Check if image 'docker/ems' exists
+SET IMAGE_NAME=docker/ems
+FOR /F "tokens=*" %%i IN ('docker images -q %IMAGE_NAME%') DO SET IMAGE_EXISTS=%%i
 
 IF NOT DEFINED IMAGE_EXISTS (
-    echo Image not found, building docker/ems ...
-    docker build -t docker/ems .
+    echo Image %IMAGE_NAME% found, building %IMAGE_NAME% ...
+    docker build -t %IMAGE_NAME% .
     echo Image build complete.
 ) ELSE (
-    echo Image docker/ems already exists.
+    echo Image %IMAGE_NAME% already exists.
 )
 
-@REM Setup Docker Environment and Containers
-echo Starting Image ...
-@REM docker-compose up
+@REM Start Docker Containers
+echo Starting Docker Containers...
 docker-compose up -d
 
-@REM Activate the virtual environment and spin up the UI
-ECHO Starting up UI ...
+@REM Activate the virtual environment
 CALL env\Scripts\activate
-streamlit run src\ems.py
+
+@REM Running Streamlit UI
+ECHO Starting Streamlit UI ...
+python -m streamlit run src/ems.py
