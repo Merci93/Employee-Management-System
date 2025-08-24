@@ -33,10 +33,10 @@ async def verify_user_details(email: str) -> bool | None:
     :return: Returns a boolean True if it exists, False if not, and None in case of error.
     """
     try:
-        employee_id_task = backend_modules.verify_employee_id(email)
-        email_task = backend_modules.verify_email(email, who="user")
-        employee_id_exists, email_exists = await asyncio.gather(employee_id_task, email_task)
-        return employee_id_exists, email_exists  # type: ignore
+        employee_task = backend_modules.verify_email(email, who="employee")
+        user_admin_task = backend_modules.verify_email(email, who="user")
+        employee_email_exists, user_admin_exists = await asyncio.gather(employee_task, user_admin_task)
+        return employee_email_exists, user_admin_exists  # type: ignore
     except Exception as e:
         st.error("Verification failed ❌.")
         st.error(f"Error details: {e}")
@@ -73,23 +73,23 @@ async def create_user() -> None:
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
 
-    employee_id_exists, email_exists = await verify_user_details(email)  # type: ignore
+    employee_email_exists, user_admin_exists = await verify_user_details(email)  # type: ignore
 
-    if employee_id_exists is None or email_exists is None:
-        if employee_id_exists is None:
+    if employee_email_exists is None or user_admin_exists is None:
+        if employee_email_exists is None:
             st.error("Employee ID verification failed ❌.")
             logger.error("Employee ID verification failed.")
-        if email_exists is None:
+        if user_admin_exists is None:
             st.error("Email verification failed ❌.")
             logger.error("Email verification failed.")
         return
 
-    if not employee_id_exists and isinstance(employee_id_exists, bool):
+    if not employee_email_exists and isinstance(employee_email_exists, bool):
         logger.error(f"User with email {email} is not an employee.")
         st.error(f"User with email {email} is not an employee ❌.")
         return
 
-    if email_exists:
+    if user_admin_exists:
         logger.error(f"User with email {email} is already in users table.")
         st.error(f"Email {email} is already used ❌. Already a user.")
         return
@@ -103,7 +103,7 @@ async def create_user() -> None:
                 email=email,
                 password=password,
                 role=assigned_role,
-                employee_id=employee_id_exists,
+                employee_id=employee_email_exists,
             )
             if response.get("status") == "Success":
                 st.success(f"{response.get('message')} with assigned role {assigned_role} ✅.")

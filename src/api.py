@@ -3,7 +3,8 @@
 from contextlib import asynccontextmanager
 from enum import Enum
 from pydantic import BaseModel
-from typing import Any, AsyncContextManager, Dict
+from typing import Any, AsyncContextManager, Dict, Optional
+from datetime import date
 
 import bcrypt
 import uvicorn
@@ -172,40 +173,58 @@ class PositionUpdate(BaseModel):
     position: int
 
 
+class EmployeeResponseModel(BaseModel):
+    id: int
+    first_name: str
+    middle_name: Optional[str] = None
+    last_name: str
+    email: str
+    phone: str
+    address: str
+    salary: float
+    department: str
+    position: str
+    gender: str
+    date_of_birth: date
+    hired_date: date
+    status: str
+    date_resigned: Optional[date] = None
+
+
 @app.get("/v1/root/", tags=["Root"])
 def get_root() -> dict[str, str]:
     """API root endpoint."""
     return {"message": "Hello!!! Root API running."}
 
 
-@app.get("/v1/verify_employee_id/", tags=["Employee Data Verification"])
-def verify_employee_id(email: str) -> Dict[str, Any]:
-    """Verify if user to be created has an email associated with an employee ID"""
+# @app.get("/v1/verify_employee_id/", tags=["Employee Data Verification"])
+# def verify_employee_id(email: str) -> Dict[str, Any]:
+#     """Verify if user to be created has an email associated with an employee ID"""
 
-    logger.info("Verifying employee id ...")
+#     logger.info("Verifying employee id ...")
 
-    try:
-        with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(
-                sql.Identifier(settings.employee_table_name)
-            )
-            cursor.execute(query, (email,))
-            employee_id = cursor.fetchone()
-            if employee_id:
-                logger.info(f"Employee with email {email} has id {employee_id}")
-                return {"exist": True, "value": employee_id[0]}
-            else:
-                logger.info(f"Employee with email {email} does not exist.")
-                return {"exist": False, "value": False}
-    except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while fetching employee id with email {email}: {e}"
-        )
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+#     try:
+#         with db_connect.db_client.cursor() as cursor:
+#             query = sql.SQL("SELECT id FROM {} WHERE email = %s").format(
+#                 sql.Identifier(settings.employee_table_name)
+#             )
+#             cursor.execute(query, (email,))
+#             employee_id = cursor.fetchone()
+#             if employee_id:
+#                 logger.info(f"Employee with email {email} has id {employee_id}")
+#                 return {"exist": True, "value": employee_id[0]}
+#             else:
+#                 logger.info(f"Employee with email {email} does not exist.")
+#                 return {"exist": False, "value": False}
+#     except Exception as e:
+#         logger.error(
+#             f"Unexpected error occurred while fetching employee id with email {email}: {e}"
+#         )
+#         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/verify_email/", tags=["Employee Data Verification"])
-def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
+@app.get("/v1/verify_email/{email}", tags=["Employee Data Verification"])
+def verify_email_exists(email: str, who: WhoToVerify) -> Dict[str, bool]:
     """Verify if email already exists."""
 
     logger.info(f"Verifying email {email} ...")
@@ -220,11 +239,12 @@ def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
 
             cursor.execute(query, (email,))
             user_email = cursor.fetchone()
+
             if user_email:
-                logger.info(f"Email {email} exists.")
+                logger.info(f"Email {email} exists in {who} database.")
                 return {"exist": True}
             else:
-                logger.info(f"Email {email} does not exist.")
+                logger.info(f"Email {email} does not exists in {who} database.")
                 return {"exist": False}
 
     except Exception as e:
@@ -232,33 +252,34 @@ def verify_email(email: str, who: WhoToVerify) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/verify_phone_number/", tags=["Employee Data Verification"])
-def verify_phone_number(phone: str) -> Dict[str, bool]:
+@app.get("/v1/verify_phone_number/{phone_number}", tags=["Employee Data Verification"])
+def verify_phone_number(phone_number: str) -> Dict[str, bool]:
     """Verify if phone number already exists in database."""
 
-    logger.info(f"Verifying phone number {phone}")
+    logger.info(f"Verifying phone number {phone_number}")
 
     try:
         with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT phone FROM {} WHERE phone = %s").format(
                 sql.Identifier(settings.employee_table_name)
             )
-            cursor.execute(query, (phone,))
+            cursor.execute(query, (phone_number,))
             employee_phone = cursor.fetchone()
+
             if employee_phone:
-                logger.info(f"Phone number {phone} exists.")
+                logger.info(f"Phone number {phone_number} exists.")
                 return {"exist": True}
             else:
-                logger.info(f"Phone number {phone} does not exist.")
+                logger.info(f"Phone number {phone_number} does not exist.")
                 return {"exist": False}
     except Exception as e:
         logger.error(
-            f"Unexpected error occurred while verifying phone number {phone}: {e}"
+            f"Unexpected error occurred while verifying phone number {phone_number}: {e}"
         )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_gender_id/", tags=["Retrieve ID"])
+@app.get("/v1/get_gender_id/{gender}", tags=["Retrieve ID"])
 def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
     """Get employee gender id."""
     logger.info(f"Retrieving gender id for gender {gender} ...")
@@ -269,6 +290,7 @@ def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
             )
             cursor.execute(query, (gender,))
             employee_gender_id = cursor.fetchone()
+
             if employee_gender_id:
                 logger.info(
                     f"Gender ID retrieved successfully. Value: {employee_gender_id[0]}"
@@ -285,7 +307,7 @@ def get_gender_id(gender: GenderIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_department_id/", tags=["Retrieve ID"])
+@app.get("/v1/get_department_id/{department}", tags=["Retrieve ID"])
 def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
     """Get employee department id."""
     logger.info(f"Retrieving department id for {department} ...")
@@ -296,6 +318,7 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
             )
             cursor.execute(query, (department,))
             employee_dept_id = cursor.fetchone()
+
             if employee_dept_id:
                 logger.info(
                     f"Department ID retrieved successfully. Value: {employee_dept_id[0]}"
@@ -312,7 +335,7 @@ def get_department_id(department: DepartmentIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_position_id/", tags=["Retrieve ID"])
+@app.get("/v1/get_position_id/{position}", tags=["Retrieve ID"])
 def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
     """Get employee position id."""
     logger.info(f"Retrieving position id for {position} ...")
@@ -323,6 +346,7 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
             )
             cursor.execute(query, (position,))
             employee_position_id = cursor.fetchone()
+
             if employee_position_id:
                 logger.info(
                     f"Position ID retrieved successfully. Value: {employee_position_id[0]}"
@@ -339,8 +363,8 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/v1/get_employee_data/", tags=["Employee Data Search"])
-def get_employee_data(employee_id: int) -> Dict[str, Any]:
+@app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
+def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
     """
     Retrieve employee data using employee ID.
 
@@ -388,20 +412,24 @@ def get_employee_data(employee_id: int) -> Dict[str, Any]:
                 sql.Identifier(settings.join_column),
             )
             cursor.execute(query, (employee_id,))
-            rows = cursor.fetchall()
-            col_names = [desc[0] for desc in cursor.description]  # type: ignore
-            employee_data = [dict(zip(col_names, row)) for row in rows]
+            row = cursor.fetchone()
 
-            if employee_data:
+            if row:
+                col_names = [desc[0] for desc in cursor.description]  # type: ignore
+                employee_data = dict(zip(col_names, row))
                 logger.info(
                     f"Employee data retrieved successfully for employee with ID {employee_id}"
                 )
-                return {"value": employee_data}
+                return employee_data
             else:
                 logger.info(
                     f"Employee with ID {employee_id} does not exists in the database."
                 )
-                return {"value": False}
+                raise HTTPException(status_code=404, detail="Employee not found")
+
+    except HTTPException:
+        # Let FastAPI handle 404
+        raise
 
     except Exception as e:
         logger.error(
