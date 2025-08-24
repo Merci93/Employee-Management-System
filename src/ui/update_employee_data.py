@@ -34,7 +34,7 @@ async def get_employee_data(employee_id: int) -> pd.DataFrame:
     :return: Pandas Dataframe with employee data or an empty DataFrame.
     """
     df = await backend_modules.get_employee_data(employee_id=employee_id)
-    return df if df is not False else pd.DataFrame() # type: ignore
+    return df if df is not False else pd.DataFrame()  # type: ignore
 
 
 if get_available_employee_data:
