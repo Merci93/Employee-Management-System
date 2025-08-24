@@ -29,8 +29,8 @@ logout_page = st.Page(
     icon=":material/logout:",
 )
 
-new_user = st.Page(
-    "ui/new_user.py",
+new_admin_user = st.Page(
+    "ui/new_admin_user.py",
     title="Create New User",
     icon=":material/person_add:",
     default=(role == "admin"),
