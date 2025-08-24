@@ -1,23 +1,85 @@
 # Employee Management System
-An Employee Management System developed using Python, Customtkinter and tkinter libraries. The system is designed to include functionalities:
-- Adding a new employee
-- Updating employee data
-- Deleting a specified employee data
-- Deleting all data
+The Employee Management System (EMS) is a Python-based application with a Streamlit-powered web interface, designed to manage employee records efficiently. It provides a full suite of CRUD operations and integrates with a robust backend API built using FastAPI.
 
-The database is a PostgreSQL database and stores all employee information(s) including first name, last name, phone number, address, role, gender, department and salary.
+### System Architecture
+- Streamlit provides a responsive web interface
+- FastAPI exposes REST endpoints for CRUD operations
+- PostgreSQL ensures data integrity and fast queries
 
-The UI contains a query interface that displays the results when the database is queried for employee data.
-
-### Overview
 ![](img/overview.png)
 
-### Functionalities
-1. **Login**: Verifies user login data against already existing data in the database. Access is granted if username exists. If username does not exists or password entered is wrong, an error message is shown. Dat verification in the database is possible via API endpoint.
-2. **Add User**: Functionlaity to add a new user to the users database. This adds a new user detail via a FastAPI endpoint and will grant the specified user access to the Employee Management System. New user data includes username (which will be verified against the existing data in the database before being added), firstname, lastname, email and password (with a second confirmation).
+
+### Features and Functionalities
+The system includes the following features:
+1. **User Authentication**
+    - Secure login interface
+    - Role-based access control (Admin, User)
+
+2. **Employee Management**
+    - *Add New Employee Data*: Captures comprehensive employee details including:
+        - First, Middle and Last Name
+        - Position and Department
+        - Address
+        - Phone Number
+        - Salary
+        - Gender
+        - Date of Birth
+        - Hired Date
+    
+    - *Update Employee Data*: Modify existing employee records, including:
+        - Names (First, Middle and Last)
+        - Address
+        - Department
+        - Position
+        - Salary
+        - Phone Number
+    
+    - *Delete Employee Data*
+        - Strictly by Admin role
+        - Option to delete individual employee record
+
+
+3. **Employee Search**: Flexible query interface to search employees by:
+    - First Name
+    - Last Name
+    - Employee ID
+    - Department
+
+4. **Backend Integration**:
+    - All data operations are handled through a *FastAPI* backend
+    - PostgreSQL database stores all employee information securely, including contact details, role, department, and salary.
+
+ 
 
 ### User Interface
 >> TODO
 
-### Setup
->> TODO
+
+### Getting Started (Windows)
+1. Ensure Docker Desktop is installed and running
+2. Clone the repository:
+````
+git clone https://github.com/Merci93/Employee-Management-System
+cd Employee-Management-System
+````
+
+3. Run the setup batch script:
+````
+.\setup.bat
+````
+
+The batch script will:
+    - Build the Docker image (if not already built)
+    - Start Docker containers via docker-compose
+    - Activate the virtual environment
+    - Launch the EMS Streamlit UI
+
+No manual virtual environment setup or Python commands are needed — everything is handled by setup.bat
+
+
+### Tech Stack
+ - *UI*: Streamlit
+ - *Backend*: FastAPI
+ - *Database*: PostgreSQL
+ - *Containerization*: Docker & Docker Compose
+ - *Language*: Python 3.10+
