@@ -56,6 +56,7 @@ The system includes the following features:
 
 
 ### Getting Started (Windows)
+#### Approach 1
 1. Ensure Docker Desktop is installed and running
 2. Clone the repository:
 ````
@@ -63,10 +64,18 @@ git clone https://github.com/Merci93/Employee-Management-System
 cd Employee-Management-System
 ````
 
-3. Run the setup batch script:
+3. Run the setup batch script in the command line.
 ````
 .\setup.bat
 ````
+#### Approach 2
+1. Ensure Docker Desktop is installed and running
+2. Clone the repository:
+````
+git clone https://github.com/Merci93/Employee-Management-System
+````
+
+3. Open the folder and click ````setup.bat```` script.
 
 The batch script will:
 - Build the Docker image (if not already built)
