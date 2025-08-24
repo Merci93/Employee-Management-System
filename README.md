@@ -69,10 +69,10 @@ cd Employee-Management-System
 ````
 
 The batch script will:
-1. Build the Docker image (if not already built)
-2. Start Docker containers via docker-compose
-3. Activate the virtual environment
-4. Launch the EMS Streamlit UI
+    1. Build the Docker image (if not already built)
+    2. Start Docker containers via docker-compose
+    3. Activate the virtual environment
+    4. Launch the EMS Streamlit UI
 
 
 No manual virtual environment setup or Python commands are needed — everything is handled by setup.bat
