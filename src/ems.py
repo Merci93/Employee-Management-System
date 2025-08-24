@@ -82,7 +82,7 @@ st.logo("img/ems_logo.jpg", icon_image="img/CustomTkinter_icon_Windows.ico")
 account_pages = [user_details, logout_page]
 user_pages = [search_employees]
 admin_pages = [search_employees, add_employee, update_employee, delete_employee]
-create_user_pages = [new_user]
+create_user_pages = [new_admin_user]
 
 page_dict = {}
 if role is not None and role.lower() == "user":
