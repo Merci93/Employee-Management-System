@@ -13,30 +13,30 @@ BASE_URL = "http://localhost:8000/v1"
 HEADERS = {"accept": "application/json"}
 
 
-async def verify_employee_id(email: str) -> bool:
-    """
-    Verify if the user to be added is an employee.
+# async def verify_employee_id(email: str) -> bool:
+#     """
+#     Verify if the user to be added is an employee.
 
-    :param Email: Employee email to check.
-    return: A boolean True if it exists, False otherwise.
-    """
-    logger.info("Starting Employee ID verification...")
+#     :param Email: Employee email to check.
+#     return: A boolean True if it exists, False otherwise.
+#     """
+#     logger.info("Starting Employee ID verification...")
 
-    url = f"{BASE_URL}/verify_employee_id/"
-    params = {
-        "email": email,
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
-        response.raise_for_status()
-        logger.info("Employee ID verification completed.")
-        response = response.json()
+#     url = f"{BASE_URL}/verify_employee_id/"
+#     params = {
+#         "email": email,
+#     }
+#     async with httpx.AsyncClient() as client:
+#         response = await client.get(url, params=params, headers=HEADERS)
+#         response.raise_for_status()
+#         logger.info("Employee ID verification completed.")
+#         response = response.json()
 
-        if response.get("exist"):
-            return response.get("value")
+#         if response.get("exist"):
+#             return response.get("value")
 
-        logger.error(f"User with email {email} is not an employee.")
-        return response.get("value", False)
+#         logger.error(f"User with email {email} is not an employee.")
+#         return response.get("value", False)
 
 
 async def verify_email(email: str, who: str) -> bool:
@@ -49,11 +49,9 @@ async def verify_email(email: str, who: str) -> bool:
     """
     logger.info("Starting email verification...")
 
-    url = f"{BASE_URL}/verify_email/"
-    params = {
-        "email": email,
-        "who": who,
-    }
+    url = f"{BASE_URL}/verify_email/{email}"
+    params = {"who": who}
+
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=HEADERS)
         response.raise_for_status()
@@ -67,7 +65,7 @@ async def verify_email(email: str, who: str) -> bool:
         return response.get("exist", False)
 
 
-async def verify_phone_number(phone: str) -> bool:
+async def verify_phone_number(phone_number: str) -> bool:
     """
     Verify if phone number already exists in database.
 
@@ -76,21 +74,19 @@ async def verify_phone_number(phone: str) -> bool:
     """
     logger.info("Starting phone number verification...")
 
-    url = f"{BASE_URL}/verify_phone_number/"
-    params = {
-        "phone": phone
-    }
+    url = f"{BASE_URL}/verify_phone_number/{phone_number}"
+
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
+        response = await client.get(url, headers=HEADERS)
         response.raise_for_status()
         logger.info("Phone number verification completed.")
         response = response.json()
 
         if response.get("exist"):
-            logger.info(f"Phone number {phone} exists.")
+            logger.info(f"Phone number {phone_number} exists.")
             return response.get("exist")
 
-        logger.info(f"Phone number {phone} does not exist.")
+        logger.info(f"Phone number {phone_number} does not exist.")
         return response.get("exist", False)
 
 
@@ -103,12 +99,10 @@ async def get_gender_id(gender: str) -> int | bool:
     """
     logger.info("Starting gender id retrieval ...")
 
-    url = f"{BASE_URL}/get_gender_id/"
-    params = {
-        "gender": gender
-    }
+    url = f"{BASE_URL}/get_gender_id/{gender}"
+
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
+        response = await client.get(url, headers=HEADERS)
         response.raise_for_status()
         response = response.json()
 
@@ -129,12 +123,10 @@ async def get_department_id(department: str) -> int | bool:
     """
     logger.info("Starting department id retrieval ...")
 
-    url = f"{BASE_URL}/get_department_id/"
-    params = {
-        "department": department
-    }
+    url = f"{BASE_URL}/get_department_id/{department}"
+
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
+        response = await client.get(url, headers=HEADERS)
         response.raise_for_status()
         response = response.json()
 
@@ -155,12 +147,10 @@ async def get_position_id(position: str) -> int:
     """
     logger.info("Starting position id retrieval ...")
 
-    url = f"{BASE_URL}/get_position_id/"
-    params = {
-        "position": position
-    }
+    url = f"{BASE_URL}/get_position_id/{position}"
+
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
+        response = await client.get(url, headers=HEADERS)
         response.raise_for_status()
         response = response.json()
 
@@ -172,24 +162,25 @@ async def get_position_id(position: str) -> int:
         return response.get("value", False)
 
 
-async def get_employee_data(employee_id: int) -> pd.DataFrame | None:
+async def get_employee_data_by_id(employee_id: int) -> pd.DataFrame | None:
     """Fetch employee data using employee id"""
     logger.info("Initiating employee data retrieval process ...")
-    url = f"{BASE_URL}/get_employee_data/"
-    payload = {"employee_id": employee_id}
+    url = f"{BASE_URL}/get_employee_data/{employee_id}"
 
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(url, params=payload, headers=HEADERS)
+            response = await client.get(url, headers=HEADERS)
+
+            if response.status_code == 404:
+                logger.warning(f"Employee ID {employee_id} not found.")
+                return None
+
             response.raise_for_status()
-            response = response.json()
 
-            data = response.get("value")
+            data = response.json()
+            logger.info("Pandas DataFrame with employee data created.")
+            return pd.DataFrame([data])
 
-            if data:
-                logger.info("Pandas DataFrame with employee data created.")
-                return pd.DataFrame(data)
-            return data
         except Exception as e:
             logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
