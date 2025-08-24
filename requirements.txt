@@ -3,7 +3,7 @@ colorlog==6.8.2
 fastapi==0.111.0
 httpx==0.27.0
 pandas==2.2.2
-psycopg2-binary==2.9.1
+psycopg2-binary
 psycopg2==2.9.9
 pydantic-settings==2.3.4
 streamlit==1.41.1
