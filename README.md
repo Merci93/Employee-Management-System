@@ -74,6 +74,7 @@ The batch script will:
     - Activate the virtual environment
     - Launch the EMS Streamlit UI
 
+
 No manual virtual environment setup or Python commands are needed — everything is handled by setup.bat
 
 
