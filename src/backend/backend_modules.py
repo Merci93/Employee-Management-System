@@ -67,6 +67,33 @@ async def verify_email(email: str, who: str) -> bool:
         return response.get("exist", False)
 
 
+async def verify_phone_number(phone: str) -> bool:
+    """
+    Verify if phone number already exists in database.
+
+    :param phone: Phone number to verify.
+    :return: Boolean True if esist, False otherwise.
+    """
+    logger.info("Starting phone number verification...")
+
+    url = f"{BASE_URL}/verify_phone_number/"
+    params = {
+        "phone": phone
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        logger.info("Phone number verification completed.")
+        response = response.json()
+
+        if response.get("exist"):
+            logger.info(f"Phone number {phone} exists.")
+            return response.get("exist")
+
+        logger.info(f"Phone number {phone} does not exist.")
+        return response.get("exist", False)
+
+
 async def get_gender_id(gender: str) -> int | bool:
     """
     Get the gender ID for the employee.
@@ -145,31 +172,27 @@ async def get_position_id(position: str) -> int:
         return response.get("value", False)
 
 
-async def verify_phone_number(phone: str) -> bool:
-    """
-    Verify if phone number already exists in database.
+async def get_employee_data(employee_id: int) -> pd.DataFrame | None:
+    """Fetch employee data using employee id"""
+    logger.info("Initiating employee data retrieval process ...")
+    url = f"{BASE_URL}/get_employee_data/"
+    payload = {"employee_id": employee_id}
 
-    :param phone: Phone number to verify.
-    :return: Boolean True if esist, False otherwise.
-    """
-    logger.info("Starting phone number verification...")
-
-    url = f"{BASE_URL}/verify_phone_number/"
-    params = {
-        "phone": phone
-    }
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
-        response.raise_for_status()
-        logger.info("Phone number verification completed.")
-        response = response.json()
+        try:
+            response = await client.get(url, params=payload, headers=HEADERS)
+            response.raise_for_status()
+            response = response.json()
 
-        if response.get("exist"):
-            logger.info(f"Phone number {phone} exists.")
-            return response.get("exist")
+            data = response.get("value")
 
-        logger.info(f"Phone number {phone} does not exist.")
-        return response.get("exist", False)
+            if data:
+                logger.info("Pandas DataFrame with employee data created.")
+                return pd.DataFrame(data)
+            return data
+        except Exception as e:
+            logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 async def add_new_user(
@@ -257,28 +280,6 @@ async def add_new_employee_data(
             logger.error(f"Unexpected error occurred while adding employee data for {first_name} {last_name}: {e}")
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
-
-async def get_employee_data(employee_id: int) -> pd.DataFrame | None:
-    """Fetch employee data using employee id"""
-    logger.info("Initiating employee data retrieval process ...")
-    url = f"{BASE_URL}/get_employee_data/"
-    payload = {"employee_id": employee_id}
-
-    async with httpx.AsyncClient() as client:
-        try:
-            response = await client.get(url, params=payload, headers=HEADERS)
-            response.raise_for_status()
-            response = response.json()
-
-            data = response.get("value")
-
-            if data:
-                logger.info("Pandas DataFrame with employee data created.")
-                return pd.DataFrame(data)
-            return data
-        except Exception as e:
-            logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
-            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 # TODO - Add new enpoint call for deleting employee data

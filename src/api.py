@@ -339,6 +339,77 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
+@app.get("/v1/get_employee_data/", tags=["Employee Data Search"])
+def get_employee_data(employee_id: int) -> Dict[str, Any]:
+    """
+    Retrieve employee data using employee ID.
+
+    :param employee_id: Employee ID
+    :return: Employee data from all tables, if available.
+    """
+    logger.info(f"Retrieving data for employee with ID {employee_id}")
+    try:
+        with db_connect.db_client.cursor() as cursor:
+            query = sql.SQL(
+                """
+                            SELECT
+                                e.id,
+                                e.first_name,
+                                e.middle_name,
+                                e.last_name,
+                                e.email,
+                                e.phone,
+                                e.address,
+                                e.salary,
+                                d.department,
+                                p.position,
+                                g.gender,
+                                e.date_of_birth,
+                                e.hired_date,
+                                e.status,
+                                e.date_resigned
+                            FROM {} AS e
+                            JOIN {} AS d ON e.{} = d.{}
+                            JOIN {} AS g ON e.{} = g.{}
+                            JOIN {} AS p ON e.{} = p.{}
+                            WHERE e.{} = %s;
+                        """
+            ).format(
+                sql.Identifier(settings.employee_table_name),
+                sql.Identifier(settings.dept_table_name),
+                sql.Identifier(settings.department_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.gender_table_name),
+                sql.Identifier(settings.gender_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.position_table_name),
+                sql.Identifier(settings.position_id),
+                sql.Identifier(settings.join_column),
+                sql.Identifier(settings.join_column),
+            )
+            cursor.execute(query, (employee_id,))
+            rows = cursor.fetchall()
+            col_names = [desc[0] for desc in cursor.description]  # type: ignore
+            employee_data = [dict(zip(col_names, row)) for row in rows]
+
+            if employee_data:
+                logger.info(
+                    f"Employee data retrieved successfully for employee with ID {employee_id}"
+                )
+                return {"value": employee_data}
+            else:
+                logger.info(
+                    f"Employee with ID {employee_id} does not exists in the database."
+                )
+                return {"value": False}
+
+    except Exception as e:
+        logger.error(
+            f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
+        )
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
 @app.post("/v1/add_user/", tags=["Admin and User Management"])
 def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
@@ -457,77 +528,6 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
         db_connect.db_client.rollback()
         logger.error(
             f"Unexpected error occurred while adding employee {employee.first_name} {employee.last_name}: {e}"
-        )
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-
-@app.get("/v1/get_employee_data/", tags=["Employee Data Search"])
-def get_employee_data(employee_id: int) -> Dict[str, Any]:
-    """
-    Retrieve employee data using employee ID.
-
-    :param employee_id: Employee ID
-    :return: Employee data from all tables, if available.
-    """
-    logger.info(f"Retrieving data for employee with ID {employee_id}")
-    try:
-        with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL(
-                """
-                            SELECT
-                                e.id,
-                                e.first_name,
-                                e.middle_name,
-                                e.last_name,
-                                e.email,
-                                e.phone,
-                                e.address,
-                                e.salary,
-                                d.department,
-                                p.position,
-                                g.gender,
-                                e.date_of_birth,
-                                e.hired_date,
-                                e.status,
-                                e.date_resigned
-                            FROM {} AS e
-                            JOIN {} AS d ON e.{} = d.{}
-                            JOIN {} AS g ON e.{} = g.{}
-                            JOIN {} AS p ON e.{} = p.{}
-                            WHERE e.{} = %s;
-                        """
-            ).format(
-                sql.Identifier(settings.employee_table_name),
-                sql.Identifier(settings.dept_table_name),
-                sql.Identifier(settings.department_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.gender_table_name),
-                sql.Identifier(settings.gender_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.position_table_name),
-                sql.Identifier(settings.position_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.join_column),
-            )
-            cursor.execute(query, (employee_id,))
-            rows = cursor.fetchall()
-            col_names = [desc[0] for desc in cursor.description]  # type: ignore
-            employee_data = [dict(zip(col_names, row)) for row in rows]
-
-            if employee_data:
-                logger.info(
-                    f"Employee data retrieved successfully for employee with ID {employee_id}"
-                )
-                return {"value": employee_data}
-            else:
-                logger.info(
-                    f"Employee with ID {employee_id} does not exists in the database."
-                )
-                return {"value": False}
-
-    except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
         )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
