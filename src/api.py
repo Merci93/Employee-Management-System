@@ -405,8 +405,8 @@ def fetch_employee_data(where_clause: str, value: Any) -> List[Dict[str, Any]]:
         return [dict(zip(col_names, row)) for row in rows]
 
 
-@app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
-def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
+@app.get("/v1/get_employee_data/{employee_id}", response_model=List[EmployeeResponseModel], tags=["Employee Data Search"])
+def get_employee_data_by_id(employee_id: int) -> List[Dict[str, Any]]:
     """
     Retrieve employee data using employee ID.
 
@@ -420,10 +420,10 @@ def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
         raise HTTPException(status_code=404, detail="Employee not found")
 
     logger.info("Employee data retrieved successfully.")
-    return result[0]
+    return result
 
 
-@app.get("/v1/get_employee_data/{first_name}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
+@app.get("/v1/get_employee_data/{first_name}", response_model=List[EmployeeResponseModel], tags=["Employee Data Search"])
 def get_employee_data_by_first_name(first_name: str) -> List[Dict[str, Any]]:
     """
     Retrieve employee data using employee first name.
