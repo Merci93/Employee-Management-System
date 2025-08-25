@@ -3,7 +3,7 @@
 from contextlib import asynccontextmanager
 from enum import Enum
 from pydantic import BaseModel
-from typing import Any, AsyncContextManager, Dict, Optional
+from typing import Any, AsyncContextManager, Dict, List, Optional
 from datetime import date
 
 import bcrypt
@@ -363,79 +363,136 @@ def get_position_id(position: PositionIdRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
+def fetch_employee_data(where_clause: str, value: Any) -> List[Dict[str, Any]]:
+    """
+    A helper function for fetching employee data via API calss to the Database
+
+    :param where_clause: Conditional filter
+    :param value: value for filter
+    :return: List of dictionary values for retrieved data.
+    """
+    with db_connect.db_client.cursor() as cursor:
+        query = sql.SQL(
+            f"""
+                SELECT
+                    e.id,
+                    e.first_name,
+                    e.middle_name,
+                    e.last_name,
+                    e.email,
+                    e.phone,
+                    e.address,
+                    e.salary,
+                    d.department,
+                    p.position,
+                    g.gender,
+                    e.date_of_birth,
+                    e.hired_date,
+                    e.status,
+                    e.date_resigned
+                FROM {settings.employee_table_name} AS e
+                JOIN {settings.dept_table_name} AS d ON e.{settings.department_id} = d.{settings.join_column}
+                JOIN {settings.gender_table_name} AS g ON e.{settings.gender_id} = g.{settings.join_column}
+                JOIN {settings.position_table_name} AS p ON e.{settings.position_id} = p.{settings.join_column}
+                WHERE {where_clause};
+            """
+            )
+        cursor.execute(query, (value,))
+        rows = cursor.fetchall()
+
+        col_names = [desc[0] for desc in cursor.description]  # type: ignore
+        logger.info(f"Employee data retrieved successfully. Value: {value}")
+        return [dict(zip(col_names, row)) for row in rows]
+
+
 @app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
-def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
+def get_employee_data_by_id(employee_id: int) -> List[Dict[str, Any]]:
     """
     Retrieve employee data using employee ID.
 
     :param employee_id: Employee ID
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving data for employee with ID {employee_id}")
-    try:
-        with db_connect.db_client.cursor() as cursor:
-            query = sql.SQL(
-                """
-                            SELECT
-                                e.id,
-                                e.first_name,
-                                e.middle_name,
-                                e.last_name,
-                                e.email,
-                                e.phone,
-                                e.address,
-                                e.salary,
-                                d.department,
-                                p.position,
-                                g.gender,
-                                e.date_of_birth,
-                                e.hired_date,
-                                e.status,
-                                e.date_resigned
-                            FROM {} AS e
-                            JOIN {} AS d ON e.{} = d.{}
-                            JOIN {} AS g ON e.{} = g.{}
-                            JOIN {} AS p ON e.{} = p.{}
-                            WHERE e.{} = %s;
-                        """
-            ).format(
-                sql.Identifier(settings.employee_table_name),
-                sql.Identifier(settings.dept_table_name),
-                sql.Identifier(settings.department_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.gender_table_name),
-                sql.Identifier(settings.gender_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.position_table_name),
-                sql.Identifier(settings.position_id),
-                sql.Identifier(settings.join_column),
-                sql.Identifier(settings.join_column),
-            )
-            cursor.execute(query, (employee_id,))
-            row = cursor.fetchone()
+    result = fetch_employee_data("e.id = %s", employee_id)
 
-            if row:
-                col_names = [desc[0] for desc in cursor.description]  # type: ignore
-                employee_data = dict(zip(col_names, row))
-                logger.info(
-                    f"Employee data retrieved successfully for employee with ID {employee_id}"
-                )
-                return employee_data
-            else:
-                logger.info(
-                    f"Employee with ID {employee_id} does not exists in the database."
-                )
-                raise HTTPException(status_code=404, detail="Employee not found")
+    if not result:
+        raise HTTPException(status_code=404, detail="Employee not found")
 
-    except HTTPException:
-        # Let FastAPI handle 404
-        raise
+    return result
 
-    except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
-        )
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+# @app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
+# def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
+#     """
+#     Retrieve employee data using employee ID.
+
+#     :param employee_id: Employee ID
+#     :return: Employee data from all tables, if available.
+#     """
+#     logger.info(f"Retrieving data for employee with ID {employee_id}")
+#     try:
+#         with db_connect.db_client.cursor() as cursor:
+#             query = sql.SQL(
+#                 """
+#                             SELECT
+#                                 e.id,
+#                                 e.first_name,
+#                                 e.middle_name,
+#                                 e.last_name,
+#                                 e.email,
+#                                 e.phone,
+#                                 e.address,
+#                                 e.salary,
+#                                 d.department,
+#                                 p.position,
+#                                 g.gender,
+#                                 e.date_of_birth,
+#                                 e.hired_date,
+#                                 e.status,
+#                                 e.date_resigned
+#                             FROM {} AS e
+#                             JOIN {} AS d ON e.{} = d.{}
+#                             JOIN {} AS g ON e.{} = g.{}
+#                             JOIN {} AS p ON e.{} = p.{}
+#                             WHERE e.{} = %s;
+#                         """
+#             ).format(
+#                 sql.Identifier(settings.employee_table_name),
+#                 sql.Identifier(settings.dept_table_name),
+#                 sql.Identifier(settings.department_id),
+#                 sql.Identifier(settings.join_column),
+#                 sql.Identifier(settings.gender_table_name),
+#                 sql.Identifier(settings.gender_id),
+#                 sql.Identifier(settings.join_column),
+#                 sql.Identifier(settings.position_table_name),
+#                 sql.Identifier(settings.position_id),
+#                 sql.Identifier(settings.join_column),
+#                 sql.Identifier(settings.join_column),
+#             )
+#             cursor.execute(query, (employee_id,))
+#             row = cursor.fetchone()
+
+#             if row:
+#                 col_names = [desc[0] for desc in cursor.description]  # type: ignore
+#                 employee_data = dict(zip(col_names, row))
+#                 logger.info(
+#                     f"Employee data retrieved successfully for employee with ID {employee_id}"
+#                 )
+#                 return employee_data
+#             else:
+#                 logger.info(
+#                     f"Employee with ID {employee_id} does not exists in the database."
+#                 )
+#                 raise HTTPException(status_code=404, detail="Employee not found")
+
+#     except HTTPException:
+#         # Let FastAPI handle 404
+#         raise
+
+#     except Exception as e:
+#         logger.error(
+#             f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
+#         )
+#         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.post("/v1/add_user/", tags=["Admin and User Management"])

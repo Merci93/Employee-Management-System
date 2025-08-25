@@ -179,7 +179,7 @@ async def get_employee_data_by_id(employee_id: int) -> pd.DataFrame | None:
 
             data = response.json()
             logger.info("Pandas DataFrame with employee data created.")
-            return pd.DataFrame([data])
+            return pd.DataFrame(data)
 
         except Exception as e:
             logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
