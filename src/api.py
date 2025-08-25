@@ -401,24 +401,43 @@ def fetch_employee_data(where_clause: str, value: Any) -> List[Dict[str, Any]]:
         rows = cursor.fetchall()
 
         col_names = [desc[0] for desc in cursor.description]  # type: ignore
-        logger.info(f"Employee data retrieved successfully. Value: {value}")
+
         return [dict(zip(col_names, row)) for row in rows]
 
 
 @app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
-def get_employee_data_by_id(employee_id: int) -> List[Dict[str, Any]]:
+def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
     """
     Retrieve employee data using employee ID.
 
     :param employee_id: Employee ID
     :return: Employee data from all tables, if available.
     """
+    logger.info(f"Retrieving employee data. ID: {employee_id}")
     result = fetch_employee_data("e.id = %s", employee_id)
 
     if not result:
         raise HTTPException(status_code=404, detail="Employee not found")
 
+    logger.info("Employee data retrieved successfully.")
+    return result[0]
+
+
+@app.get("/v1/get_employee_data/{first_name}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
+def get_employee_data_by_first_name(first_name: str) -> List[Dict[str, Any]]:
+    """
+    Retrieve employee data using employee first name.
+
+    :param first_name: Employee first name
+    :return: Employee data from all tables, if available.
+    """
+    result = fetch_employee_data("e.first_name = %s", first_name)
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
     return result
+
 
 # @app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
 # def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
