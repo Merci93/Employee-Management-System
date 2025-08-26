@@ -431,8 +431,8 @@ def get_employee_data_by_first_name(first_name: str) -> List[Dict[str, Any]]:
     :param first_name: Employee first name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. first name: {first_name}")
-    result = fetch_employee_data("e.first_name = %s", first_name)
+    logger.info(f"Retrieving employee data. first name: {first_name.capitalize()}")
+    result = fetch_employee_data("e.first_name = %s", first_name.capitalize())
 
     if not result:
         raise HTTPException(status_code=404, detail="Employee not found")
