@@ -39,6 +39,35 @@ HEADERS = {"accept": "application/json"}
 #         return response.get("value", False)
 
 
+async def verify_parameter(base_path: str, identifier: str | int, log_context: str, params: dict | None = None) -> bool:
+    """
+    Helper function to verify/validate identifier existence in the database and return true or false.
+
+    :param base_path: API base path
+    :param identifier: Employee identifier
+    :param log_context: Context for logging messages
+    :param params: Optional query parameters to include in the request
+    :return: True if exists, False otherwise.
+    """
+    logger.info(f"Starting verification for {log_context}: {identifier} ...")
+
+    url = f"{BASE_URL}/{base_path}/{identifier}"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, headers=HEADERS)
+        response.raise_for_status()
+        response = response.json()
+
+        exists = response.get("exist", False)
+
+        if exists:
+            logger.info(f"{log_context.capitalize()} with email {identifier} already exists.")
+        else:
+            logger.info(f"{log_context.capitalize()} {identifier} does not exist.")
+
+        return exists
+
+
 async def verify_email(email: str, who: str) -> bool:
     """
     Verify if user email already exists in the database.
@@ -47,22 +76,12 @@ async def verify_email(email: str, who: str) -> bool:
     :param who: Input parameter to either verify employee email or user/admin email.
     return: A boolean True if it exists, False otherwise.
     """
-    logger.info("Starting email verification...")
-
-    url = f"{BASE_URL}/verify_email/{email}"
-    params = {"who": who}
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=HEADERS)
-        response.raise_for_status()
-        response = response.json()
-
-        if response.get("exist"):
-            logger.info(f"{who.capitalize()} with email {email} already exists.")
-        else:
-            logger.info(f"Email {email} does not exist in {who.lower()}s table.")
-
-        return response.get("exist", False)
+    return await verify_parameter(
+        base_path="verify_email",
+        identifier=email,
+        log_context="email",
+        params={"who": who}
+    )
 
 
 async def verify_phone_number(phone_number: str) -> bool:
@@ -72,22 +91,37 @@ async def verify_phone_number(phone_number: str) -> bool:
     :param phone: Phone number to verify.
     :return: Boolean True if esist, False otherwise.
     """
-    logger.info("Starting phone number verification...")
+    return await verify_parameter(
+        base_path="verify_phone_number",
+        identifier=phone_number,
+        log_context="phone number"
+    )
 
-    url = f"{BASE_URL}/verify_phone_number/{phone_number}"
+
+async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) -> int | bool:
+    """
+    Helper function to fetch parameter id from database and return a value.
+
+    :param base_path: API base path
+    :param identifier: Employee identifier
+    :param log_context: Context for logging messages
+    """
+    logger.info(f"Starting {log_context} ID retrieval for {log_context}: {identifier}")
+    url = f"{BASE_URL}/{base_path}/{identifier}"
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=HEADERS)
         response.raise_for_status()
-        logger.info("Phone number verification completed.")
         response = response.json()
 
-        if response.get("exist"):
-            logger.info(f"Phone number {phone_number} exists.")
-            return response.get("exist")
+        required_id = response.get("value", False)
 
-        logger.info(f"Phone number {phone_number} does not exist.")
-        return response.get("exist", False)
+        if required_id is not False:
+            logger.info(f"{identifier.capitalize()} ID retrieved successfully.")
+            return required_id
+
+        logger.info("Gender ID not retrieved.")
+        return required_id
 
 
 async def get_gender_id(gender: str) -> int | bool:
@@ -97,21 +131,11 @@ async def get_gender_id(gender: str) -> int | bool:
     :param gender: Gender
     :return: Gender ID from the gender table.
     """
-    logger.info("Starting gender id retrieval ...")
-
-    url = f"{BASE_URL}/get_gender_id/{gender}"
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=HEADERS)
-        response.raise_for_status()
-        response = response.json()
-
-        if response.get("value") is not False:
-            logger.info("Gender ID retrieved successfully.")
-            return response.get("value")
-
-        logger.info("Gender ID not retrieved.")
-        return response.get("value", False)
+    return await fetch_parameter_id(
+        base_path="get_gender_id",
+        identifier=gender,
+        log_context="gender"
+    )
 
 
 async def get_department_id(department: str) -> int | bool:
@@ -121,21 +145,11 @@ async def get_department_id(department: str) -> int | bool:
     :param department: Department
     :return: Department ID from the department table.
     """
-    logger.info("Starting department id retrieval ...")
-
-    url = f"{BASE_URL}/get_department_id/{department}"
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=HEADERS)
-        response.raise_for_status()
-        response = response.json()
-
-        if response.get("value") is not False:
-            logger.info("Department ID retrieved successfully.")
-            return response.get("value")
-
-        logger.info("Department ID not retrieved.")
-        return response.get("value", False)
+    return await fetch_parameter_id(
+        base_path="get_department_id",
+        identifier=department,
+        log_context="department"
+    )
 
 
 async def get_position_id(position: str) -> int:
@@ -145,45 +159,59 @@ async def get_position_id(position: str) -> int:
     :param position: Position
     :return: Position ID from the position table.
     """
-    logger.info("Starting position id retrieval ...")
-
-    url = f"{BASE_URL}/get_position_id/{position}"
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=HEADERS)
-        response.raise_for_status()
-        response = response.json()
-
-        if response.get("value") is not False:
-            logger.info("Position ID retrieved successfully")
-            return response.get("value")
-
-        logger.info("position ID not retrieved.")
-        return response.get("value", False)
+    return await fetch_parameter_id(
+        base_path="get_position_id",
+        identifier=position,
+        log_context="position"
+    )
 
 
-async def get_employee_data_by_id(employee_id: int) -> pd.DataFrame | None:
-    """Fetch employee data using employee id"""
-    logger.info("Initiating employee data retrieval process ...")
-    url = f"{BASE_URL}/get_employee_data/by_id/{employee_id}"
+async def fetch_employee_data(endpoint: str, identifier: str | int, log_context: str) -> pd.DataFrame | None:
+    """
+    Helper function to fetch employee data from API and return a DataFrame
+
+    :param endpoint: API subpath
+    :param identifier: Employee identifier
+    :param log_context: Context for logging messages
+    """
+    logger.info(f"Initiating employee data retrieval process for {log_context}: {identifier} ...")
+    url = f"{BASE_URL}/get_employee_data/{endpoint}/{identifier}"
 
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url, headers=HEADERS)
 
             if response.status_code == 404:
-                logger.warning(f"Employee ID {employee_id} not found.")
+                logger.warning(f"Employee with {log_context} {identifier} not found.")
                 return None
 
             response.raise_for_status()
 
             data = response.json()
-            logger.info("Pandas DataFrame with employee data created.")
+            logger.info("Pandas Dataframe with employee data created.")
             return pd.DataFrame(data)
 
         except Exception as e:
-            logger.error(f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}")
+            logger.error(f"Unexpected error occurred while retrieving data for employee {log_context} {identifier}: {e}")
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+async def get_employee_data_by_id(employee_id: int) -> pd.DataFrame | None:
+    """Fetch employee data using employee id"""
+    return await fetch_employee_data(
+        endpoint="by_id",
+        identifier=employee_id,
+        log_context="ID"
+    )
+
+
+async def get_employee_data_by_first_name(first_name: str) -> pd.DataFrame | None:
+    """Fetch employee data using their first name."""
+    return await fetch_employee_data(
+        endpoint="by_first_name",
+        identifier=first_name,
+        log_context="first name"
+    )
 
 
 async def add_new_user(
