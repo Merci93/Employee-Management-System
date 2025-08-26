@@ -165,7 +165,7 @@ async def get_position_id(position: str) -> int:
 async def get_employee_data_by_id(employee_id: int) -> pd.DataFrame | None:
     """Fetch employee data using employee id"""
     logger.info("Initiating employee data retrieval process ...")
-    url = f"{BASE_URL}/get_employee_data/{employee_id}"
+    url = f"{BASE_URL}/get_employee_data/by_id/{employee_id}"
 
     async with httpx.AsyncClient() as client:
         try:
