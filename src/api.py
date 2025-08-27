@@ -441,81 +441,6 @@ def get_employee_data_by_first_name(first_name: str) -> List[Dict[str, Any]]:
     return result
 
 
-# @app.get("/v1/get_employee_data/{employee_id}", response_model=EmployeeResponseModel, tags=["Employee Data Search"])
-# def get_employee_data_by_id(employee_id: int) -> Dict[str, Any]:
-#     """
-#     Retrieve employee data using employee ID.
-
-#     :param employee_id: Employee ID
-#     :return: Employee data from all tables, if available.
-#     """
-#     logger.info(f"Retrieving data for employee with ID {employee_id}")
-#     try:
-#         with db_connect.db_client.cursor() as cursor:
-#             query = sql.SQL(
-#                 """
-#                             SELECT
-#                                 e.id,
-#                                 e.first_name,
-#                                 e.middle_name,
-#                                 e.last_name,
-#                                 e.email,
-#                                 e.phone,
-#                                 e.address,
-#                                 e.salary,
-#                                 d.department,
-#                                 p.position,
-#                                 g.gender,
-#                                 e.date_of_birth,
-#                                 e.hired_date,
-#                                 e.status,
-#                                 e.date_resigned
-#                             FROM {} AS e
-#                             JOIN {} AS d ON e.{} = d.{}
-#                             JOIN {} AS g ON e.{} = g.{}
-#                             JOIN {} AS p ON e.{} = p.{}
-#                             WHERE e.{} = %s;
-#                         """
-#             ).format(
-#                 sql.Identifier(settings.employee_table_name),
-#                 sql.Identifier(settings.dept_table_name),
-#                 sql.Identifier(settings.department_id),
-#                 sql.Identifier(settings.join_column),
-#                 sql.Identifier(settings.gender_table_name),
-#                 sql.Identifier(settings.gender_id),
-#                 sql.Identifier(settings.join_column),
-#                 sql.Identifier(settings.position_table_name),
-#                 sql.Identifier(settings.position_id),
-#                 sql.Identifier(settings.join_column),
-#                 sql.Identifier(settings.join_column),
-#             )
-#             cursor.execute(query, (employee_id,))
-#             row = cursor.fetchone()
-
-#             if row:
-#                 col_names = [desc[0] for desc in cursor.description]  # type: ignore
-#                 employee_data = dict(zip(col_names, row))
-#                 logger.info(
-#                     f"Employee data retrieved successfully for employee with ID {employee_id}"
-#                 )
-#                 return employee_data
-#             else:
-#                 logger.info(
-#                     f"Employee with ID {employee_id} does not exists in the database."
-#                 )
-#                 raise HTTPException(status_code=404, detail="Employee not found")
-
-#     except HTTPException:
-#         # Let FastAPI handle 404
-#         raise
-
-#     except Exception as e:
-#         logger.error(
-#             f"Unexpected error occurred while retrieving data for employee ID {employee_id}: {e}"
-#         )
-#         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-
 @app.post("/v1/add_user/", tags=["Admin and User Management"])
 def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
@@ -662,15 +587,6 @@ def address_update(address: AddressUpdate, employee_id: int) -> Dict[str, bool]:
             f"Unexpected error occurred while updating address for employee {employee_id}: {e}"
         )
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-
-# TODO - Add endpoint for updating employee data
-# 1. Endpoint to update address ✅
-# 2. Endpoint to update phone number
-# 3. Endpoint to update salary
-# 4. Endpoint to update department
-# 5. Endpoint to update position
-# TODO - Add endpoint to delete employee data
 
 
 if __name__ == "__main__":
