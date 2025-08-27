@@ -116,11 +116,11 @@ async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) 
 
         required_id = response.get("value", False)
 
-        if required_id is not False:
-            logger.info(f"{identifier.capitalize()} ID retrieved successfully.")
+        if required_id:
+            logger.info(f"{log_context.capitalize()} ID retrieved successfully.")
             return required_id
 
-        logger.info("Gender ID not retrieved.")
+        logger.info(f"{log_context.capitalize()} ID not retrieved.")
         return required_id
 
 
@@ -267,7 +267,7 @@ async def add_new_employee_data(
     """
     Add a new employee details to the database.
     """
-    logger.info("Initiating new employee creating process ...")
+    logger.info(f"Initiating new employee creating process for {first_name} {last_name}...")
 
     url = f"{BASE_URL}/add_new_employee/"
     payload = {
