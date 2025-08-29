@@ -214,6 +214,33 @@ async def get_employee_data_by_first_name(first_name: str) -> pd.DataFrame | Non
     )
 
 
+async def get_employee_data_by_last_name(last_name: str) -> pd.DataFrame | None:
+    """Fetch employee data using their last name."""
+    return await fetch_employee_data(
+        endpoint="by_last_name",
+        identifier=last_name,
+        log_context="last name"
+    )
+
+
+async def get_employee_data_by_department(department: str) -> pd.DataFrame | None:
+    """Fetch employee data using their department."""
+    return await fetch_employee_data(
+        endpoint="by_department",
+        identifier=department,
+        log_context="department"
+    )
+
+
+async def get_employee_data_by_position(position: str) -> pd.DataFrame | None:
+    """Fetch employee data by their position."""
+    return await fetch_employee_data(
+        endpoint="by_position",
+        identifier=position,
+        log_context="position"
+    )
+
+
 async def add_new_user(
     role: str,
     firstname: str,
