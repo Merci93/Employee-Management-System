@@ -459,6 +459,24 @@ async def get_employee_data_by_last_name(last_name: str) -> List[Dict[str, Any]]
     return result
 
 
+@app.get("/v1/get_employee_data/by_department/{department}", response_model=List[EmployeeResponseModel], tags=["Employee Data Search"])
+async def get_employee_data_by_department(department: str) -> List[Dict[str, Any]]:
+    """
+    Retrieve employee data using department. This returns at least one result if available.
+
+    :param last_name: Department
+    :return: Employee data from all tables, if available.
+    """
+    logger.info(f"Retrieving employee data. department: {department.capitalize()}")
+    result = fetch_employee_data("e.department = %s", department.capitalize())
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    logger.info("Employee data retrieved successfully.")
+    return result
+
+
 @app.post("/v1/add_user/", tags=["Admin and User Management"])
 def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
     """
