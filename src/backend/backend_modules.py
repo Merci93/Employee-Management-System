@@ -232,6 +232,14 @@ async def get_employee_data_by_department(department: str) -> pd.DataFrame | Non
     )
 
 
+async def get_employee_data_by_position(position: str) -> pd.DataFrame | None:
+    """Fetch employee data by their position."""
+    return await fetch_employee_data(
+        endpoint="by_position",
+        identifier=position,
+        log_context="position"
+    )
+
 
 async def add_new_user(
     role: str,
