@@ -193,10 +193,10 @@ class EmployeeResponseModel(BaseModel):
 
 class DepartmentList(str, Enum):
     it = "IT"
-    marketing = "Marketing"
+    hr = "HR"
     sales = "Sales"
     research = "Research"
-    hr = "HR"
+    marketing = "Marketing"
     data_analytics = "Data & Analytics"
 
 
@@ -478,7 +478,7 @@ async def get_employee_data_by_last_name(last_name: str) -> List[Dict[str, Any]]
 
 
 @app.get("/v1/get_employee_data/by_department/{department}", response_model=List[EmployeeResponseModel], tags=["Employee Data Search"])
-async def get_employee_data_by_department(department: str) -> List[Dict[str, Any]]:
+async def get_employee_data_by_department(department: DepartmentIdRequest) -> List[Dict[str, Any]]:
     """
     Retrieve employee data using department. This returns at least one result if available.
 
