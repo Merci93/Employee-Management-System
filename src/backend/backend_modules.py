@@ -214,6 +214,15 @@ async def get_employee_data_by_first_name(first_name: str) -> pd.DataFrame | Non
     )
 
 
+async def get_employee_data_by_last_name(last_name: str) -> pd.DataFrame | None:
+    """Fetch employee data using their last name."""
+    return await fetch_employee_data(
+        endpoint="by_last_name",
+        identifier=last_name,
+        log_context="last name"
+    )
+
+
 async def add_new_user(
     role: str,
     firstname: str,
