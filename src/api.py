@@ -191,6 +191,15 @@ class EmployeeResponseModel(BaseModel):
     date_resigned: Optional[date] = None
 
 
+class DepartmentList(str, Enum):
+    it = "IT"
+    marketing = "Marketing"
+    sales = "Sales"
+    research = "Research"
+    hr = "HR"
+    data_analytics = "Data & Analytics"
+
+
 @app.get("/v1/root/", tags=["Root"])
 def get_root() -> dict[str, str]:
     """API root endpoint."""
@@ -464,11 +473,11 @@ async def get_employee_data_by_department(department: str) -> List[Dict[str, Any
     """
     Retrieve employee data using department. This returns at least one result if available.
 
-    :param last_name: Department
+    :param department: Department name
     :return: Employee data from all tables, if available.
     """
     logger.info(f"Retrieving employee data. department: {department.capitalize()}")
-    result = fetch_employee_data("e.department = %s", department.capitalize())
+    result = fetch_employee_data("d.department = %s", department.capitalize())
 
     if not result:
         raise HTTPException(status_code=404, detail="Employee not found")
