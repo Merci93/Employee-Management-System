@@ -485,10 +485,10 @@ async def get_employee_data_by_department(department: DepartmentIdRequest) -> Li
     :param department: Department name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. department: {department.capitalize()}")
+    logger.info(f"Retrieving employee data. department: {department}")
     result = fetch_employee_data(
         where_clause="d.department = %s",
-        value=department.capitalize()
+        value=department
     )
 
     if not result:
