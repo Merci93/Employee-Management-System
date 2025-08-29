@@ -449,7 +449,7 @@ async def get_employee_data_by_last_name(last_name: str) -> List[Dict[str, Any]]
     :param last_name: Employee last name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. first name: {last_name.capitalize()}")
+    logger.info(f"Retrieving employee data. last name: {last_name.capitalize()}")
     result = fetch_employee_data("e.last_name = %s", last_name.capitalize())
 
     if not result:
