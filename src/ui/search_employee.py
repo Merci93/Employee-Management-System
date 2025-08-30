@@ -21,25 +21,14 @@ OPTIONS = {
     "Department": ("department", backend_modules.get_employee_data_by_department),
 }
 
-# Initialize session state if not already present
-if 'employees_data' not in st.session_state:
-    cols = [
-        "id", "first_name", "middle_name", "last_name", "email", "phone", "address", "salary",
-        "department", "position", "gender", "date_of_birth", "hired_date", "status", "date_resigned"
-    ]
-    st.session_state.employees_data = pd.DataFrame(columns=cols)
-
-st.header("Search Employee")
-
-with st.form("search_employees_form"):
-    search_option = st.selectbox("Search by", ["First Name", "Last Name", "Employee ID", "Department", "Position"])
-    if search_option == "Department":
-        search_query = st.selectbox("Select Department", DEPARTMENTS)
-    elif search_option == "Position":
-        search_query = st.selectbox("Select Department", POSITIONS)
-    else:
-        search_query = st.text_input("Enter search query")
-    submit_button = st.form_submit_button("Search")
+# Input widgets definition
+input_widgets = {
+    "Department": lambda: st.selectbox("Select Department", DEPARTMENTS),
+    "Position": lambda: st.selectbox("Select Position", POSITIONS),
+    "First Name": lambda: st.text_input("Enter First Name"),
+    "Last Name": lambda: st.text_input("Enter Last Name"),
+    "Employee ID": lambda: st.text_input("Enter Employee ID"),
+}
 
 
 async def get_employees_data(search_option: str, search_query: str) -> pd.DataFrame:
@@ -65,6 +54,28 @@ async def get_employees_data(search_option: str, search_query: str) -> pd.DataFr
 
     #  Run other searches
     return await func(query)
+
+
+# Initialize session state if not already present
+if 'employees_data' not in st.session_state:
+    cols = [
+        "id", "first_name", "middle_name", "last_name", "email", "phone", "address", "salary",
+        "department", "position", "gender", "date_of_birth", "hired_date", "status", "date_resigned"
+    ]
+    st.session_state.employees_data = pd.DataFrame(columns=cols)
+
+st.header("Search Employee")
+
+with st.form("search_employees_form"):
+    search_option = st.selectbox(
+        "Search by",
+        ["First Name", "Last Name", "Employee ID", "Department", "Position"]
+    )
+
+    # Call corresponding widget function to get input
+    search_query = input_widgets[search_option]()
+
+    submit_button = st.form_submit_button("Search")
 
 
 if submit_button:
