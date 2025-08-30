@@ -1,9 +1,11 @@
 """Configuration settings."""
+from typing import List
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    # Database Configs
     postgres_user: str = "postgres"
     postgres_password: str = "postgres"
     database_name: str = "employees"
@@ -18,6 +20,52 @@ class Settings(BaseSettings):
     department_id: str = "department_id"
     host: str = "ems-db"
     port: int = 5432
+
+    # UI Configs
+    EMPLOYEES_COLUMN: List[str] = [
+        "id",
+        "first_name",
+        "middle_name",
+        "last_name",
+        "email",
+        "phone",
+        "address",
+        "salary",
+        "department",
+        "position",
+        "gender",
+        "date_of_birth",
+        "hired_date",
+        "status",
+        "date_resigned",
+    ]
+
+    DEPARTMENTS: List[str] = [
+        "IT",
+        "HR",
+        "Sales",
+        "Research",
+        "Marketing",
+        "Data & Analytics",
+    ]
+
+    POSITIONS: List[str] = [
+        "HR",
+        "Intern",
+        "Data Engineer",
+        "Solutions Architect",
+        "Data Analyst",
+        "Business Analyst",
+        "Senior Manager Engineering",
+        "Data Scientist",
+        "Junior Data Engineer",
+        "Web Developer",
+        "Cloud Architect",
+        "Software Engineer",
+        "Network Engineer",
+        "DevOps Engineer",
+        "Product Owner",
+    ]
 
 
 def init_settings() -> None:
