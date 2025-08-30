@@ -23,36 +23,35 @@ with st.form("search_employees_form"):
     submit_button = st.form_submit_button("Search")
 
 
-async def get_employees_data(search_option: str, search_query: str) -> pd.DataFrame | None:
+#  Search option mapping with client functions
+OPTIONS = {
+    "Employee ID": ("id", backend_modules.get_employee_data_by_id),
+    "Position": ("position", backend_modules.get_employee_data_by_position),
+    "Last Name": ("last_name", backend_modules.get_employee_data_by_last_name),
+    "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
+    "Department": ("department", backend_modules.get_employee_data_by_department),
+}
+
+
+async def get_employees_data(search_option: str, search_query: str) -> pd.DataFrame:
     """
     Get all data matching input parameter from the database.
     """
-    #  Search option mapping with client functions
-    options = {
-        "Employee ID": ("id", backend_modules.get_employee_data_by_id),
-        "Position": ("position", backend_modules.get_employee_data_by_position),
-        "Last Name": ("last_name", backend_modules.get_employee_data_by_last_name),
-        "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
-        "Department": ("department", backend_modules.get_employee_data_by_department),
-    }
-
     query = search_query.strip()
     if not query:
         st.error("Empty strings are not allowed. Please enter a valid search parameter.")
-        return
+        return pd.DataFrame()
 
-    select_options = options.get(search_option)
-    if not select_options:
+    field, func = OPTIONS.get(search_option, (None, None))
+    if not field or not func:
         st.error(f"Invalid search option: {search_option}")
-        return
-
-    field, func = select_options
+        return pd.DataFrame()
 
     #  Special case for employee ID's to validate entered data are all integers
     if field == "id":
         if not query.isdigit():
             st.error("Invalid Employee ID. Please enter a numeric value.")
-            return
+            return pd.DataFrame()
         return await func(int(query))
 
     #  Run other searches
@@ -60,6 +59,13 @@ async def get_employees_data(search_option: str, search_query: str) -> pd.DataFr
 
 
 if submit_button:
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    st.session_state.employees_data = loop.run_until_complete(get_employees_data(search_option, search_query))
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
+    # st.session_state.employees_data = loop.run_until_complete(get_employees_data(search_option, search_query))
+    st.session_state.employees_data = asyncio.run(get_employees_data(search_option, search_query))
+
+if st.session_state.employees_data is not None and not st.session_state.employees_data.empty:
+    st.write("### Employee Data:")
+    st.dataframe(st.session_state.employees_data)
+else:
+    st.write("No data found for the search value.")
