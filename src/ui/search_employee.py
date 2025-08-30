@@ -8,8 +8,21 @@ from src.backend import backend_modules
 
 
 EMPLOYEE_COLUMNS = [
-    "id", "first_name", "middle_name", "last_name", "email", "phone", "address", "salary",
-    "department", "position", "gender", "date_of_birth", "hired_date", "status", "date_resigned"
+    "id",
+    "first_name",
+    "middle_name",
+    "last_name",
+    "email",
+    "phone",
+    "address",
+    "salary",
+    "department",
+    "position",
+    "gender",
+    "date_of_birth",
+    "hired_date",
+    "status",
+    "date_resigned"
 ]
 
 #  Search option mapping with client functions
@@ -20,6 +33,33 @@ OPTIONS = {
     "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
     "Department": ("department", backend_modules.get_employee_data_by_department),
 }
+
+DEPARTMENTS = [
+    "IT",
+    "HR",
+    "Sales",
+    "Research",
+    "Marketing",
+    "Data & Analytics",
+]
+
+POSITIONS = [
+    "HR",
+    "Intern",
+    "Data Engineer",
+    "Solutions Architect",
+    "Data Analyst",
+    "Business Analyst",
+    "Senior Manager Engineering",
+    "Data Scientist",
+    "Junior Data Engineer",
+    "Web Developer",
+    "Cloud Architect",
+    "Software Engineer",
+    "Network Engineer",
+    "DevOps Engineer",
+    "Product Owner",
+]
 
 
 # Initialize session state if not already present
@@ -34,7 +74,12 @@ st.header("Search Employee")
 
 with st.form("search_employees_form"):
     search_option = st.selectbox("Search by", ["First Name", "Last Name", "Employee ID", "Department", "Position"])
-    search_query = st.text_input("Enter search query")
+    if search_option == "Department":
+        search_query = st.selectbox("Select Department", DEPARTMENTS)
+    elif search_option == "Position":
+        search_query = st.selectbox("Select Department", POSITIONS)
+    else:
+        search_query = st.text_input("Enter search query")
     submit_button = st.form_submit_button("Search")
 
 
