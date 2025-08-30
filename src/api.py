@@ -499,7 +499,7 @@ async def get_employee_data_by_position(position: PositionIdRequest) -> List[Dic
     """
     logger.info(f"Retrieving employee data. department: {position}")
     result = fetch_employee_data(
-        where_clause="d.department = %s",
+        where_clause="p.position = %s",
         value=position
     )
 
