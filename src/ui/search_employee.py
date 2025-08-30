@@ -4,13 +4,13 @@ import asyncio
 import streamlit as st
 import pandas as pd
 
+from src.config import settings
 from src.backend import backend_modules
 
 
-EMPLOYEE_COLUMNS = [
-    "id", "first_name", "middle_name", "last_name", "email", "phone", "address", "salary",
-    "department", "position", "gender", "date_of_birth", "hired_date", "status", "date_resigned"
-]
+POSITIONS = settings.POSITIONS
+DEPARTMENTS = settings.DEPARTMENTS
+EMPLOYEE_COLUMNS = settings.EMPLOYEES_COLUMN
 
 #  Search option mapping with client functions
 OPTIONS = {
@@ -20,7 +20,6 @@ OPTIONS = {
     "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
     "Department": ("department", backend_modules.get_employee_data_by_department),
 }
-
 
 # Initialize session state if not already present
 if 'employees_data' not in st.session_state:
@@ -34,7 +33,12 @@ st.header("Search Employee")
 
 with st.form("search_employees_form"):
     search_option = st.selectbox("Search by", ["First Name", "Last Name", "Employee ID", "Department", "Position"])
-    search_query = st.text_input("Enter search query")
+    if search_option == "Department":
+        search_query = st.selectbox("Select Department", DEPARTMENTS)
+    elif search_option == "Position":
+        search_query = st.selectbox("Select Department", POSITIONS)
+    else:
+        search_query = st.text_input("Enter search query")
     submit_button = st.form_submit_button("Search")
 
 
