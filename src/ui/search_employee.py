@@ -4,26 +4,13 @@ import asyncio
 import streamlit as st
 import pandas as pd
 
+from src.config import settings
 from src.backend import backend_modules
 
 
-EMPLOYEE_COLUMNS = [
-    "id",
-    "first_name",
-    "middle_name",
-    "last_name",
-    "email",
-    "phone",
-    "address",
-    "salary",
-    "department",
-    "position",
-    "gender",
-    "date_of_birth",
-    "hired_date",
-    "status",
-    "date_resigned"
-]
+POSITIONS = settings.POSITIONS
+DEPARTMENTS = settings.DEPARTMENTS
+EMPLOYEE_COLUMNS = settings.EMPLOYEES_COLUMN
 
 #  Search option mapping with client functions
 OPTIONS = {
@@ -33,34 +20,6 @@ OPTIONS = {
     "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
     "Department": ("department", backend_modules.get_employee_data_by_department),
 }
-
-DEPARTMENTS = [
-    "IT",
-    "HR",
-    "Sales",
-    "Research",
-    "Marketing",
-    "Data & Analytics",
-]
-
-POSITIONS = [
-    "HR",
-    "Intern",
-    "Data Engineer",
-    "Solutions Architect",
-    "Data Analyst",
-    "Business Analyst",
-    "Senior Manager Engineering",
-    "Data Scientist",
-    "Junior Data Engineer",
-    "Web Developer",
-    "Cloud Architect",
-    "Software Engineer",
-    "Network Engineer",
-    "DevOps Engineer",
-    "Product Owner",
-]
-
 
 # Initialize session state if not already present
 if 'employees_data' not in st.session_state:
