@@ -39,9 +39,7 @@ async def get_employee_data(employee_id: int) -> pd.DataFrame:
 
 if get_available_employee_data:
     if employee_id.strip().isdigit():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        st.session_state.employee_data = loop.run_until_complete(get_employee_data(int(employee_id)))
+        st.session_state.employee_data = asyncio.run(get_employee_data(int(employee_id)))
     else:
         st.error("Invalid Employee ID. Please enter a numeric value.")
 
