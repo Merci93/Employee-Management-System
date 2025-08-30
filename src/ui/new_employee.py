@@ -192,6 +192,4 @@ async def add_new_employee() -> None:
 
 
 if submit_button:
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(add_new_employee())
+    asyncio.run(add_new_employee())

@@ -7,6 +7,21 @@ import pandas as pd
 from src.backend import backend_modules
 
 
+EMPLOYEE_COLUMNS = [
+    "id", "first_name", "middle_name", "last_name", "email", "phone", "address", "salary",
+    "department", "position", "gender", "date_of_birth", "hired_date", "status", "date_resigned"
+]
+
+#  Search option mapping with client functions
+OPTIONS = {
+    "Employee ID": ("id", backend_modules.get_employee_data_by_id),
+    "Position": ("position", backend_modules.get_employee_data_by_position),
+    "Last Name": ("last_name", backend_modules.get_employee_data_by_last_name),
+    "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
+    "Department": ("department", backend_modules.get_employee_data_by_department),
+}
+
+
 # Initialize session state if not already present
 if 'employees_data' not in st.session_state:
     cols = [
@@ -21,16 +36,6 @@ with st.form("search_employees_form"):
     search_option = st.selectbox("Search by", ["First Name", "Last Name", "Employee ID", "Department", "Position"])
     search_query = st.text_input("Enter search query")
     submit_button = st.form_submit_button("Search")
-
-
-#  Search option mapping with client functions
-OPTIONS = {
-    "Employee ID": ("id", backend_modules.get_employee_data_by_id),
-    "Position": ("position", backend_modules.get_employee_data_by_position),
-    "Last Name": ("last_name", backend_modules.get_employee_data_by_last_name),
-    "First Name": ("first_name", backend_modules.get_employee_data_by_first_name),
-    "Department": ("department", backend_modules.get_employee_data_by_department),
-}
 
 
 async def get_employees_data(search_option: str, search_query: str) -> pd.DataFrame:
@@ -59,9 +64,6 @@ async def get_employees_data(search_option: str, search_query: str) -> pd.DataFr
 
 
 if submit_button:
-    # loop = asyncio.new_event_loop()
-    # asyncio.set_event_loop(loop)
-    # st.session_state.employees_data = loop.run_until_complete(get_employees_data(search_option, search_query))
     st.session_state.employees_data = asyncio.run(get_employees_data(search_option, search_query))
 
 if st.session_state.employees_data is not None and not st.session_state.employees_data.empty:
