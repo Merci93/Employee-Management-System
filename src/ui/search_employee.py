@@ -85,21 +85,6 @@ else:
     search_query = st.text_input("Enter Last Name")
 
 
-# with st.form("search_employees_form"):
-#     search_option = st.selectbox(
-#         "Search by",
-#         ["First Name", "Last Name", "Employee ID", "Department", "Position"]
-#     )
-
-#     # Call corresponding widget function to get input
-#     search_query = input_widgets[search_option]()
-
-#     submit_button = st.form_submit_button("Search")
-
-
-# if submit_button:
-#     st.session_state.employees_data = asyncio.run(get_employees_data(search_option, search_query))
-
 if st.button("Search"):
     st.session_state.employees_data = asyncio.run(
         get_employees_data(search_option, search_query)

@@ -490,7 +490,7 @@ async def get_employee_data_by_department(department: DepartmentIdRequest) -> Li
 
 
 @app.get("/v1/get_employee_data/by_position/{position}", response_model=List[EmployeeResponseModel], tags=["Employee Data Search"])
-async def get_employee_data_by_position(position: DepartmentIdRequest) -> List[Dict[str, Any]]:
+async def get_employee_data_by_position(position: PositionIdRequest) -> List[Dict[str, Any]]:
     """
     Retrieve employee data using department. This returns at least one result if available.
 
