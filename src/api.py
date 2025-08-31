@@ -153,24 +153,15 @@ class EmployeeCreateRequest(BaseModel):
     status: str
 
 
-class AddressUpdate(BaseModel):
-    address: str
-
-
-class SalaryUpdate(BaseModel):
-    salary: int
-
-
-class PhoneNumberUpdate(BaseModel):
-    phone: str
-
-
-class DepartmentUpdate(BaseModel):
-    department: int
-
-
-class PositionUpdate(BaseModel):
-    position: int
+class EmployeeUpdateRequest(BaseModel):
+    employee_id: int
+    address: Optional[str] = None
+    salary: Optional[int | float] = None
+    first_name: Optional[str] = None
+    middle_name: Optional[str] = None
+    last_name: Optional[str] = None
+    position: Optional[str] = None
+    department: Optional[str] = None
 
 
 class EmployeeResponseModel(BaseModel):
@@ -632,30 +623,59 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/update_employee_address/", tags=["Employee Data Update"])
-def address_update(address: AddressUpdate, employee_id: int) -> Dict[str, bool]:
-    """Update existing address."""
-    logger.info(f"Updating address for employee with ID {employee_id} ...")
-    query = """
+def update_data(
+    where_column: str,
+    where_value: str | int,
+    column_name: str,
+    update_value: str | int | float,
+    log_context: str
+) -> bool:
+    """A helper function to update employee data."""
+    logger.info(f"Updating employee {log_context} ...")
+
+    query = f"""
         UPDATE employees
-        SET address = %s
-        WHERE id = %s;
+        SET {column_name} = %s
+        WHERE {where_column} = %s;
     """
+
     try:
         with db_connect.db_client.cursor() as cursor:
-            cursor.execute(query, (address.address, employee_id))
+            cursor.execute(query, (update_value, where_value))
         db_connect.db_client.commit()
 
-        logger.info(f"Address updated successfully for employee ID {employee_id}.")
-
-        return {"status": True}
+        logger.info(f"Employee {log_context} update completed successfully.")
+        return True
 
     except Exception as e:
         db_connect.db_client.rollback()
-        logger.error(
-            f"Unexpected error occurred while updating address for employee {employee_id}: {e}"
-        )
+        logger.error(f"Error updating employee {log_context}: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.post("/v1/update_employee_address", tags=["Employee Data Update"])
+def employee_data_update(request: EmployeeUpdateRequest) -> bool:
+    """Update employee data."""
+
+    # Exclude fields without any value
+    updates = request.model_dump(exclude_unset=True)
+
+    employee_id = updates.pop("employee_id", None)
+    if not employee_id:
+        raise HTTPException(status_code=400, detail="Employee ID is required.")
+
+    if len(updates) != 1:
+        raise HTTPException(status_code=400, detail="Only one field can be updated per request.")
+
+    column_name, update_value = next(iter(updates.items()))
+
+    return update_data(
+        where_column="id",
+        where_value=employee_id,
+        column_name=column_name,
+        update_value=update_value,
+        log_context=column_name
+    )
 
 
 if __name__ == "__main__":
