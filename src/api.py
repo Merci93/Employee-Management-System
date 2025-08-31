@@ -623,25 +623,26 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-def update_data(
-    where_column: str,
-    where_value: str | int,
-    column_name: str,
-    update_value: str | int | float,
-    log_context: str
-) -> bool:
+def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
     """A helper function to update employee data."""
     logger.info(f"Updating employee {log_context} ...")
 
+    set_clauses = []
+    values = []
+
+    for column, value in updates.items():
+        set_clauses.append(f"{column} = %s")
+        values.append(value)
+
     query = f"""
         UPDATE employees
-        SET {column_name} = %s
-        WHERE {where_column} = %s;
+        SET {', '.join(set_clauses)}
+        WHERE id = %s;
     """
 
     try:
         with db_connect.db_client.cursor() as cursor:
-            cursor.execute(query, (update_value, where_value))
+            cursor.execute(query, (*values, employee_id))
         db_connect.db_client.commit()
 
         logger.info(f"Employee {log_context} update completed successfully.")
@@ -653,28 +654,24 @@ def update_data(
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/update_employee_address", tags=["Employee Data Update"])
+@app.post("/v1/update_employee_data", tags=["Employee Data Update"])
 def employee_data_update(request: EmployeeUpdateRequest) -> bool:
     """Update employee data."""
 
     # Exclude fields without any value
-    updates = request.model_dump(exclude_unset=True)
+    updates = request.model_dump(exclude_none=True)
 
     employee_id = updates.pop("employee_id", None)
     if not employee_id:
         raise HTTPException(status_code=400, detail="Employee ID is required.")
 
-    if len(updates) != 1:
-        raise HTTPException(status_code=400, detail="Only one field can be updated per request.")
-
-    column_name, update_value = next(iter(updates.items()))
+    if not updates:
+        raise HTTPException(status_code=400, detail="No update fields provided.")
 
     return update_data(
-        where_column="id",
-        where_value=employee_id,
-        column_name=column_name,
-        update_value=update_value,
-        log_context=column_name
+        employee_id=employee_id,
+        updates=updates,
+        log_context=", ".join(updates.keys())
     )
 
 
