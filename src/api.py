@@ -656,7 +656,7 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
 
 
 @app.patch("/v1/update_employee_data", tags=["Employee Data Update"], description="""
-    Provide only the fields you want to update.
+    - Provide only the fields you want to update.
 
     - **employee_id** is required
 
