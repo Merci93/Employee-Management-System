@@ -656,12 +656,12 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
 
 
 @app.patch("/v1/update_employee_data", tags=["Employee Data Update"], description="""
-    Provide only the fields you want to update.
-    
+    - Provide only the fields you want to update.
+
     - **employee_id** is required
-    
+
     - Other fields (address, phone, position, department, first name, middle name, last name) are optional
-    
+
     - ⚠️ Delete keys you don't want to update, instead of sending them as `null`
     """)
 def employee_data_update(request: EmployeeUpdateRequest) -> bool:
