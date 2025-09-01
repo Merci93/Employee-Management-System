@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     gender_table_name: str = "gender"
     position_table_name: str = "position"
     dept_table_name: str = "department"
-    join_column: str = "id"
+    fetch_employee_data_join_column: str = "id"
     gender_id: str = "gender_id"
     position_id: str = "position_id"
     department_id: str = "department_id"
@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     port: int = 5432
 
     # UI Configs
+    # Search Employee Data UI Config data
     EMPLOYEES_COLUMN: List[str] = [
         "id",
         "first_name",
@@ -65,6 +66,18 @@ class Settings(BaseSettings):
         "Network Engineer",
         "DevOps Engineer",
         "Product Owner",
+    ]
+
+    # Update Employee Data UI Config data
+    DATA_TO_UPDATE: List[str] = [
+        "First Name",
+        "Middle Name",
+        "Last Name",
+        "Address",
+        "Phone",
+        "Department",
+        "Position",
+        "Salary",
     ]
 
 
