@@ -79,7 +79,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
@@ -162,6 +162,7 @@ class EmployeeUpdateRequest(BaseModel):
     last_name: Optional[str] = None
     position: Optional[str] = None
     department: Optional[str] = None
+    phone: Optional[int] = None
 
 
 class EmployeeResponseModel(BaseModel):
@@ -382,9 +383,9 @@ def fetch_employee_data(where_clause: str, value: Any) -> List[Dict[str, Any]]:
                     e.status,
                     e.date_resigned
                 FROM {settings.employee_table_name} AS e
-                JOIN {settings.dept_table_name} AS d ON e.{settings.department_id} = d.{settings.join_column}
-                JOIN {settings.gender_table_name} AS g ON e.{settings.gender_id} = g.{settings.join_column}
-                JOIN {settings.position_table_name} AS p ON e.{settings.position_id} = p.{settings.join_column}
+                JOIN {settings.dept_table_name} AS d ON e.{settings.department_id} = d.{settings.fetch_employee_data_join_column}
+                JOIN {settings.gender_table_name} AS g ON e.{settings.gender_id} = g.{settings.fetch_employee_data_join_column}
+                JOIN {settings.position_table_name} AS p ON e.{settings.position_id} = p.{settings.fetch_employee_data_join_column}
                 WHERE {where_clause};
             """
             )
@@ -635,7 +636,7 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
         values.append(value)
 
     query = f"""
-        UPDATE employees
+        UPDATE {settings.employee_table_name}
         SET {', '.join(set_clauses)}
         WHERE id = %s;
     """
@@ -654,7 +655,12 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.post("/v1/update_employee_data", tags=["Employee Data Update"])
+@app.patch("/v1/update_employee_data", tags=["Employee Data Update"], description="""
+    Provide only the fields you want to update.
+    - **employee_id** is required
+    - Other fields (address, phone, position, department, first name, middle name, last name) are optional
+    - ⚠️ Delete keys you don't want to update, instead of sending them as `null`
+    """)
 def employee_data_update(request: EmployeeUpdateRequest) -> bool:
     """Update employee data."""
 
