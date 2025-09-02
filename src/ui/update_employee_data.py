@@ -4,6 +4,25 @@ import streamlit as st
 import pandas as pd
 
 from src.backend import backend_modules
+from src.config import settings
+
+
+DATA_TO_UPDATE = settings.DATA_TO_UPDATE
+
+
+def update_input():
+    """Function to update session state for input reset"""
+    st.session_state.updated_value = ""
+
+
+async def get_employee_data(employee_id: int) -> pd.DataFrame:
+    """
+    Get employee data using the employee ID.
+    :param employee_id: ID of employee
+    :return: Pandas Dataframe with employee data or an empty DataFrame.
+    """
+    df = await backend_modules.get_employee_data_by_id(employee_id=employee_id)
+    return df if df is not None else pd.DataFrame()  # type: ignore
 
 
 st.header("Update Employee Data")
@@ -17,24 +36,9 @@ if "updated_value" not in st.session_state:
     st.session_state.updated_value = ""
 
 
-def update_input():
-    """Function to update session state for input reset"""
-    st.session_state.updated_value = ""
-
-
 with st.form("employee_id_search_form"):
     employee_id = st.text_input("Enter Employee ID")
     get_available_employee_data = st.form_submit_button("Verify Existing Employee Data")
-
-
-async def get_employee_data(employee_id: int) -> pd.DataFrame:
-    """
-    Get employee data using the employee ID.
-    :param employee_id: ID of employee
-    :return: Pandas Dataframe with employee data or an empty DataFrame.
-    """
-    df = await backend_modules.get_employee_data_by_id(employee_id=employee_id)
-    return df if df is not None else pd.DataFrame()  # type: ignore
 
 
 if get_available_employee_data:
@@ -50,10 +54,10 @@ else:
     st.write(f"Employee with ID {employee_id} does not exist.")
 
 data_to_update = st.selectbox(
-    "Data to Update",
-    ["Address", "Phone", "Department", "Position", "Salary"],
+    "### Data to Update",
+    DATA_TO_UPDATE,
     key="selected_update_field",
-    on_change=update_input
+    on_change=update_input,
 )
 
 # Dynamic input field for updates
