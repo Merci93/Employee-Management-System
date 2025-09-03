@@ -3,7 +3,7 @@
 from contextlib import asynccontextmanager
 from enum import Enum
 from pydantic import BaseModel
-from typing import Any, AsyncContextManager, Dict, List, Optional
+from typing import Any, AsyncContextManager, Dict, List
 from datetime import date
 
 import bcrypt
@@ -155,20 +155,20 @@ class EmployeeCreateRequest(BaseModel):
 
 class EmployeeUpdateRequest(BaseModel):
     employee_id: int
-    address: Optional[str] = None
-    salary: Optional[int | float] = None
-    first_name: Optional[str] = None
-    middle_name: Optional[str] = None
-    last_name: Optional[str] = None
-    position: Optional[str] = None
-    department: Optional[str] = None
-    phone: Optional[int] = None
+    address: str | None = None
+    salary: int | float | None = None
+    first_name: str | None = None
+    middle_name: str | None = None
+    last_name: str | None = None
+    position: str | None = None
+    department: str | None = None
+    phone: int | None = None
 
 
 class EmployeeResponseModel(BaseModel):
     id: int
     first_name: str
-    middle_name: Optional[str] = None
+    middle_name: str | None = None
     last_name: str
     email: str
     phone: str
@@ -180,7 +180,7 @@ class EmployeeResponseModel(BaseModel):
     date_of_birth: date
     hired_date: date
     status: str
-    date_resigned: Optional[date] = None
+    date_resigned: date | None = None
 
 
 @app.get("/v1/root/", tags=["Root"])
