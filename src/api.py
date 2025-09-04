@@ -624,7 +624,7 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
+def update_data(employee_id: int, updates: dict, log_context: str) -> Dict[str, bool]:
     """A helper function to update employee data."""
     logger.info(f"Updating employee {log_context} ...")
 
@@ -647,7 +647,7 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
         db_connect.db_client.commit()
 
         logger.info(f"Employee {log_context} update completed successfully.")
-        return True
+        return {"success": True}
 
     except Exception as e:
         db_connect.db_client.rollback()
@@ -664,7 +664,7 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> bool:
 
     - ⚠️ Delete keys you don't want to update, instead of sending them as `null`
     """)
-def employee_data_update(request: EmployeeUpdateRequest) -> bool:
+def employee_data_update(request: EmployeeUpdateRequest) -> Dict[str, bool]:
     """Update employee data."""
 
     # Exclude fields without any value
