@@ -125,11 +125,11 @@ async def add_new_employee() -> None:
 
     if phone_exists is None or email_exists is None:
         if phone_exists is None:
-            st.error("Phone number verification failed ❌.")
-            logger.error("Phone number verification failed.")
+            st.error(f"Phone number verification failed ❌./nUser with phone number {phone} already exists.")
+            logger.warning("Phone number verification failed. User with phone number already exists.")
         if email_exists is None:
-            st.error("Email verification failed ❌.")
-            logger.error("Email verification failed.")
+            st.error(f"Email verification failed ❌./nUser with email {email} already exists.")
+            logger.warning("Email verification failed. User with email already exists.")
         return
 
     if phone_exists:
