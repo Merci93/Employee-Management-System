@@ -7,6 +7,8 @@ import re
 
 import streamlit as st
 
+from typing import Tuple
+
 from src.backend import backend_modules
 from src.config import settings
 from src.log_handler import logger
@@ -31,22 +33,22 @@ with st.form("add_employee_form"):
 
 
 FIELDS = {
-    "first_name": first_name,
-    "middle_name": middle_name,
-    "last_name": last_name,
-    "address": address,
-    "date_of_birth": dob,
-    "gender_id": gender,
-    "phone": phone,
-    "position_id": position,
     "email": email,
-    "department_id": department,
+    "phone": phone,
     "salary": salary,
+    "address": address,
+    "gender_id": gender,
+    "date_of_birth": dob,
+    "last_name": last_name,
+    "position_id": position,
+    "first_name": first_name,
     "hired_date": hired_date,
+    "middle_name": middle_name,
+    "department_id": department,
 }
 
 
-async def verify_email_and_phone(email: str, phone: str) -> bool | None:
+async def verify_email_and_phone(email: str, phone: str) -> Tuple[bool | None, bool | None]:
     """
     Runs email and phone number verification on employees database to ensure they don't already exist.
 
@@ -58,14 +60,14 @@ async def verify_email_and_phone(email: str, phone: str) -> bool | None:
         phone_task = backend_modules.verify_phone_number(phone)
         email_task = backend_modules.verify_email(email, who="employee")
         phone_exists, email_exists = await asyncio.gather(phone_task, email_task)
-        return phone_exists, email_exists  # type: ignore
+        return phone_exists, email_exists
     except Exception as e:
         st.error("Verification failed ❌.")
         st.error(f"Error details: {e}")
-        return None, None  # type: ignore
+        return None, None
 
 
-async def get_ids(department: str, gender: str, position: str) -> int:
+async def get_ids(department: str, gender: str, position: str) -> Tuple[int | None, int | None, int | None]:
     """
     Gets the id for the department, gender and position of the new employee using the input data.
 
@@ -75,18 +77,18 @@ async def get_ids(department: str, gender: str, position: str) -> int:
     :return: Integer values for each of the items form their respective tables.
     """
     try:
-        department_id_task = backend_modules.get_department_id(department)
         gender_id_task = backend_modules.get_gender_id(gender)
         position_id_task = backend_modules.get_position_id(position)
+        department_id_task = backend_modules.get_department_id(department)
         dept_id, gender_id, position_id = await asyncio.gather(
             department_id_task, gender_id_task, position_id_task
         )
-        return dept_id, gender_id, position_id  # type: ignore
+        return dept_id, gender_id, position_id
 
     except Exception as e:
         st.error("ID retrieval failed ❌.")
         st.error(f"Error details: {e}")
-        return None, None, None  # type: ignore
+        return None, None, None
 
 
 async def add_new_employee() -> None:
@@ -105,7 +107,7 @@ async def add_new_employee() -> None:
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
 
-    phone_exists, email_exists = await verify_email_and_phone(phone=phone, email=email)  # type: ignore
+    phone_exists, email_exists = await verify_email_and_phone(phone=phone, email=email)
 
     if phone_exists is None or email_exists is None:
         if phone_exists is None:
@@ -127,7 +129,7 @@ async def add_new_employee() -> None:
         return
 
     # Get the department, gender and position id's
-    dept_id, gender_id, position_id = await get_ids(department, gender, position)  # type: ignore
+    dept_id, gender_id, position_id = await get_ids(department, gender, position)
 
     if any(not value for value in (dept_id, gender_id, position_id)):
         if not dept_id:
@@ -150,18 +152,18 @@ async def add_new_employee() -> None:
 
         try:
             response = await backend_modules.add_new_employee_data(
+                email=FIELDS.get("email"),  # type: ignore
+                phone=FIELDS.get("phone"),  # type: ignore
+                salary=FIELDS.get("salary"),  # type: ignore
+                address=FIELDS.get("address"),  # type: ignore
+                gender_id=FIELDS.get("gender_id"),  # type: ignore
+                last_name=FIELDS.get("last_name"),  # type: ignore
+                hired_date=FIELDS.get("hired_date"),  # type: ignore
                 first_name=FIELDS.get("first_name"),  # type: ignore
                 middle_name=FIELDS.get("middle_name"),  # type: ignore
-                last_name=FIELDS.get("last_name"),  # type: ignore
-                address=FIELDS.get("address"),  # type: ignore
-                date_of_birth=FIELDS.get("date_of_birth"),  # type: ignore
-                gender_id=FIELDS.get("gender_id"),  # type: ignore
-                phone=FIELDS.get("phone"),  # type: ignore
                 position_id=FIELDS.get("position_id"),  # type: ignore
-                email=FIELDS.get("email"),  # type: ignore
+                date_of_birth=FIELDS.get("date_of_birth"),  # type: ignore
                 department_id=FIELDS.get("department_id"),  # type: ignore
-                salary=FIELDS.get("salary"),  # type: ignore
-                hired_date=FIELDS.get("hired_date"),  # type: ignore
             )
 
             if response.get("status") == "Success":
