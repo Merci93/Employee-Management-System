@@ -1,6 +1,6 @@
 """"Backend module"""
 from datetime import date
-from typing import Dict
+from typing import Any, Dict
 
 import httpx
 import pandas as pd
@@ -46,7 +46,7 @@ async def verify_parameter(base_path: str, identifier: str | int, log_context: s
     :param base_path: API base path
     :param identifier: Employee identifier
     :param log_context: Context for logging messages
-    :param params: Optional query parameters to include in the request
+    :param params: query parameters to include in the request
     :return: True if exists, False otherwise.
     """
     logger.info(f"Starting verification for {log_context}: {identifier} ...")
@@ -58,7 +58,7 @@ async def verify_parameter(base_path: str, identifier: str | int, log_context: s
         response.raise_for_status()
         response = response.json()
 
-        exists = response.get("exist", False)
+        exists = response.get("exist")
 
         if exists:
             logger.info(f"{log_context.capitalize()} with email {identifier} already exists.")
@@ -98,7 +98,7 @@ async def verify_phone_number(phone_number: str) -> bool:
     )
 
 
-async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) -> int | bool:
+async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) -> int:
     """
     Helper function to fetch parameter id from database and return a value.
 
@@ -114,7 +114,7 @@ async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) 
         response.raise_for_status()
         response = response.json()
 
-        required_id = response.get("value", False)
+        required_id = response.get("value")
 
         if required_id:
             logger.info(f"{log_context.capitalize()} ID retrieved successfully.")
@@ -124,7 +124,7 @@ async def fetch_parameter_id(base_path: str, identifier: str, log_context: str) 
         return required_id
 
 
-async def get_gender_id(gender: str) -> int | bool:
+async def get_gender_id(gender: str) -> int:
     """
     Get the gender ID for the employee.
 
@@ -138,7 +138,7 @@ async def get_gender_id(gender: str) -> int | bool:
     )
 
 
-async def get_department_id(department: str) -> int | bool:
+async def get_department_id(department: str) -> int:
     """
     Get the department ID for the employee.
 
@@ -290,7 +290,7 @@ async def add_new_employee_data(
     salary: int,
     hired_date: date,
     status: str = "Active",
-) -> Dict[str, str]:  # type: ignore
+) -> Any:
     """
     Add a new employee details to the database.
     """
@@ -327,6 +327,64 @@ async def add_new_employee_data(
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
+async def update_employee_data(
+    employee_id: int,
+    address: str | None = None,
+    salary: int | float | None = None,
+    first_name: str | None = None,
+    middle_name: str | None = None,
+    last_name: str | None = None,
+    position: str | None = None,
+    department: str | None = None,
+    phone: int | None = None,
+) -> bool | None:
+    """Client call to update employee data"""
+    logger.info(f"Initialting update process for employee with id {employee_id} ...")
+    url = f"{BASE_URL}/update_employee_data"
+    payload = {
+        "employee_id": employee_id,
+        "address": address,
+        "salary": salary,
+        "first_name": first_name,
+        "middle_name": middle_name,
+        "last_name": last_name,
+        "position": position,
+        "department": department,
+        "phone": phone
+    }
+
+    # Get all assigned values
+    VALUES = {k: v for k, v in payload.items() if v is not None}
+
+    # Call phone number verification if only phone number was sent
+    PHONE_NUMBER = VALUES.get("phone")
+
+    if PHONE_NUMBER is not None:
+        phone_exist = await verify_phone_number(phone_number=PHONE_NUMBER)
+        if phone_exist:
+            logger.warning(f"Phone number {PHONE_NUMBER} already exists in the database.")
+            return phone_exist
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.patch(url, json=payload, headers=HEADERS)
+
+            if response.status_code == 400:
+                logger.warning("Either employee id is missing or no update fields provided.")
+                return None
+
+            if response.status_code == 500:
+                logger.warning(f"Unexpected error: {response.json().get('detail')}")
+                return None
+
+            response.raise_for_status()
+
+            data = response.json()
+            logger.info("Employee data updated successfully.")
+            return data.get("success")
+
+        except Exception as e:
+            logger.error(f"Unexpected error occurred updating employee data: {e}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 # TODO - Add new enpoint call for deleting employee data
-# TODO - Add new enpoint call for updating employee data

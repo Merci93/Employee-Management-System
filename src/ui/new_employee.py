@@ -7,7 +7,10 @@ import re
 
 import streamlit as st
 
+from typing import Tuple
+
 from src.backend import backend_modules
+from src.config import settings
 from src.log_handler import logger
 
 
@@ -19,36 +22,33 @@ with st.form("add_employee_form"):
     last_name = st.text_input("Last Name")
     address = st.text_input("Address")
     dob = st.date_input("Date of Birth")
-    gender = st.selectbox("Gender", ["Male", "Female"])
+    gender = st.selectbox("Gender", settings.GENDER)
     phone = st.text_input("Phone Number")
-    employee_positions = [
-        "HR",
-        "Data Engineer",
-        "Solutions Architect",
-        "Data Analyst",
-        "Intern",
-        "Business Analyst",
-        "Senior Manager Engineering",
-        "Data Scientist",
-        "Junior Data Engineer",
-        "Web Developer",
-        "Cloud Architect",
-        "Software Engineer",
-        "Network Engineer",
-        "DevOps Engineer",
-        "Product Owner",
-    ]
-    position = st.selectbox("Position", employee_positions)
+    position = st.selectbox("Position", settings.POSITIONS)
     email = st.text_input("Email")
-    department = st.selectbox(
-        "Department", ["IT", "Marketing", "Sales", "Research", "HR", "Data & Analytics"]
-    )
+    department = st.selectbox("Department", settings.DEPARTMENTS)
     salary = st.number_input("Salary")
     hired_date = st.date_input("Hired Date")
     submit_button = st.form_submit_button("Save")
 
 
-async def verify_email_and_phone(email: str, phone: str) -> bool | None:
+FIELDS = {
+    "email": email,
+    "phone": phone,
+    "salary": salary,
+    "address": address,
+    "gender_id": gender,
+    "date_of_birth": dob,
+    "last_name": last_name,
+    "position_id": position,
+    "first_name": first_name,
+    "hired_date": hired_date,
+    "middle_name": middle_name,
+    "department_id": department,
+}
+
+
+async def verify_email_and_phone(email: str, phone: str) -> Tuple[bool | None, bool | None]:
     """
     Runs email and phone number verification on employees database to ensure they don't already exist.
 
@@ -60,14 +60,14 @@ async def verify_email_and_phone(email: str, phone: str) -> bool | None:
         phone_task = backend_modules.verify_phone_number(phone)
         email_task = backend_modules.verify_email(email, who="employee")
         phone_exists, email_exists = await asyncio.gather(phone_task, email_task)
-        return phone_exists, email_exists  # type: ignore
+        return phone_exists, email_exists
     except Exception as e:
         st.error("Verification failed ❌.")
         st.error(f"Error details: {e}")
-        return None, None  # type: ignore
+        return None, None
 
 
-async def get_ids(department: str, gender: str, position: str) -> int:
+async def get_ids(department: str, gender: str, position: str) -> Tuple[int | None, int | None, int | None]:
     """
     Gets the id for the department, gender and position of the new employee using the input data.
 
@@ -77,38 +77,24 @@ async def get_ids(department: str, gender: str, position: str) -> int:
     :return: Integer values for each of the items form their respective tables.
     """
     try:
-        department_id_task = backend_modules.get_department_id(department)
         gender_id_task = backend_modules.get_gender_id(gender)
         position_id_task = backend_modules.get_position_id(position)
+        department_id_task = backend_modules.get_department_id(department)
         dept_id, gender_id, position_id = await asyncio.gather(
             department_id_task, gender_id_task, position_id_task
         )
-        return dept_id, gender_id, position_id  # type: ignore
+        return dept_id, gender_id, position_id
 
     except Exception as e:
         st.error("ID retrieval failed ❌.")
         st.error(f"Error details: {e}")
-        return None, None, None  # type: ignore
+        return None, None, None
 
 
 async def add_new_employee() -> None:
     """Handles form submission with async API calls to add new employee data"""
-    fields = {
-        "first_name": first_name,
-        "middle_name": middle_name,
-        "last_name": last_name,
-        "address": address,
-        "date_of_birth": dob,
-        "gender_id": gender,
-        "phone": phone,
-        "position_id": position,
-        "email": email,
-        "department_id": department,
-        "salary": salary,
-        "hired_date": hired_date,
-    }
 
-    missing_fields = [field for field, value in fields.items() if not value]
+    missing_fields = [field for field, value in FIELDS.items() if not value]
     email_valid_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
     if missing_fields:
@@ -121,15 +107,15 @@ async def add_new_employee() -> None:
         st.error("Invalid email! ❌ Please enter a correct email format.")
         return
 
-    phone_exists, email_exists = await verify_email_and_phone(phone=phone, email=email)  # type: ignore
+    phone_exists, email_exists = await verify_email_and_phone(phone=phone, email=email)
 
     if phone_exists is None or email_exists is None:
         if phone_exists is None:
-            st.error("Phone number verification failed ❌.")
-            logger.error("Phone number verification failed.")
+            st.error("Phone number verification failed due to unkown error ❌.")
+            logger.warning("Phone number verification failed. User with phone number already exists.")
         if email_exists is None:
-            st.error("Email verification failed ❌.")
-            logger.error("Email verification failed.")
+            st.error("Email verification failed due to unknown error ❌.")
+            logger.warning("Email verification failed. User with email already exists.")
         return
 
     if phone_exists:
@@ -143,7 +129,7 @@ async def add_new_employee() -> None:
         return
 
     # Get the department, gender and position id's
-    dept_id, gender_id, position_id = await get_ids(department, gender, position)  # type: ignore
+    dept_id, gender_id, position_id = await get_ids(department, gender, position)
 
     if any(not value for value in (dept_id, gender_id, position_id)):
         if not dept_id:
@@ -160,24 +146,24 @@ async def add_new_employee() -> None:
         return
 
     else:
-        fields["department_id"] = dept_id
-        fields["gender_id"] = gender_id
-        fields["position_id"] = position_id
+        FIELDS["department_id"] = dept_id
+        FIELDS["gender_id"] = gender_id
+        FIELDS["position_id"] = position_id
 
         try:
             response = await backend_modules.add_new_employee_data(
-                first_name=fields.get("first_name"),  # type: ignore
-                middle_name=fields.get("middle_name"),  # type: ignore
-                last_name=fields.get("last_name"),  # type: ignore
-                address=fields.get("address"),  # type: ignore
-                date_of_birth=fields.get("date_of_birth"),  # type: ignore
-                gender_id=fields.get("gender_id"),  # type: ignore
-                phone=fields.get("phone"),  # type: ignore
-                position_id=fields.get("position_id"),  # type: ignore
-                email=fields.get("email"),  # type: ignore
-                department_id=fields.get("department_id"),  # type: ignore
-                salary=fields.get("salary"),  # type: ignore
-                hired_date=fields.get("hired_date"),  # type: ignore
+                email=FIELDS.get("email"),  # type: ignore
+                phone=FIELDS.get("phone"),  # type: ignore
+                salary=FIELDS.get("salary"),  # type: ignore
+                address=FIELDS.get("address"),  # type: ignore
+                gender_id=FIELDS.get("gender_id"),  # type: ignore
+                last_name=FIELDS.get("last_name"),  # type: ignore
+                hired_date=FIELDS.get("hired_date"),  # type: ignore
+                first_name=FIELDS.get("first_name"),  # type: ignore
+                middle_name=FIELDS.get("middle_name"),  # type: ignore
+                position_id=FIELDS.get("position_id"),  # type: ignore
+                date_of_birth=FIELDS.get("date_of_birth"),  # type: ignore
+                department_id=FIELDS.get("department_id"),  # type: ignore
             )
 
             if response.get("status") == "Success":

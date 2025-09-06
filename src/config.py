@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     port: int = 5432
 
     # UI Configs
-    # Search Employee Data UI Config data
     EMPLOYEES_COLUMN: List[str] = [
         "id",
         "first_name",
@@ -68,7 +67,6 @@ class Settings(BaseSettings):
         "Product Owner",
     ]
 
-    # Update Employee Data UI Config data
     DATA_TO_UPDATE: List[str] = [
         "First Name",
         "Middle Name",
@@ -79,6 +77,8 @@ class Settings(BaseSettings):
         "Position",
         "Salary",
     ]
+
+    GENDER: List[str] = ["Male", "Female"]
 
 
 def init_settings() -> None:
