@@ -337,7 +337,7 @@ async def update_employee_data(
     position: str | None = None,
     department: str | None = None,
     phone: int | None = None,
-) -> bool | None:
+) -> bool:
     """Client call to update employee data"""
     logger.info(f"Initialting update process for employee with id {employee_id} ...")
     url = f"{BASE_URL}/update_employee_data"
@@ -371,11 +371,11 @@ async def update_employee_data(
 
             if response.status_code == 400:
                 logger.warning("Either employee id is missing or no update fields provided.")
-                return None
+                return False
 
             if response.status_code == 500:
                 logger.warning(f"Unexpected error: {response.json().get('detail')}")
-                return None
+                return False
 
             response.raise_for_status()
 
