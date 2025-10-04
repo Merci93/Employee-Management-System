@@ -27,30 +27,37 @@ async def get_employee_data(employee_id: int) -> pd.DataFrame:
 
 async def update_employee_data(
     employee_id: int,
-    address: str | None = None,
-    salary: int | float | None = None,
-    first_name: str | None = None,
-    middle_name: str | None = None,
-    last_name: str | None = None,
-    position: str | None = None,
-    department: str | None = None,
-    phone: int | None = None,
+    data_to_update: str,
+    updated_value: str | int | float
 ) -> bool:
     """
     A function to update employee information with given data.
 
     :return: Boolean True if update was successful, False, otherwise
     """
+    DATA_MAPPING = {
+        "Address": "address",
+        "Salary": "salary",
+        "First Name": "first_name",
+        "Middle Name": "middle_name",
+        "Last Name": "last_name",
+        "Position": "position",
+        "Department": "department",
+        "Phone": "phone"
+    }
+
+    # Build keyword arguments with all fields defaulted to None
+    kwargs = {v: None for v in DATA_MAPPING.values()}
+
+    if data_to_update in DATA_MAPPING:
+        field_name = DATA_MAPPING[data_to_update]
+        kwargs[field_name] = updated_value  # type: ignore
+    else:
+        raise ValueError(f"Invalid field: {data_to_update}")
+
     update_status = await backend_modules.update_employee_data(
         employee_id=employee_id,
-        address=address,
-        salary=salary,
-        first_name=first_name,
-        middle_name=middle_name,
-        last_name=last_name,
-        position=position,
-        department=department,
-        phone=phone
+        **kwargs
     )
     return update_status
 
@@ -92,7 +99,7 @@ data_to_update = st.selectbox(
 
 # Dynamic input field for updates
 if data_to_update == "Salary":
-    updated_value = st.number_input(f"Enter new {data_to_update}", min_value=0, step=1)
+    updated_value = st.number_input(f"Enter new {data_to_update}", min_value=0, step=1) 
 else:
     updated_value = st.text_input(f"Enter new {data_to_update}", key="updated_value")
 
@@ -100,4 +107,16 @@ with st.form("employee_data_update_form"):
     submit_button = st.form_submit_button("Update Data")
 
 if submit_button:
-    st.write(f"Updating {data_to_update} to {updated_value} ...")
+    st.write(f"Updating employee {data_to_update} ...")
+    if employee_id.strip().isdigit():
+        success = asyncio.run(update_employee_data(
+            employee_id=int(employee_id),
+            data_to_update=data_to_update,
+            updated_value=updated_value
+        ))
+        if success:
+            st.success(f"{data_to_update} updated successfully for employee {employee_id}.")
+        else:
+            st.error("Update failed. Please try again.")
+    else:
+        st.error("Invalid Employee ID. Please enter a numeric value.")
