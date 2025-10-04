@@ -25,6 +25,36 @@ async def get_employee_data(employee_id: int) -> pd.DataFrame:
     return df if df is not None else pd.DataFrame()  # type: ignore
 
 
+async def update_employee_data(
+    employee_id: int,
+    address: str | None = None,
+    salary: int | float | None = None,
+    first_name: str | None = None,
+    middle_name: str | None = None,
+    last_name: str | None = None,
+    position: str | None = None,
+    department: str | None = None,
+    phone: int | None = None,
+) -> bool:
+    """
+    A function to update employee information with given data.
+
+    :return: Boolean True if update was successful, False, otherwise
+    """
+    update_status = await backend_modules.update_employee_data(
+        employee_id=employee_id,
+        address=address,
+        salary=salary,
+        first_name=first_name,
+        middle_name=middle_name,
+        last_name=last_name,
+        position=position,
+        department=department,
+        phone=phone
+    )
+    return update_status
+
+
 st.header("Update Employee Data")
 
 # Initialize session state variables
