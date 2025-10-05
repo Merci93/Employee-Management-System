@@ -162,7 +162,7 @@ class EmployeeUpdateRequest(BaseModel):
     last_name: str | None = None
     position_id: int | None = None
     department_id: int | None = None
-    phone: int | None = None
+    phone: str | None = None
 
 
 class EmployeeResponseModel(BaseModel):
