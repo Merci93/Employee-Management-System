@@ -8,6 +8,8 @@ from src.config import settings
 
 
 DATA_TO_UPDATE = settings.DATA_TO_UPDATE
+POSITIONS = settings.POSITIONS
+DEPARTMENTS = settings.DEPARTMENTS
 
 
 def update_input():
@@ -99,7 +101,11 @@ data_to_update = st.selectbox(
 
 # Dynamic input field for updates
 if data_to_update == "Salary":
-    updated_value = st.number_input(f"Enter new {data_to_update}", min_value=0, step=1) 
+    updated_value = st.number_input(f"Enter new {data_to_update}", min_value=0, step=1)
+elif data_to_update == "Position":
+    updated_value = st.selectbox(f"Enter new {data_to_update}", POSITIONS)
+elif data_to_update == "Department":
+    updated_value = st.selectbox(f"Enter new {data_to_update}", DEPARTMENTS)
 else:
     updated_value = st.text_input(f"Enter new {data_to_update}", key="updated_value")
 
