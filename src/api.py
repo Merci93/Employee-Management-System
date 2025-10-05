@@ -160,8 +160,8 @@ class EmployeeUpdateRequest(BaseModel):
     first_name: str | None = None
     middle_name: str | None = None
     last_name: str | None = None
-    position: str | None = None
-    department: str | None = None
+    position_id: str | None = None
+    department_id: str | None = None
     phone: int | None = None
 
 
