@@ -359,7 +359,7 @@ async def update_employee_data(
     # Parameters that need further validation
     POSITION = VALUES.get("position")
     PHONE_NUMBER = VALUES.get("phone")
-    DEPARTMENT = VALUES.get("department")
+    DEPARTMENT = VALUES.get("department_id")
 
     # Call verifications for data if exists
     if PHONE_NUMBER is not None:
@@ -375,6 +375,8 @@ async def update_employee_data(
     if DEPARTMENT is not None:
         department_id = await get_department_id(department=DEPARTMENT)
         payload.update({"department_id": department_id})
+
+    payload = {k: v for k, v in payload.items() if v is not None}
 
     async with httpx.AsyncClient() as client:
         try:
