@@ -126,7 +126,7 @@ class PositionIdRequest(str, Enum):
     data_analyst = "Data Analyst"
     intern = "Intern"
     business_analyst = "Business Analyst"
-    senior_mgr_engr = "Senior Manager Engineering"
+    senior_engr_mgr = "Senior Engineering Manager"
     data_scientist = "Data Scientist"
     jnr_data_eengieer = "Junior Data Engineer"
     web_developer = "Web Developer"
