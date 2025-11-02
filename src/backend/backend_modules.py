@@ -357,7 +357,7 @@ async def update_employee_data(
     VALUES = {k: v for k, v in payload.items() if v is not None}
 
     # Parameters that need further validation
-    POSITION = VALUES.get("position")
+    POSITION = VALUES.get("position_id")
     PHONE_NUMBER = VALUES.get("phone")
     DEPARTMENT = VALUES.get("department_id")
 
