@@ -56,7 +56,7 @@ class Settings(BaseSettings):
         "Solutions Architect",
         "Data Analyst",
         "Business Analyst",
-        "Senior Manager Engineering",
+        "Senior Engineering Manager",
         "Data Scientist",
         "Junior Data Engineer",
         "Web Developer",
