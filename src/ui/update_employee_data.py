@@ -11,17 +11,6 @@ DATA_TO_UPDATE = settings.DATA_TO_UPDATE
 POSITIONS = settings.POSITIONS
 DEPARTMENTS = settings.DEPARTMENTS
 
-DATA_MAPPING = {
-    "address": "address",
-    "salary": "salary",
-    "first_name": "first_name",
-    "middle_name": "middle_name",
-    "last_name": "last_name",
-    "position": "position",
-    "department": "department",
-    "phone": "phone"
-}
-
 
 def update_input():
     """Function to update session state for input reset"""
@@ -48,6 +37,18 @@ async def update_employee_data(
 
     :return: Boolean True if update was successful, False, otherwise
     """
+
+    DATA_MAPPING = {
+        "Address": "address",
+        "Salary": "salary",
+        "First Name": "first_name",
+        "Middle Name": "middle_name",
+        "Last Name": "last_name",
+        "Position": "position",
+        "Department": "department",
+        "Phone": "phone"
+    }
+
     # Build keyword arguments with all fields defaulted to None
     kwargs = {v: None for v in DATA_MAPPING.values()}
 
