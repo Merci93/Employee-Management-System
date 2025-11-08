@@ -337,7 +337,7 @@ async def update_employee_data(
     position: str | None = None,
     department: str | None = None,
     phone: str | None = None,
-) -> bool:
+) -> bool | None:
     """Client call to update employee data"""
     logger.info(f"Initialting update process for employee with id {employee_id} ...")
     url = f"{BASE_URL}/update_employee_data"
@@ -366,7 +366,7 @@ async def update_employee_data(
         phone_exist = await verify_phone_number(phone_number=PHONE_NUMBER)
         if phone_exist:
             logger.warning(f"Phone number {PHONE_NUMBER} already exists in the database.")
-            return phone_exist
+            return
 
     if POSITION is not None:
         position_id = await get_position_id(position=POSITION)
