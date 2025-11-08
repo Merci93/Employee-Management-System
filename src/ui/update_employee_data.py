@@ -31,7 +31,7 @@ async def update_employee_data(
     employee_id: int,
     data_to_update: str,
     updated_value: str | int | float
-) -> bool:
+) -> bool | None:
     """
     A function to update employee information with given data.
 
@@ -121,7 +121,9 @@ if submit_button:
             data_to_update=data_to_update,
             updated_value=updated_value
         ))
-        if success:
+        if data_to_update == "Phone" and success is None:
+            st.error(f"{data_to_update} number already in use. input a different phone number.")
+        elif success:
             st.success(f"{data_to_update} updated successfully for employee {employee_id}.")
         else:
             st.error("Update failed. Please try again.")
