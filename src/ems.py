@@ -10,9 +10,28 @@ def login():
 
     st.header("Log in")
 
+    # Inputs
+    email_or_id = st.text_input("Employee ID or Email")
+    password = st.text_input("Password", type="password")
+    role = st.selectbox("Role", ["Admin", "User"])
+
+    # Login Button
     if st.button("Log in"):
-        st.session_state.role = "Admin"
-        st.rerun()
+        if email_or_id and password:
+            # TODO Add backemd call for password and email or id verification
+            # Call Backend API to fetch password and verify user
+            if role == "Admin":
+                st.session_state.role = "Admin"
+                st.success("Login Successful!")
+                st.rerun()
+            elif role == "User":
+                st.session_state.role = "User"
+                st.success("Login Successful!")
+                st.rerun()
+            else:
+                st.error("Invalid credentials or role.")
+        else:
+            st.warning("Please enter both email and password.")
 
 
 def logout():
