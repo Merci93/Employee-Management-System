@@ -96,7 +96,6 @@ CREATE TABLE users (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
     role VARCHAR(10),
-    date_of_birth DATE,
     password VARCHAR(255) NOT NULL,
     employee_id INT UNIQUE NOT NULL,
 
@@ -105,5 +104,5 @@ CREATE TABLE users (
 );
 
 -- Add default admin
-INSERT INTO users (first_name, last_name, email, role, date_of_birth, password, employee_id)
-VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', '2024-01-01', 'ADmin1234', 1);
+INSERT INTO users (first_name, last_name, email, role, password, employee_id)
+VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', 'ADmin1234', 1);
