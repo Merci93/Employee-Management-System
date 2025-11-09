@@ -514,7 +514,7 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
         f"Adding user {user.firstname} {user.lastname} and details to the database ..."
     )
     query = """
-        INSERT INTO users (first_name, last_name, email, date_of_birth, role, password, employee_id)
+        INSERT INTO users (first_name, last_name, email, role, password, employee_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING first_name last_name;
     """
@@ -529,7 +529,6 @@ def add_new_user(user: UserCreateRequest) -> Dict[str, str]:
                     user.firstname,
                     user.lastname,
                     user.email,
-                    user.dob,
                     user.role,
                     encrypted_password,
                     user.employee_id,
