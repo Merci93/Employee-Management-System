@@ -27,7 +27,6 @@ with st.form("new_user_admin_form"):
     assigned_role = st.selectbox("Role", ["User", "Admin"])
     firstname = st.text_input("First Name")
     lastname = st.text_input("Last Name")
-    dob = st.date_input("Date of Birth") # Remove this
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
@@ -58,7 +57,6 @@ async def create_user() -> None:
         "Role": assigned_role,
         "First Name": firstname,
         "Last Name": lastname,
-        "Date of Birth": dob, # remove this
         "Email": email,
         "Password": password,
         "Confirm Password": confirm_password,
@@ -108,7 +106,6 @@ async def create_user() -> None:
             response = await backend_modules.add_new_user(
                 firstname=firstname,
                 lastname=lastname,
-                dob=dob,  # type: ignore # remove this
                 email=email,
                 password=password,
                 role=assigned_role,

@@ -245,7 +245,6 @@ async def add_new_user(
     role: str,
     firstname: str,
     lastname: str,
-    dob: date,
     email: str,
     password: str,
     employee_id: int
@@ -263,7 +262,6 @@ async def add_new_user(
         "role": role,
         "firstname": firstname,
         "lastname": lastname,
-        "dob": dob.strftime("%Y-%m-%d"),
         "email": email,
         "password": password,
         "employee_id": employee_id,
