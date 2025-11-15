@@ -7,11 +7,15 @@ import pandas as pd
 from src.config import settings
 from src.backend import backend_modules
 
-# Markdown ro center headings
+# Markdown to center headings
 st.markdown("""
     <style>
     h1, h2, h3 {
         text-align: center;
+    }
+    div.stButton > button {
+        display: block;
+        margin: auto;
     }
     </style>
 """, unsafe_allow_html=True)

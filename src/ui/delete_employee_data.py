@@ -2,11 +2,15 @@ import streamlit as st
 import pandas as pd
 
 
-# Markdown ro center headings
+# Markdown to center headings
 st.markdown("""
     <style>
     h1, h2, h3 {
         text-align: center;
+    }
+    div.stButton > button {
+        display: block;
+        margin: auto;
     }
     </style>
 """, unsafe_allow_html=True)
