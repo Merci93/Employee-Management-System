@@ -7,6 +7,14 @@ import pandas as pd
 from src.config import settings
 from src.backend import backend_modules
 
+# Markdown ro center headings
+st.markdown("""
+    <style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 POSITIONS = settings.POSITIONS
 DEPARTMENTS = settings.DEPARTMENTS
