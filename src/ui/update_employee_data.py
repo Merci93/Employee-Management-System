@@ -7,6 +7,15 @@ from src.backend import backend_modules
 from src.config import settings
 
 
+# Markdown ro center headings
+st.markdown("""
+    <style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 DATA_TO_UPDATE = settings.DATA_TO_UPDATE
 POSITIONS = settings.POSITIONS
 DEPARTMENTS = settings.DEPARTMENTS

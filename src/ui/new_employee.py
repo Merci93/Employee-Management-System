@@ -14,6 +14,15 @@ from src.config import settings
 from src.log_handler import logger
 
 
+# Markdown ro center headings
+st.markdown("""
+    <style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.header("Add New Employee")
 
 with st.form("add_employee_form"):

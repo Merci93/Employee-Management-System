@@ -1,6 +1,15 @@
 import streamlit as st
 
 
+# Markdown ro center headings
+st.markdown("""
+    <style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # User role obtained from database after login, but for now, we will define them
 if "role" not in st.session_state:
     st.session_state.role = None
