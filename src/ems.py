@@ -44,7 +44,7 @@ def login():
             else:
                 st.error("Invalid credentials or role.")
         else:
-            st.warning("Please enter both email and password.")
+            st.warning("Please enter email and password.")
 
 
 def logout():
