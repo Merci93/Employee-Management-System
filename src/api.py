@@ -99,7 +99,6 @@ class UserCreateRequest(BaseModel):
     role: Role
     firstname: str
     lastname: str
-    dob: str
     email: str
     password: str
     employee_id: int
