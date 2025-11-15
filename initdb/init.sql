@@ -89,20 +89,44 @@ INSERT INTO employee (first_name, middle_name, last_name, email, phone, address,
 VALUES ('Admin', 'Admin', 'Admin', 'admin@gmail.com', '070000', '123 checksum street, Indi', 34567, 1, 13, 1, '2005-05-19', '2024-12-05', 'Active', NULL);
 
 
--- Create Users table
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(50) UNIQUE NOT NULL,
-    role VARCHAR(10),
-    password VARCHAR(255) NOT NULL,
-    employee_id INT UNIQUE NOT NULL,
+-- -- Create Users table
+-- CREATE TABLE users (
+--     id BIGSERIAL PRIMARY KEY,
+--     first_name VARCHAR(50) NOT NULL,
+--     last_name VARCHAR(50) NOT NULL,
+--     email VARCHAR(50) UNIQUE NOT NULL,
+--     role VARCHAR(10),
+--     password VARCHAR(255) NOT NULL,
+--     employee_id INT UNIQUE NOT NULL,
+
+--     -- Foreign Key Constraint
+--     CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE
+-- );
+
+-- -- Add default admin
+-- INSERT INTO users (first_name, last_name, email, role, password, employee_id)
+-- VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', 'ADmin1234', 1);
+
+
+CREATE TABLE employee_passwords (
+    id INT PRIMARY KEY, -- employee id
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL -- encoded password
 
     -- Foreign Key Constraint
-    CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE
+    CONSTRAINT fk_employee FOREIGN KEY (id) REFERENCES employee(id) ON DELETE CASCADE
+    CONSTRAINT fk_employee FOREIGN KEY (email) REFERENCES employee(email) ON DELETE CASCADE
 );
 
--- Add default admin
-INSERT INTO users (first_name, last_name, email, role, password, employee_id)
-VALUES ('Admin', 'Admin', 'admin@gmail.com', 'Admin', 'ADmin1234', 1);
+
+-- Employee Assigned Roles
+CREATE TABLE role (
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(20)
+);
+
+-- Add default admin role
+INSERT INTO role (role)
+VALUES ('Admin'),
+    ('Manager'),
+    ('Employee');
