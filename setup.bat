@@ -2,7 +2,7 @@
 REM Force execution from the batch file's folder (project root)
 cd /d "%~dp0"
 
-SET IMAGE_NAME=docker/ems
+SET IMAGE_NAME=ems-app
 
 REM ----------------------------------------
 REM Select mode (dev or prod)
@@ -15,7 +15,7 @@ IF "%MODE%"=="" SET MODE=dev
 IF /I "%MODE%"=="dev" (
     ECHO Running in DEVELOPMENT mode...
     
-    REM Remove old docker/ems images
+    REM Remove old ems-app images
     FOR /F "tokens=*" %%i IN ('docker images -q %IMAGE_NAME%') DO (
         ECHO Deleting old image %%i...
         docker rmi -f %%i

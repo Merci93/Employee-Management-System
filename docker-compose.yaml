@@ -1,6 +1,6 @@
 services:
   app:
-    image: docker/ems
+    image: ems-app
     container_name: ems-api
     environment:
       - IS_DOCKER=true
