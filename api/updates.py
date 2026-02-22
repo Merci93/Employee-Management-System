@@ -60,7 +60,7 @@ def update_data(employee_id: int, updates: dict) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.patch("/v1/update_employee_data", tags=["Employee Data Update"], description="""
+@router.patch("/update_employee_data", tags=["Employee Data Update"], description="""
     - Provide only the fields you want to update.
 
     - **employee_id** is required
