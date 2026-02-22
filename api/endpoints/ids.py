@@ -5,7 +5,6 @@ return the corresponding ID from the database. The endpoints handle database int
 including executing SQL queries to fetch the required IDs, and include error handling to manage
 potential issues during the retrieval process.   
 """
-from enum import Enum
 from typing import Dict
 
 from fastapi import (
@@ -14,47 +13,20 @@ from fastapi import (
 )
 from psycopg2 import sql
 
-from backend import db_connect
+from api.input_data_validations.pydantic_validations import (
+    DepartmentIdRequest,
+    GenderIdRequest,
+    PositionIdRequest,
+)
 from app.config.config import settings
 from app.logger.log_handler import logger
+from backend import db_connect
 
 
-router = APIRouter(prefix="/v1", tags=["Retrieve ID"])
+id_router = APIRouter(prefix="/v1", tags=["ID Retrieval"])
 
 
-class GenderIdRequest(str, Enum):
-    male = "Male"
-    female = "Female"
-
-
-class DepartmentIdRequest(str, Enum):
-    it = "IT"
-    hr = "HR"
-    sales = "Sales"
-    research = "Research"
-    marketing = "Marketing"
-    data_analytics = "Data & Analytics"
-
-
-class PositionIdRequest(str, Enum):
-    hr = "HR"
-    intern = "Intern"
-    data_analyst = "Data Analyst"
-    web_developer = "Web Developer"
-    product_owner = "Product Owner"
-    data_engineer = "Data Engineer"
-    data_scientist = "Data Scientist"
-    devops_engineer = "DevOps Engineer"
-    cloud_architect = "Cloud Architect"
-    network_engineer = "Network Engineer"
-    business_analyst = "Business Analyst"
-    software_engineer = "Software Engineer"
-    jnr_data_eengieer = "Junior Data Engineer"
-    solutions_architect = "Solutions Architect"
-    senior_engr_mgr = "Senior Engineering Manager"
-
-
-@router.get("/get_gender_id/{gender}")
+@id_router.get("/get_gender_id/{gender}")
 async def get_gender_id(gender: GenderIdRequest) -> Dict[str, int]:
     """Get employee gender id."""
     logger.info("Retrieving Employee gender id  ...")
@@ -80,7 +52,7 @@ async def get_gender_id(gender: GenderIdRequest) -> Dict[str, int]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.get("/get_department_id/{department}")
+@id_router.get("/get_department_id/{department}")
 async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
     """Get employee department id."""
     logger.info("Retrieving Employee department id ...")
@@ -104,7 +76,7 @@ async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.get("/get_position_id/{position}")
+@id_router.get("/get_position_id/{position}")
 async def get_position_id(position: PositionIdRequest) -> Dict[str, int]:
     """Get employee position id."""
     logger.info("Retrieving Employee position id ...")

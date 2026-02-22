@@ -5,16 +5,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from src.api.root import router as root_router
-from src.api.verification import router as verification_router
-from src.api.ids import router as ids_router
-# from src.api.users import router as users_router
-from src.api.employees import router as employees_router
-from src.api.updates import router as updates_router
-
-from src.backend import db_connect
-from src.config import init_settings
-# from src.log_handler import logger
+from api.endpoints.root import root_router
+from api.endpoints.verification import verification_router
+from api.endpoints.ids import id_router
+# from api.endpoints.users import router as users_router
+from api.endpoints.employees import employees_data_router
+from api.endpoints.updates import updates_router
+from app.config.config import init_settings
+from api.endpoints.new_employee import router as add_new_employee_router
+# from log_handler import logger
+from backend import db_connect
 
 
 description = """
@@ -49,11 +49,11 @@ app = FastAPI(
     lifespan=lifespan,
     openapi_tags=[
         {
-            "name": "Employee Data Verification",
+            "name": "Employee Email and Phone Number Verification",
             "description": "Endpoints for verifying employee data - email, phone number and ID.",
         },
         {
-            "name": "Retrieve ID",
+            "name": "ID Retrieval",
             "description": "Endpoints for retrieving id for specified gender, department and position from their respective tables.",
         },
         {
@@ -61,15 +61,15 @@ app = FastAPI(
             "description": "Endpoints to add employees as user and admins in order to access or modify data.",
         },
         {
-            "name": "Employee Management",
-            "description": "Endpoints to manage employee data - add, update and delete.",
+            "name": "Add New Employee",
+            "description": "Endpoints to add new employee data to the database.",
         },
         {
-            "name": "Employee Data Search",
-            "description": "Endpoints to fetch employee data.",
+            "name": "Employee Data",
+            "description": "Endpoints to retrieve employee data based on specified criteria.",
         },
         {
-            "name": "Employee Data Update",
+            "name": "Update Employee Data",
             "description": "Endpoints to update employee data.",
         },
     ],
@@ -85,8 +85,9 @@ app.add_middleware(
 
 
 # Register all router modules
-app.include_router(ids_router)
+app.include_router(id_router)
 app.include_router(root_router)
 app.include_router(updates_router)
-app.include_router(employees_router)
+app.include_router(employees_data_router)
 app.include_router(verification_router)
+app.include_router(add_new_employee_router)

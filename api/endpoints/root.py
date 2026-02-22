@@ -2,9 +2,9 @@
 from fastapi import APIRouter
 
 
-router = APIRouter(tags=["Root"])
+root_router = APIRouter(tags=["Root"])
 
 
-@router.get("/v1/root/")
+@root_router.get("/v1/root/")
 def get_root():
     return {"message": "Hello!!! Root API running."}
