@@ -57,7 +57,7 @@ class PositionIdRequest(str, Enum):
 @router.get("/get_gender_id/{gender}")
 async def get_gender_id(gender: GenderIdRequest) -> Dict[str, int]:
     """Get employee gender id."""
-    logger.info(f"Retrieving gender id for gender {gender} ...")
+    logger.info("Retrieving Employee gender id  ...")
     try:
         with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE gender = %s").format(
@@ -76,16 +76,14 @@ async def get_gender_id(gender: GenderIdRequest) -> Dict[str, int]:
                 return {"value": False}
 
     except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while retrieving id for gender {gender}: {e}"
-        )
+        logger.error("Unexpected error occurred while retrieving id for employee gender. Message: %s", str(e))
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @router.get("/get_department_id/{department}")
 async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
     """Get employee department id."""
-    logger.info(f"Retrieving department id for {department} ...")
+    logger.info("Retrieving Employee department id ...")
     try:
         with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE department = %s").format(
@@ -95,25 +93,21 @@ async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
             employee_dept_id = cursor.fetchone()
 
             if employee_dept_id:
-                logger.info(
-                    f"Department ID retrieved successfully. Value: {employee_dept_id[0]}"
-                )
+                logger.info("Department ID retrieved successfully.")
                 return {"value": employee_dept_id[0]}
             else:
                 logger.info("Department ID not retrieved.")
                 return {"value": False}
 
     except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while retrieving id for {department}: {e}"
-        )
+        logger.error("Unexpected error occurred while retrieving id for department. Message: %s", str(e))
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @router.get("/get_position_id/{position}")
 async def get_position_id(position: PositionIdRequest) -> Dict[str, int]:
     """Get employee position id."""
-    logger.info(f"Retrieving position id for {position} ...")
+    logger.info("Retrieving Employee position id ...")
     try:
         with db_connect.db_client.cursor() as cursor:
             query = sql.SQL("SELECT id FROM {} WHERE position = %s").format(
@@ -123,16 +117,12 @@ async def get_position_id(position: PositionIdRequest) -> Dict[str, int]:
             employee_position_id = cursor.fetchone()
 
             if employee_position_id:
-                logger.info(
-                    f"Position ID retrieved successfully. Value: {employee_position_id[0]}"
-                )
+                logger.info("Position ID retrieved successfully.")
                 return {"value": employee_position_id[0]}
             else:
-                logger.info("position ID not retrieved.")
+                logger.info("Position ID not retrieved.")
                 return {"value": False}
 
     except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while retrieving id for {position}: {e}"
-        )
+        logger.error("Unexpected error occurred while retrieving id for employee position. Message: %s", str(e))
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
