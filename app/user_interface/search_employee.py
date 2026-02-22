@@ -4,8 +4,9 @@ import asyncio
 import streamlit as st
 import pandas as pd
 
-from src.config import settings
-from src.backend import backend_modules
+from backend import backend_modules
+from config.config import settings
+
 
 # Markdown to center headings
 st.markdown("""

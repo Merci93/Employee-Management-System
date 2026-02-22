@@ -80,6 +80,8 @@ class Settings(BaseSettings):
 
     GENDER: List[str] = ["Male", "Female"]
 
+    ROLES: List[str] = ["Admin", "Manager", "Employee"]
+
 
 def init_settings() -> None:
     global settings

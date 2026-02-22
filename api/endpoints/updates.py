@@ -7,26 +7,14 @@ and executes the update operation in the database. It also includes error handli
 from typing import Dict
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 
+from api.input_data_validations.pydantic_validations import EmployeeUpdateRequest
 from app.config.config import settings
 from app.logger.log_handler import logger
 from backend import db_connect
 
 
-router = APIRouter(prefix="/v1", tags=["Employee Data Update"])
-
-
-class EmployeeUpdateRequest(BaseModel):
-    employee_id: int
-    address: str | None = None
-    salary: int | float | None = None
-    first_name: str | None = None
-    middle_name: str | None = None
-    last_name: str | None = None
-    position_id: int | None = None
-    department_id: int | None = None
-    phone: str | None = None
+updates_router = APIRouter(prefix="/v1", tags=["Update Employee Data"])
 
 
 def update_data(employee_id: int, updates: dict) -> Dict[str, bool]:
@@ -60,7 +48,7 @@ def update_data(employee_id: int, updates: dict) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.patch("/v1/update_employee_data", tags=["Employee Data Update"], description="""
+@updates_router.patch("/update_employee_data", tags=["Employee Data Update"], description="""
     - Provide only the fields you want to update.
 
     - **employee_id** is required

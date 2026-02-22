@@ -1,25 +1,19 @@
 """Data and users verification module"""
-from enum import Enum
 from typing import Dict
 
 from fastapi import APIRouter, HTTPException
 from psycopg2 import sql
 
-from src.backend import db_connect
-from src.config import settings
-from src.log_handler import logger
+from api.input_data_validations.pydantic_validations import WhoToVerify
+from app.config.config import settings
+from app.logger.log_handler import logger
+from backend import db_connect
 
 
-router = APIRouter(prefix="v1", tags=["Employee Data Verification"])
+verification_router = APIRouter(prefix="/v1", tags=["Employee Email and Phone Number Verification"])
 
 
-class WhoToVerify(str, Enum):
-    admin = "admin"
-    manager = "manager"
-    employee = "employee"
-
-
-@router.get("/verify_email/{email}")
+@verification_router.get("/verify_email/{email}")
 async def verify_email_exists(email: str, who: WhoToVerify) -> Dict[str, bool]:
     """Verify if email already exists."""
 
@@ -48,7 +42,7 @@ async def verify_email_exists(email: str, who: WhoToVerify) -> Dict[str, bool]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.get("/verify_phone_number/{phone_number}")
+@verification_router.get("/verify_phone_number/{phone_number}")
 async def verify_phone_number(phone_number: str) -> Dict[str, bool]:
     """Verify if phone number already exists in database."""
 

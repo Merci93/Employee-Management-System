@@ -1,4 +1,5 @@
 """"Backend module"""
+import os
 from datetime import date
 from typing import Any, Dict
 
@@ -6,10 +7,16 @@ import httpx
 import pandas as pd
 from fastapi import HTTPException
 
-from src.log_handler import logger
+from app.logger.log_handler import logger
 
 
-BASE_URL = "http://localhost:8000/v1"
+IS_DOCKER = os.getenv("IS_DOCKER", "false").lower() == "true"
+
+if IS_DOCKER:
+    BASE_URL = "http://api:8000/v1"
+else:
+    BASE_URL = "http://localhost:8000/v1"
+
 HEADERS = {"accept": "application/json"}
 
 
