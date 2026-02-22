@@ -1,4 +1,10 @@
-"""ID verification module"""
+"""
+This module defines API endpoints for retrieving IDs for employee gender, department, and position.
+It includes GET endpoints that accept specific parameters (gender, department, or position) and
+return the corresponding ID from the database. The endpoints handle database interactions,
+including executing SQL queries to fetch the required IDs, and include error handling to manage
+potential issues during the retrieval process.   
+"""
 from enum import Enum
 from typing import Dict
 
