@@ -159,7 +159,7 @@ async def get_employee_data_by_id(employee_id: int) -> List[Dict[str, Any]]:
     :param employee_id: Employee ID
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. ID: {employee_id}")
+    logger.info("Retrieving employee data using ID ...")
     result = fetch_employee_data(
         filter_field="id",
         value=employee_id
@@ -180,7 +180,7 @@ async def get_employee_data_by_first_name(first_name: str) -> List[Dict[str, Any
     :param first_name: Employee first name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. first name: {first_name.capitalize()}")
+    logger.info("Retrieving employee data by first name ...")
     result = fetch_employee_data(
         filter_field="first_name",
         value=first_name.capitalize()
@@ -201,7 +201,7 @@ async def get_employee_data_by_last_name(last_name: str) -> List[Dict[str, Any]]
     :param last_name: Employee last name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. last name: {last_name.capitalize()}")
+    logger.info("Retrieving employee data by last name ...")
     result = fetch_employee_data(
         filter_field="last_name",
         value=last_name.capitalize()
@@ -222,7 +222,7 @@ async def get_employee_data_by_department(department: DepartmentIdRequest) -> Li
     :param department: Department name
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. department: {department}")
+    logger.info("Retrieving employee data by department ...")
     result = fetch_employee_data(
         filter_field="department",
         value=department
@@ -243,7 +243,7 @@ async def get_employee_data_by_position(position: PositionIdRequest) -> List[Dic
     :param position: Employee position
     :return: Employee data from all tables, if available.
     """
-    logger.info(f"Retrieving employee data. position: {position}")
+    logger.info("Retrieving employee data by position ...")
     result = fetch_employee_data(
         filter_field="position",
         value=position
@@ -264,9 +264,7 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
     :param employee: Employee details.
     :return: Success if added, failed is not.
     """
-    logger.info(
-        f"Adding new employee {employee.first_name} {employee.last_name} to the database ..."
-    )
+    logger.info("Adding new employee to the database ...")
 
     query = """
         INSERT INTO employee (
@@ -308,14 +306,10 @@ def add_new_employee(employee: EmployeeCreateRequest) -> Dict[str, str]:
 
     except (InFailedSqlTransaction, OperationalError, UniqueViolation) as e:
         db_connect.db_client.rollback()
-        logger.error(
-            f"Failed to add employee {employee.first_name} {employee.last_name}: {e}"
-        )
+        logger.error("Failed to add new employee to the database. Message: %s", str(e))
         raise HTTPException(status_code=400, detail=f"Failed to add employee: {str(e)}")
 
     except Exception as e:
         db_connect.db_client.rollback()
-        logger.error(
-            f"Unexpected error occurred while adding employee {employee.first_name} {employee.last_name}: {e}"
-        )
+        logger.error("Unexpected error occurred while adding employee. Message: %s", str(e))
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
