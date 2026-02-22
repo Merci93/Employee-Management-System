@@ -2,12 +2,15 @@
 from enum import Enum
 from typing import Dict
 
-from fastapi import APIRouter, HTTPException
+from fastapi import (
+    APIRouter,
+    HTTPException,
+)
 from psycopg2 import sql
 
-from src.backend import db_connect
-from src.config import settings
-from src.log_handler import logger
+from backend import db_connect
+from app.config.config import settings
+from app.logger.log_handler import logger
 
 
 router = APIRouter(prefix="/v1", tags=["Retrieve ID"])
@@ -73,7 +76,7 @@ async def get_gender_id(gender: GenderIdRequest) -> Dict[str, int]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.get("/v1/get_department_id/{department}")
+@router.get("/get_department_id/{department}")
 async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
     """Get employee department id."""
     logger.info(f"Retrieving department id for {department} ...")
@@ -101,7 +104,7 @@ async def get_department_id(department: DepartmentIdRequest) -> Dict[str, int]:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.get("/v1/get_position_id/{position}")
+@router.get("/get_position_id/{position}")
 async def get_position_id(position: PositionIdRequest) -> Dict[str, int]:
     """Get employee position id."""
     logger.info(f"Retrieving position id for {position} ...")
