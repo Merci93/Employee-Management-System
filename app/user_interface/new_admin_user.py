@@ -8,8 +8,8 @@ import asyncio
 import re
 import streamlit as st
 
-from src.backend import backend_modules
-from src.log_handler import logger
+from backend import backend_modules
+from logger.log_handler import logger
 
 
 # Markdown to center headings

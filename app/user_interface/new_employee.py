@@ -9,9 +9,9 @@ import streamlit as st
 
 from typing import Tuple
 
-from src.backend import backend_modules
-from src.config import settings
-from src.log_handler import logger
+from backend import backend_modules
+from config.config import settings
+from logger.log_handler import logger
 
 
 # Markdown to center headings
@@ -42,7 +42,9 @@ with st.form("add_employee_form"):
     department = st.selectbox("Department", settings.DEPARTMENTS)
     salary = st.number_input("Salary")
     hired_date = st.date_input("Hired Date")
+    assigned_role = st.selectbox("Role", settings.ROLES)
     submit_button = st.form_submit_button("Save")
+    # Add assigned role and assigne where else necessary
 
 
 FIELDS = {
