@@ -1,8 +1,11 @@
 # Folders
-env/
+.venv/
 __pycache__/
 .vscode/
 logs/
 flow-chart
 
 # Files
+uv.lock
+pyproject.toml
+.python-version
