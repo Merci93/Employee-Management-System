@@ -1,12 +1,17 @@
-"""Employee Data Updates"""
+"""
+This module defines the API endpoints for updating employee data.
+It includes a PATCH endpoint that allows clients to update specific fields of an employee's record by providing the employee ID
+and the fields to be updated. The endpoint validates the input, constructs a dynamic SQL query based on the provided fields,
+and executes the update operation in the database. It also includes error handling to manage potential issues during the update process.
+"""
 from typing import Dict
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from src.backend import db_connect
-from src.config import settings
-from src.log_handler import logger
+from app.config.config import settings
+from app.logger.log_handler import logger
+from backend import db_connect
 
 
 router = APIRouter(prefix="/v1", tags=["Employee Data Update"])
@@ -24,9 +29,9 @@ class EmployeeUpdateRequest(BaseModel):
     phone: str | None = None
 
 
-def update_data(employee_id: int, updates: dict, log_context: str) -> Dict[str, bool]:
+def update_data(employee_id: int, updates: dict) -> Dict[str, bool]:
     """A helper function to update employee data."""
-    logger.info(f"Updating employee {log_context} ...")
+    logger.info("Updating employee data ...")
 
     set_clauses = []
     values = []
@@ -46,12 +51,12 @@ def update_data(employee_id: int, updates: dict, log_context: str) -> Dict[str, 
             cursor.execute(query, (*values, employee_id))
         db_connect.db_client.commit()
 
-        logger.info(f"Employee {log_context} update completed successfully.")
+        logger.info("Employee data update completed successfully.")
         return {"success": True}
 
     except Exception as e:
         db_connect.db_client.rollback()
-        logger.error(f"Error updating employee {log_context}: {e}")
+        logger.error("Error updating employee data. Message: %s", str(e))
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
@@ -80,5 +85,4 @@ async def employee_data_update(request: EmployeeUpdateRequest) -> Dict[str, bool
     return update_data(
         employee_id=employee_id,
         updates=updates,
-        log_context=", ".join(updates.keys())
     )
