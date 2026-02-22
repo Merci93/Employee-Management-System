@@ -1,18 +1,50 @@
-FROM python:3.11-slim
+# Docker image for EMS Application using multistage builds
+# This helps to keep the final image small and efficient by only including necessary runtime dependencies.
 
-LABEL quay.expires-after=12w
+# Builder Stage
+FROM python:3.11-slim AS builder
+
+WORKDIR /install
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends g++ gcc libpq-dev && \ 
-    apt-get autoremove -yqq --purge && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    python -m pip install --upgrade pip
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+RUN python -m pip install --upgrade pip uv
+
+COPY requirements.txt .
+
+RUN uv pip install \
+    --system \
+    --no-cache-dir \
+    --prefix=/install/deps \
+    -r requirements.txt
+
+
+# Runtime Stage
+FROM python:3.11-slim
+
+LABEL description="Production-ready EMS application (FastAPI + Streamlit + PostgreSQL)"
+
+RUN useradd -m appuser
+
+WORKDIR /ems
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libpq5 && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /install/deps /usr/local
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+ENV PYTHONPATH=/ems \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-EXPOSE 8000
+RUN chown -R appuser:appuser /ems
+
+USER appuser
