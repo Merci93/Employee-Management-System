@@ -1,12 +1,17 @@
-"""Employee Data Updates"""
+"""
+This module defines the API endpoints for updating employee data.
+It includes a PATCH endpoint that allows clients to update specific fields of an employee's record by providing the employee ID
+and the fields to be updated. The endpoint validates the input, constructs a dynamic SQL query based on the provided fields,
+and executes the update operation in the database. It also includes error handling to manage potential issues during the update process.
+"""
 from typing import Dict
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from src.backend import db_connect
-from src.config import settings
-from src.log_handler import logger
+from app.config.config import settings
+from app.logger.log_handler import logger
+from backend import db_connect
 
 
 router = APIRouter(prefix="/v1", tags=["Employee Data Update"])
