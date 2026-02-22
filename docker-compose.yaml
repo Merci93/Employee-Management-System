@@ -34,7 +34,7 @@ services:
     networks:
       - ems
     volumes:
-      - ./logs:/var/log/my_app
+      - ./logs:/ems/logs
 
   ui:
     image: ems-app
