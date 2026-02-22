@@ -1,7 +1,7 @@
 """Database connection module."""
 import psycopg2
 
-from src.config import settings
+from app.config.config import settings
 
 
 db_client = None

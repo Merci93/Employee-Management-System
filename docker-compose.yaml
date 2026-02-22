@@ -1,27 +1,11 @@
 services:
-  app:
-    image: ems-app
-    container_name: ems-api
-    environment:
-      - IS_DOCKER=true
-    ports:
-      - "8000:8000"
-    command: uvicorn src.api:app --host=0.0.0.0 --port=8000
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - ems
-    volumes:
-      - ./logs:/var/log/my_app 
-
   postgres:
     image: postgres:15.5-alpine
     container_name: ems-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRESS_DB: postgres
+      POSTGRES_DB: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
@@ -33,6 +17,36 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+    networks:
+      - ems
+
+  api:
+    image: ems-app
+    container_name: ems-api
+    environment:
+      - IS_DOCKER=true
+    ports:
+      - "8000:8000"
+    command: uvicorn api.main:app --host=0.0.0.0 --port=8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ems
+    volumes:
+      - ./logs:/ems/logs
+
+  ui:
+    image: ems-app
+    container_name: ems-ui
+    environment:
+      - IS_DOCKER=true
+      - PYTHONPATH=/ems
+    command: streamlit run app/ems.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
     networks:
       - ems
 

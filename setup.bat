@@ -15,7 +15,6 @@ IF "%MODE%"=="" SET MODE=dev
 IF /I "%MODE%"=="dev" (
     ECHO Running in DEVELOPMENT mode...
     
-    REM Remove old ems-app images
     FOR /F "tokens=*" %%i IN ('docker images -q %IMAGE_NAME%') DO (
         ECHO Deleting old image %%i...
         docker rmi -f %%i
@@ -32,27 +31,11 @@ IF /I "%MODE%"=="dev" (
     FOR /F "tokens=2 delims==" %%i IN ('wmic os get localdatetime /value') DO SET DTS=%%i
     SET VERSION=%DTS:~0,8%_%DTS:~8,4%
 
-    REM Build versioned image
     ECHO Building Docker image %IMAGE_NAME%:%VERSION% ...
     docker build -t %IMAGE_NAME%:%VERSION% .
 
-    REM Tag also as latest for convenience
     docker tag %IMAGE_NAME%:%VERSION% %IMAGE_NAME%:latest
 )
 
-REM ----------------------------------------
-REM Start Docker containers
-REM ----------------------------------------
 ECHO Starting Docker containers...
 docker-compose up -d
-
-REM ----------------------------------------
-REM Activate virtual environment
-REM ----------------------------------------
-CALL env\Scripts\activate
-
-REM ----------------------------------------
-REM Run Streamlit UI
-REM ----------------------------------------
-ECHO Starting Streamlit UI...
-python -m streamlit run src/ems.py

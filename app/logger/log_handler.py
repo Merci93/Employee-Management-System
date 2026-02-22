@@ -9,7 +9,7 @@ from colorlog import ColoredFormatter
 logger = logging.getLogger()
 
 if os.getenv("IS_DOCKER", "false").lower() == "true":
-    LOG_DIRECTORY = "/var/log/my_app"
+    LOG_DIRECTORY = "/ems/logs"
 else:
     LOG_DIRECTORY = "./logs"
 

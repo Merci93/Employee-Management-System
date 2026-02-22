@@ -1,12 +1,15 @@
 # Folders
 __pycache__/
-env/
+.venv/
 user_interface/
 flow-chart/
 .vscode/
 logs/
+postgres-data/
 
 # Files
+LICENSE
 README.md
-ems-setup.bat
-virtual-env-setup.bat
+setup.bat
+*.git
+*.pyc
